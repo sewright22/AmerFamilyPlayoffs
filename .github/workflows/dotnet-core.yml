@@ -32,6 +32,6 @@ jobs:
         username: ${{ secrets.REMOTE_USER }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./publishtest/
-        dry-run: true
+        server-dir: core.stevencodeswright.com/
 
 
