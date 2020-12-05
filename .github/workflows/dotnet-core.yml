@@ -24,7 +24,7 @@ jobs:
     - name: Test
       run: dotnet test --no-restore --verbosity normal
     - name: dotnet publish
-      run: dotnet publish ".\AmerFamilyPlayoffs.Api\AmerFamilyPlayoffs.Api.csproj" -c Release -o publishApi --self-contained true
+      run: dotnet publish ".\AmerFamilyPlayoffs.Api\AmerFamilyPlayoffs.Api.csproj" -c Release -o publishApi --self-contained true -r win-x86
     - name: FTP Deploy
       uses: SamKirkland/FTP-Deploy-Action@4.0.0
       with:
