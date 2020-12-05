@@ -20,7 +20,7 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Build API
-      run: dotnet build dotnet build --configuration Release --no-restore .\AmerFamilyPlayoffs.Api\
+      run: dotnet build dotnet build ".\AmerFamilyPlayoffs.Api\\" --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
     - name: dotnet publish
