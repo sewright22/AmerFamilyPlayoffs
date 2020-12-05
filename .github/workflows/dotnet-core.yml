@@ -19,19 +19,19 @@ jobs:
         dotnet-version: 5.0.100
     - name: Install dependencies
       run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
+    - name: Build API
+      run: dotnet build dotnet build --configuration Release --no-restore ".\AmerFamilyPlayoffs.Api\AmerFamilyPlayoffs.Api.csproj"
     - name: Test
       run: dotnet test --no-restore --verbosity normal
     - name: dotnet publish
-      run: dotnet publish -c Release -o publishtest 
+      run: dotnet publish ".\AmerFamilyPlayoffs.Api\AmerFamilyPlayoffs.Api.csproj" -c Release -o publishApi 
     - name: FTP Deploy
       uses: SamKirkland/FTP-Deploy-Action@4.0.0
       with:
         server: ${{ secrets.REMOTE_HOST }}
         username: ${{ secrets.REMOTE_USER }}
         password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./publishtest/
-        server-dir: core.stevencodeswright.com/
+        local-dir: ./publishApi/
+        server-dir: httpdocs/
 
 
