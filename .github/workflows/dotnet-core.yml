@@ -22,13 +22,13 @@ jobs:
     - name: Build API
       run: dotnet build --configuration Release --no-restore ".\AmerFamilyPlayoffs.Api\AmerFamilyPlayoffs.Api.csproj"
     - name: Build WASM
-      run: dotnet build --configuration Release --no-restore ".\AmerFamilyPlayoffs\AmerFamilyPlayoffs.csproj"
+      run: dotnet build --configuration Release --no-restore ".\BlazorWasm\AmerFamilyPlayoffs.csproj"
     - name: Test
       run: dotnet test --no-restore --verbosity normal
     - name: Publish API
       run: dotnet publish ".\AmerFamilyPlayoffs.Api\AmerFamilyPlayoffs.Api.csproj" -c Release -o publishApi --self-contained true -r win-x86
     - name: Publish WASM
-      run: dotnet publish ".\AmerFamilyPlayoffs\AmerFamilyPlayoffs.csproj" -c Release -o publishWasm
+      run: dotnet publish ".\BlazorWasm\AmerFamilyPlayoffs.csproj" -c Release -o publishWasm
     - name: FTP Deploy API
       uses: SamKirkland/FTP-Deploy-Action@4.0.0
       with:
@@ -45,5 +45,3 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./publishWasm/
         server-dir: core.stevencodeswright.com/
-
-
