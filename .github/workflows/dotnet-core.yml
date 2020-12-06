@@ -19,10 +19,8 @@ jobs:
         dotnet-version: 5.0.100
     - name: Install dependencies
       run: dotnet restore
-    - name: Build API
-      run: dotnet build --configuration Release --no-restore ".\AmerFamilyPlayoffs.Api\AmerFamilyPlayoffs.Api.csproj"
-    - name: Build WASM
-      run: dotnet build --configuration Release --no-restore ".\BlazorWasm\AmerFamilyPlayoffs.csproj"
+    - name: Build Solution
+      run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
     - name: Publish API
