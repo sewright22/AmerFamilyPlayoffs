@@ -13,7 +13,7 @@
     {
         private static readonly string[] Summaries = new[]
         {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warms", "Balmy", "Hots", "Sweltering", "Scorching"
+            "One", "Two", "Three"
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
