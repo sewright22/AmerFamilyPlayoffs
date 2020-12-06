@@ -13,7 +13,7 @@
     {
         private static readonly string[] Summaries = new[]
         {
-            "One", "Two", "Three"
+            "Four", "Five", "Six"
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
