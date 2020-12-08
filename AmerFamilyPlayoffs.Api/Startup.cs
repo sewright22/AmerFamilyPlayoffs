@@ -5,6 +5,7 @@ namespace AmerFamilyPlayoffs.Api
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.HttpsPolicy;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -60,6 +61,12 @@ namespace AmerFamilyPlayoffs.Api
             app.UseCors("CorsPolicy");
 
             app.UseRouting();
+
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<AmerFamilyPlayoffContext>();
+                context.Database.Migrate();
+            }
 
             // app.UseAuthorization();
 
