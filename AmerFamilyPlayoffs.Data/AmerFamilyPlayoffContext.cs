@@ -23,5 +23,6 @@
         }
 
         public DbSet<Season> Seasons { get; set; }
+        public DbSet<Team> Teams { get; set; }
     }
 }

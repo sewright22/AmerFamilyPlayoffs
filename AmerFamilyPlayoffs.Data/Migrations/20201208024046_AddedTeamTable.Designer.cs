@@ -2,14 +2,16 @@
 using AmerFamilyPlayoffs.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AmerFamilyPlayoffs.Data.Migrations
 {
     [DbContext(typeof(AmerFamilyPlayoffContext))]
-    partial class AmerFamilyPlayoffContextModelSnapshot : ModelSnapshot
+    [Migration("20201208024046_AddedTeamTable")]
+    partial class AddedTeamTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,26 +33,6 @@ namespace AmerFamilyPlayoffs.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Seasons");
-                });
-
-            modelBuilder.Entity("AmerFamilyPlayoffs.Data.Team", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Abbreviation")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<string>("Location")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Teams");
                 });
 #pragma warning restore 612, 618
         }
