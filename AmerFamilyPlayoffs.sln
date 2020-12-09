@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AmerFamilyPlayoffs", "Blazo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AmerFamilyPlayoffs.Api", "AmerFamilyPlayoffs.Api\AmerFamilyPlayoffs.Api.csproj", "{1196F74E-02BD-4685-9177-C46181325C6D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AmerFamilyPlayoffs.Data", "AmerFamilyPlayoffs.Data\AmerFamilyPlayoffs.Data.csproj", "{6DBF0C39-6D4D-4BE5-906A-77CB8DB42F79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AmerFamilyPlayoffs.Data", "AmerFamilyPlayoffs.Data\AmerFamilyPlayoffs.Data.csproj", "{6DBF0C39-6D4D-4BE5-906A-77CB8DB42F79}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AmerFamilyPlayoffs.Api.Tests", "AmerFamilyPlayoffs.Api.Tests\AmerFamilyPlayoffs.Api.Tests.csproj", "{12987C15-4C38-4637-8272-BF1117A50244}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{6DBF0C39-6D4D-4BE5-906A-77CB8DB42F79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DBF0C39-6D4D-4BE5-906A-77CB8DB42F79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DBF0C39-6D4D-4BE5-906A-77CB8DB42F79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12987C15-4C38-4637-8272-BF1117A50244}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12987C15-4C38-4637-8272-BF1117A50244}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12987C15-4C38-4637-8272-BF1117A50244}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12987C15-4C38-4637-8272-BF1117A50244}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
