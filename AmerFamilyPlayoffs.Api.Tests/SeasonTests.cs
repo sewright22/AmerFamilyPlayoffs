@@ -15,7 +15,16 @@
         {
             using (var context = new AmerFamilyPlayoffContext(this.ContextOptions))
             {
-                Assert.True(context.Seasons.Count() > 5);
+                Assert.True(context.Teams.Count()==32);
+                context.Teams.Add(new Team
+                {
+                    Abbreviation = "",
+                    Location = "",
+                    Name = "",
+                });
+                context.SaveChanges();
+                Assert.True(context.Teams.Count()==33);
+                Assert.True(false);
             }
         }
     }
