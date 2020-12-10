@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AmerFamilyPlayoffs.Api.Queries\AmerFamilyPlayoffs.Api.Queries.csproj" />
     <ProjectReference Include="..\AmerFamilyPlayoffs.Data\AmerFamilyPlayoffs.Data.csproj" />
   </ItemGroup>
 

@@ -6,16 +6,16 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Text;
 
-    public class PlayoffRound
+    public class Matchup
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public int PlayoffId { get; set; }
-        public int RoundId { get; set; }
-        public virtual Playoff Playoff { get; set; }
-        public virtual Round Round { get; set; }
 
-        public virtual List<Matchup> Matchups { get; set; }
+        public int HomeTeamId { get; set; }
+        public int AwayTeamId { get; set; }
+
+        public virtual Team HomeTeam { get; set; }
+        public virtual Team AwayTeam { get; set; }
     }
 }

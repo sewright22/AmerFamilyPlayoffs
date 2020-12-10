@@ -24,5 +24,10 @@
 
         public DbSet<Season> Seasons { get; set; }
         public DbSet<Team> Teams { get; set; }
+        public DbSet<Playoff> Playoffs { get; set; }
+        public DbSet<Round> Rounds { get; set; }
+        public DbSet<PlayoffRound> PlayoffRounds { get; set; }
+        public DbSet<Matchup> Matchups { get; set; }
+        public DbSet<SeasonTeam> SeasonTeams { get; set; }
     }
 }
