@@ -1,5 +1,6 @@
 namespace AmerFamilyPlayoffs.Api
 {
+    using AmerFamilyPlayoffs.Api.Seed;
     using AmerFamilyPlayoffs.Data;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -66,6 +67,7 @@ namespace AmerFamilyPlayoffs.Api
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<AmerFamilyPlayoffContext>();
                 context.Database.Migrate();
+                // context.Seed();
             }
 
             // app.UseAuthorization();

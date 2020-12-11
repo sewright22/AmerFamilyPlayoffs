@@ -17,5 +17,6 @@
         public int Seed { get; set; }
 
         public int TeamId { get; set; }
+        public virtual Team Team { get; set; }
     }
 }

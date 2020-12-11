@@ -20,7 +20,7 @@
         {
             try
             {
-                var response = await HttpClient.GetAsync("https://stevencodeswright.com/WeatherForecast/");
+                var response = await HttpClient.GetAsync("WeatherForecast");
                 forecasts = await response.Content.ReadFromJsonAsync<WeatherForecast[]>();
             }
             catch (Exception exception)

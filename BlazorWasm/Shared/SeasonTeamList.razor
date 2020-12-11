@@ -1,0 +1,16 @@
+﻿
+@if (string.IsNullOrEmpty(errorMessage) == false)
+{
+    <p><em>@errorMessage</em></p>
+}
+else if (Teams == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @foreach (var team in Teams)
+    {
+        <p>@team.Location @team.Name</p>
+    }
+}

@@ -1,0 +1,15 @@
+﻿@page "/leagueadmin"
+
+<h3>LeagueAdmin</h3>
+
+<select @bind="@SelectedYear">
+    <option>- Please Select a Season -</option>
+    <option>2018</option>
+    <option>2019</option>
+    <option>2020</option>
+</select>
+
+@if (string.IsNullOrEmpty(SelectedYear) == false)
+{
+    <SeasonTeamList Year="@SelectedYear"></SeasonTeamList>
+}
