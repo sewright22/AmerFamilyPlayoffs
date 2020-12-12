@@ -8,7 +8,14 @@ else if (Teams == null)
 }
 else
 {
-    <p><button class="btn btn-primary" @onclick="SavePlayoffTeams">Save</button></p>
+    <p>
+        <button class="btn btn-primary" @onclick="SavePlayoffTeams">Save</button>
+
+        @if (string.IsNullOrEmpty(Message) == false)
+        {
+            <label>@Message</label>
+        }
+    </p>
 
     <table class="table">
         <thead>

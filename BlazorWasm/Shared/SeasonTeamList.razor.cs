@@ -8,12 +8,15 @@
     using System.Linq;
     using System.Net.Http;
     using System.Net.Http.Json;
+    using System.Threading;
     using System.Threading.Tasks;
 
     public partial class SeasonTeamList : ComponentBase
     {
         [Parameter]
         public string Year { get; set; }
+        public string Message { get; set; }
+        public bool IsBusy;
         private string errorMessage;
         List<TeamModel> Teams;
 
@@ -34,12 +37,28 @@
             }
         }
 
-        private void SavePlayoffTeams()
+        private async void SavePlayoffTeams()
         {
-            foreach (var team in Teams.Where(x=>x.IsInPlayoffs))
+            await this.SavePlayoffTeamsAsync();
+        }
+
+        private async Task SavePlayoffTeamsAsync()
+        {
+            this.Message = "Saving...";
+            var task = this.HttpClient.PostAsJsonAsync("Teams", Teams.Where(x => x.IsInPlayoffs));
+
+            await task;
+
+            if (task.IsCompletedSuccessfully)
             {
-                this.HttpClient.PostAsJsonAsync("Teams", team);
+                this.Message = "Success";
             }
+            else
+            {
+                this.Message = "Failed";
+            }
+
+            this.StateHasChanged();
         }
     }
 }

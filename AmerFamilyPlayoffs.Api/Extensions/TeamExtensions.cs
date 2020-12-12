@@ -31,10 +31,14 @@
 
             if (playoff == null)
             {
+                var season = context.Seasons.FirstOrDefault(s => s.Year == year);
+
                 playoff = new Playoff
                 {
-                    Season = context.Seasons.Single(s => s.Year == year),
+                    Season = season,
                 };
+                context.Add(playoff);
+                context.SaveChanges();
             }
 
             return playoff;

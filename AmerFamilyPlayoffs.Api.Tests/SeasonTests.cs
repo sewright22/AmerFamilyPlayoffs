@@ -3,6 +3,7 @@
     using AmerFamilyPlayoffs.Api.Controllers;
     using AmerFamilyPlayoffs.Api.Queries;
     using AmerFamilyPlayoffs.Data;
+    using AmerFamilyPlayoffs.Models;
     using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;

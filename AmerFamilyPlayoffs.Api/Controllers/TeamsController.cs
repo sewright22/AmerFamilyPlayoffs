@@ -53,13 +53,16 @@ namespace AmerFamilyPlayoffs.Api.Controllers
 
         // POST <TeamsController>
         [HttpPost]
-        public void Post([FromBody] TeamModel team)
+        public void Post([FromBody] List<TeamModel> teams)
         {
-            var dbTeam = context.Teams.Include(t=>t.PlayoffTeam).FirstOrDefault(x => x.Id == team.Id);
+            foreach (var team in teams)
+            {
+                var dbTeam = context.Teams.Include(t => t.PlayoffTeam).FirstOrDefault(x => x.Id == team.Id);
 
-            var playoff = context.GetPlayoff(team.Year);
+                var playoff = context.GetPlayoff(team.Year);
 
-            context.SavePlayoffTeam(dbTeam, playoff, team.Seed.Value);
+                context.SavePlayoffTeam(dbTeam, playoff, team.Seed.Value);
+            }
         }
 
         // PUT <TeamsController>/5
