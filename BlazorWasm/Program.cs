@@ -17,8 +17,11 @@ namespace AmerFamilyPlayoffs
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
 
-            //builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+#if DEBUG
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri("https://localhost:44325/") });
+#else
+            builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri("https://stevencodeswright.com/") });
+#endif
 
             await builder.Build().RunAsync();
         }
