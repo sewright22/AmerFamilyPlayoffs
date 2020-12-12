@@ -13,5 +13,6 @@
         public int Id { get; set; }
         public int Year { get; set; }
         public string Description { get; set; }
+        public virtual Playoff Playoff { get; set; }
     }
 }

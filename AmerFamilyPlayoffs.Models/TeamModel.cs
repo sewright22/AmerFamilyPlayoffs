@@ -10,5 +10,7 @@
         public string Location { get; set; }
         public string Name { get; set; }
         public string Abbreviation { get; set; }
+        public bool IsInPlayoffs { get; set; }
+        public int? Seed { get; set; }
     }
 }

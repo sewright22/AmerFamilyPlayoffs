@@ -4,6 +4,7 @@ namespace AmerFamilyPlayoffs.Api.Controllers
 {
     using AmerFamilyPlayoffs.Api.Queries;
     using AmerFamilyPlayoffs.Data;
+    using AmerFamilyPlayoffs.Models;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using System;
@@ -24,12 +25,20 @@ namespace AmerFamilyPlayoffs.Api.Controllers
 
         // GET: <TeamsController>
         [HttpGet]
-        public Task<List<Team>> Get([FromQuery] TeamQuery teamQuery)
+        public Task<List<TeamModel>> Get([FromQuery] TeamQuery teamQuery)
         {
             return context.SeasonTeams.Include(st => st.Season)
-                                      .Include(st => st.Team)
+                                      .Include(st => st.Team).ThenInclude(t => t.PlayoffTeam)
                                       .Where(st => st.Season.Year == teamQuery.Season)
-                                      .Select(st => st.Team)
+                                      .Select(st => new TeamModel
+                                      {
+                                          Id = st.Team.Id,
+                                          Abbreviation = st.Team.Abbreviation,
+                                          Location = st.Team.Location,
+                                          Name = st.Team.Name,
+                                          IsInPlayoffs = st.Team.PlayoffTeam != null,
+                                          Seed = st.Team.PlayoffTeam == null ? null as int? : st.Team.PlayoffTeam.Seed,
+                                      })
                                       .ToListAsync();
         }
 

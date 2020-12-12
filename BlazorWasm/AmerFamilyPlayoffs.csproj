@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AmerFamilyPlayoffs.Data\AmerFamilyPlayoffs.Data.csproj" />
+    <ProjectReference Include="..\AmerFamilyPlayoffs.Models\AmerFamilyPlayoffs.Models.csproj" />
   </ItemGroup>
 
 </Project>

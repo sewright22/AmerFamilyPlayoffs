@@ -1,5 +1,4 @@
-﻿
-@if (string.IsNullOrEmpty(errorMessage) == false)
+﻿@if (string.IsNullOrEmpty(errorMessage) == false)
 {
     <p><em>@errorMessage</em></p>
 }
@@ -9,8 +8,45 @@ else if (Teams == null)
 }
 else
 {
-    @foreach (var team in Teams)
-    {
-        <p>@team.Location @team.Name</p>
-    }
+    <button class="btn btn-primary">Save</button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Seed</th>
+                <th>Abbrev.</th>
+                <th>Team</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var team in Teams.Where(t => t.IsInPlayoffs))
+            {
+                <tr>
+                    <td><input type="number" @bind="team.Seed" /></td>
+                    <td>@team.Abbreviation</td>
+                    <td>@team.Location @team.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>In Playoffs</th>
+                <th>Abbrev.</th>
+                <th>Team</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var team in Teams)
+            {
+                <tr>
+                    <td><input type="checkbox" @bind="team.IsInPlayoffs" /></td>
+                    <td>@team.Abbreviation</td>
+                    <td>@team.Location @team.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }

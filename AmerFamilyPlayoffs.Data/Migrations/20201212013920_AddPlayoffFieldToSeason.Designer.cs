@@ -3,14 +3,16 @@ using System;
 using AmerFamilyPlayoffs.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AmerFamilyPlayoffs.Data.Migrations
 {
     [DbContext(typeof(AmerFamilyPlayoffContext))]
-    partial class AmerFamilyPlayoffContextModelSnapshot : ModelSnapshot
+    [Migration("20201212013920_AddPlayoffFieldToSeason")]
+    partial class AddPlayoffFieldToSeason
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,31 +86,6 @@ namespace AmerFamilyPlayoffs.Data.Migrations
                     b.HasIndex("RoundId");
 
                     b.ToTable("PlayoffRounds");
-                });
-
-            modelBuilder.Entity("AmerFamilyPlayoffs.Data.PlayoffTeam", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("PlayoffId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Seed")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TeamId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlayoffId");
-
-                    b.HasIndex("TeamId")
-                        .IsUnique();
-
-                    b.ToTable("PlayoffTeams");
                 });
 
             modelBuilder.Entity("AmerFamilyPlayoffs.Data.Round", b =>
@@ -243,25 +220,6 @@ namespace AmerFamilyPlayoffs.Data.Migrations
                     b.Navigation("Round");
                 });
 
-            modelBuilder.Entity("AmerFamilyPlayoffs.Data.PlayoffTeam", b =>
-                {
-                    b.HasOne("AmerFamilyPlayoffs.Data.Playoff", "Playoff")
-                        .WithMany("PlayoffTeams")
-                        .HasForeignKey("PlayoffId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AmerFamilyPlayoffs.Data.Team", "Team")
-                        .WithOne("PlayoffTeam")
-                        .HasForeignKey("AmerFamilyPlayoffs.Data.PlayoffTeam", "TeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Playoff");
-
-                    b.Navigation("Team");
-                });
-
             modelBuilder.Entity("AmerFamilyPlayoffs.Data.SeasonTeam", b =>
                 {
                     b.HasOne("AmerFamilyPlayoffs.Data.Season", "Season")
@@ -281,11 +239,6 @@ namespace AmerFamilyPlayoffs.Data.Migrations
                     b.Navigation("Team");
                 });
 
-            modelBuilder.Entity("AmerFamilyPlayoffs.Data.Playoff", b =>
-                {
-                    b.Navigation("PlayoffTeams");
-                });
-
             modelBuilder.Entity("AmerFamilyPlayoffs.Data.PlayoffRound", b =>
                 {
                     b.Navigation("Matchups");
@@ -299,11 +252,6 @@ namespace AmerFamilyPlayoffs.Data.Migrations
             modelBuilder.Entity("AmerFamilyPlayoffs.Data.Season", b =>
                 {
                     b.Navigation("Playoff");
-                });
-
-            modelBuilder.Entity("AmerFamilyPlayoffs.Data.Team", b =>
-                {
-                    b.Navigation("PlayoffTeam");
                 });
 #pragma warning restore 612, 618
         }

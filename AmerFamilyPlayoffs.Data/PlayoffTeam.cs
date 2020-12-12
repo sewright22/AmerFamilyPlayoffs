@@ -18,5 +18,6 @@
 
         public int TeamId { get; set; }
         public virtual Team Team { get; set; }
+        public virtual Playoff Playoff { get; set; }
     }
 }

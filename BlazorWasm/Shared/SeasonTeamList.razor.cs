@@ -1,6 +1,7 @@
 ﻿namespace AmerFamilyPlayoffs.Shared
 {
     using AmerFamilyPlayoffs.Data;
+    using AmerFamilyPlayoffs.Models;
     using Microsoft.AspNetCore.Components;
     using System;
     using System.Collections.Generic;
@@ -14,7 +15,7 @@
         [Parameter]
         public string Year { get; set; }
         private string errorMessage;
-        Team[] Teams;
+        List<TeamModel> Teams;
 
         [Inject]
         HttpClient HttpClient { get; set; }
@@ -24,8 +25,8 @@
             try
             {
                 var response = await this.HttpClient.GetAsync($"Teams?Season={Year}");
-                var teams = await response.Content.ReadFromJsonAsync<List<Team>>();
-                Teams = teams.ToArray();
+                var teams = await response.Content.ReadFromJsonAsync<List<TeamModel>>();
+                Teams = teams;
             }
             catch (Exception exception)
             {
