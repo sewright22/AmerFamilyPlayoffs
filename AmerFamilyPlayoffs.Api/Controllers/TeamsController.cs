@@ -2,6 +2,7 @@
 
 namespace AmerFamilyPlayoffs.Api.Controllers
 {
+    using AmerFamilyPlayoffs.Api.Extensions;
     using AmerFamilyPlayoffs.Api.Queries;
     using AmerFamilyPlayoffs.Data;
     using AmerFamilyPlayoffs.Models;
@@ -36,7 +37,8 @@ namespace AmerFamilyPlayoffs.Api.Controllers
                                           Abbreviation = st.Team.Abbreviation,
                                           Location = st.Team.Location,
                                           Name = st.Team.Name,
-                                          IsInPlayoffs = st.Team.PlayoffTeam != null,
+                                          Year = st.Season.Year,
+                                          IsInPlayoffs = st.Team.PlayoffTeam != null && st.Team.PlayoffTeam.Playoff.Season.Year == teamQuery.Season,
                                           Seed = st.Team.PlayoffTeam == null ? null as int? : st.Team.PlayoffTeam.Seed,
                                       })
                                       .ToListAsync();
@@ -51,8 +53,13 @@ namespace AmerFamilyPlayoffs.Api.Controllers
 
         // POST <TeamsController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] TeamModel team)
         {
+            var dbTeam = context.Teams.Include(t=>t.PlayoffTeam).FirstOrDefault(x => x.Id == team.Id);
+
+            var playoff = context.GetPlayoff(team.Year);
+
+            context.SavePlayoffTeam(dbTeam, playoff, team.Seed.Value);
         }
 
         // PUT <TeamsController>/5

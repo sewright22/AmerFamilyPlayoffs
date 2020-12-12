@@ -33,5 +33,13 @@
                 errorMessage = exception.Message;
             }
         }
+
+        private void SavePlayoffTeams()
+        {
+            foreach (var team in Teams.Where(x=>x.IsInPlayoffs))
+            {
+                this.HttpClient.PostAsJsonAsync("Teams", team);
+            }
+        }
     }
 }

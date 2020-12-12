@@ -11,6 +11,7 @@
         public string Name { get; set; }
         public string Abbreviation { get; set; }
         public bool IsInPlayoffs { get; set; }
+        public int Year { get; set; }
         public int? Seed { get; set; }
     }
 }
