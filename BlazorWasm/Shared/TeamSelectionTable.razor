@@ -1,0 +1,20 @@
+﻿<table class="table">
+    <thead>
+        <tr>
+            <th>In Playoffs</th>
+            <th>Abbrev.</th>
+            <th>Team</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var team in Teams)
+        {
+            <tr>
+                <td><input type="checkbox" @bind="team.IsInPlayoffs" /></td>
+                <td>@team.Abbreviation</td>
+                <td>@team.Location @team.Name</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -67,7 +67,7 @@ namespace AmerFamilyPlayoffs.Api
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<AmerFamilyPlayoffContext>();
                 context.Database.Migrate();
-                // context.Seed();
+                context.Seed();
             }
 
             // app.UseAuthorization();

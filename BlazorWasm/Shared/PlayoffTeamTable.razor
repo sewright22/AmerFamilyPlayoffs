@@ -1,0 +1,19 @@
+﻿<table class="table">
+    <thead>
+        <tr>
+            <th>Seed</th>
+            <th>Abbrev.</th>
+            <th>Team</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var team in Teams.Where(t => t.IsInPlayoffs))
+        {
+            <tr>
+                <td><input type="number" @bind="team.Seed" /></td>
+                <td>@team.Abbreviation</td>
+                <td>@team.Location @team.Name</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -28,6 +28,7 @@
                     IsInPlayoffs = false,
                     Location = "Arizona",
                     Name = "Cardinals",
+                    Year = 2019,
                     Seed = null,
                 });
 
@@ -38,6 +39,7 @@
                     IsInPlayoffs = true,
                     Location = "Atlanta",
                     Name = "Falcons",
+                    Year = 2019,
                     Seed = 3,
                 });
 
