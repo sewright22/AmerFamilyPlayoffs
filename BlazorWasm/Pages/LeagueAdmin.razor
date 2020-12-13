@@ -9,7 +9,12 @@
     <option>2020</option>
 </select>
 
-@if (string.IsNullOrEmpty(SelectedYear) == false)
+<select @bind="@SelectedConference">
+    <option>AFC</option>
+    <option>NFC</option>
+</select>
+
+@if (string.IsNullOrEmpty(SelectedYear) == false && string.IsNullOrEmpty(SelectedConference) == false)
 {
-    <SeasonTeamList Year="@SelectedYear"></SeasonTeamList>
+    <SeasonTeamList Year="@SelectedYear" Conference="@SelectedConference"></SeasonTeamList>
 }

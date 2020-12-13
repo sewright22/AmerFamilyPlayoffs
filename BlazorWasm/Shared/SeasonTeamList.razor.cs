@@ -15,6 +15,10 @@
     {
         [Parameter]
         public string Year { get; set; }
+
+        [Parameter]
+        public string Conference { get; set; }
+
         public string Message { get; set; }
         public bool IsBusy;
         private string errorMessage;
@@ -27,7 +31,7 @@
         {
             try
             {
-                var response = await this.HttpClient.GetAsync($"Teams?Season={Year}");
+                var response = await this.HttpClient.GetAsync($"Teams?Season={Year}&Conference={Conference}");
                 var teams = await response.Content.ReadFromJsonAsync<List<TeamModel>>();
                 Teams = teams;
             }

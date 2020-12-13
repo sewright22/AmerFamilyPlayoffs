@@ -7,5 +7,6 @@
     public class TeamQuery
     {
         public int Season { get; set; }
+        public string Conference { get; set; }
     }
 }

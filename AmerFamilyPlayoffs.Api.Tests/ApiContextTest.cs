@@ -31,39 +31,26 @@ namespace AmerFamilyPlayoffs.Api.Tests
                 this.SeedSeasonTeams(context);
                 this.SeedPlayoffs(context);
                 this.SeedPlayoffTeams(context);
-
-                //var twentyNineteenPlayoffs = new Playoff
-                //{
-                //    Season = twentyNineteenSeason
-                //};
-
-                //entitiesToAdd.Add(twentyNineteenPlayoffs);
-
-                //var wildCardRound = new Round
-                //{
-                //    Name = "Wild Card",
-                //    Number = 1,
-                //    Matchups = new List<Matchup>(),
-                //};
-
-                //wildCardRound.Matchups.Add(new Matchup
-                //{
-                //    AwayTeamId = 2,
-                //    HomeTeamId = 4,
-                //});
-
-                //entitiesToAdd.Add(wildCardRound);
-
-                //entitiesToAdd.Add(new PlayoffRound
-                //{
-                //    Playoff = twentyNineteenPlayoffs,
-                //    Round = wildCardRound,
-                //});
-
-                //context.AddRange(entitiesToAdd);
-
-                //context.SaveChanges();
+                this.SeedConferences(context);
+                this.SeedConferenceTeams(context);
             }
+        }
+
+        private void SeedConferences(AmerFamilyPlayoffContext context)
+        {
+            context.Conferences.Add(new Conference
+            {
+                Name = "AFC",
+            });
+
+            context.Conferences.Add(new Conference
+            {
+                Name = "NFC",
+            });
+        }
+
+        public virtual void SeedConferenceTeams(AmerFamilyPlayoffContext context)
+        {
         }
 
         public virtual void SeedSeasons(AmerFamilyPlayoffContext context)
@@ -167,7 +154,7 @@ namespace AmerFamilyPlayoffs.Api.Tests
             context.Add(new PlayoffTeam
             {
                 PlayoffId = 1,
-                TeamId = 2,
+                SeasonTeamId = 2,
                 Seed = 3,
             });
 

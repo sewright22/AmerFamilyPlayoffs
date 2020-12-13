@@ -1,6 +1,7 @@
 ﻿namespace AmerFamilyPlayoffs.Api.Seed
 {
     using AmerFamilyPlayoffs.Data;
+    using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -92,7 +93,63 @@
 
                 context.SaveChanges();
             }
-            //var twentyNineteenPlayoffs = new Playoff
+
+            if (context.Conferences.Any()==false)
+            {
+                context.Conferences.Add(new Conference
+                {
+                    Name = "AFC",
+                });
+
+                context.Conferences.Add(new Conference
+                {
+                    Name = "NFC",
+                });
+
+                context.SaveChanges();
+            }
+
+            if (context.ConferenceTeams.Any() == false)
+            {
+                var afcConferenceId = context.Conferences.FirstOrDefault(c => c.Name == "AFC").Id;
+                var nfcConferenceId = context.Conferences.FirstOrDefault(c => c.Name == "NFC").Id;
+                SaveConferenceToTeam(context, "BAL", afcConferenceId);
+                SaveConferenceToTeam(context, "BUF", afcConferenceId);
+                SaveConferenceToTeam(context, "CIN", afcConferenceId);
+                SaveConferenceToTeam(context, "CLE", afcConferenceId);
+                SaveConferenceToTeam(context, "DEN", afcConferenceId);
+                SaveConferenceToTeam(context, "HOU", afcConferenceId);
+                SaveConferenceToTeam(context, "IND", afcConferenceId);
+                SaveConferenceToTeam(context, "JAX", afcConferenceId);
+                SaveConferenceToTeam(context, "KC", afcConferenceId);
+                SaveConferenceToTeam(context, "LAC", afcConferenceId);
+                SaveConferenceToTeam(context, "LV", afcConferenceId);
+                SaveConferenceToTeam(context, "MIA", afcConferenceId);
+                SaveConferenceToTeam(context, "NE", afcConferenceId);
+                SaveConferenceToTeam(context, "NYJ", afcConferenceId);
+                SaveConferenceToTeam(context, "PIT", afcConferenceId);
+                SaveConferenceToTeam(context, "TEN", afcConferenceId);
+
+                SaveConferenceToTeam(context, "ARI", nfcConferenceId);
+                SaveConferenceToTeam(context, "ATL", nfcConferenceId);
+                SaveConferenceToTeam(context, "CAR", nfcConferenceId);
+                SaveConferenceToTeam(context, "CHI", nfcConferenceId);
+                SaveConferenceToTeam(context, "DAL", nfcConferenceId);
+                SaveConferenceToTeam(context, "DET", nfcConferenceId);
+                SaveConferenceToTeam(context, "GB", nfcConferenceId);
+                SaveConferenceToTeam(context, "LAR", nfcConferenceId);
+                SaveConferenceToTeam(context, "MIN", nfcConferenceId);
+                SaveConferenceToTeam(context, "NO", nfcConferenceId);
+                SaveConferenceToTeam(context, "NYG", nfcConferenceId);
+                SaveConferenceToTeam(context, "PHI", nfcConferenceId);
+                SaveConferenceToTeam(context, "SEA", nfcConferenceId);
+                SaveConferenceToTeam(context, "SF", nfcConferenceId);
+                SaveConferenceToTeam(context, "TB", nfcConferenceId);
+                SaveConferenceToTeam(context, "WAS", nfcConferenceId);
+
+                context.SaveChanges();
+            }
+
             //{
             //    Season = twentyNineteenSeason
             //};
@@ -119,6 +176,18 @@
             //    Playoff = twentyNineteenPlayoffs,
             //    Round = wildCardRound,
             //});
+        }
+
+        private static void SaveConferenceToTeam(AmerFamilyPlayoffContext context, string abbreviation, int conferenceId)
+        {
+            foreach (var seasonTeam in context.SeasonTeams.Include(st => st.Team).Where(st => st.Team.Abbreviation == abbreviation).ToList())
+            {
+                context.Add(new ConferenceTeam
+                {
+                    SeasonTeamId = seasonTeam.Id,
+                    ConferenceId = conferenceId,
+                });
+            }
         }
     }
 }

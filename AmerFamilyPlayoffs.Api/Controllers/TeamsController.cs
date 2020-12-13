@@ -28,20 +28,16 @@ namespace AmerFamilyPlayoffs.Api.Controllers
         [HttpGet]
         public Task<List<TeamModel>> Get([FromQuery] TeamQuery teamQuery)
         {
-            return context.SeasonTeams.Include(st => st.Season)
-                                      .Include(st => st.Team).ThenInclude(t => t.PlayoffTeam)
-                                      .Where(st => st.Season.Year == teamQuery.Season)
-                                      .Select(st => new TeamModel
-                                      {
-                                          Id = st.Team.Id,
-                                          Abbreviation = st.Team.Abbreviation,
-                                          Location = st.Team.Location,
-                                          Name = st.Team.Name,
-                                          Year = st.Season.Year,
-                                          IsInPlayoffs = st.Team.PlayoffTeam != null && st.Team.PlayoffTeam.Playoff.Season.Year == teamQuery.Season,
-                                          Seed = st.Team.PlayoffTeam == null ? null as int? : st.Team.PlayoffTeam.Seed,
-                                      })
-                                      .ToListAsync();
+            var dbConference = context.Conferences.FirstOrDefault(c => c.Name == teamQuery.Conference);
+
+            if (dbConference == null)
+            {
+                return context.GetTeamsByYear(teamQuery.Season).ToListAsync();
+            }
+            else
+            {
+                return context.GetTeamsByYearAndConference(teamQuery.Season, dbConference.Id).ToListAsync();
+            }
         }
 
         // GET <TeamsController>/5
@@ -57,11 +53,10 @@ namespace AmerFamilyPlayoffs.Api.Controllers
         {
             foreach (var team in teams)
             {
-                var dbTeam = context.Teams.Include(t => t.PlayoffTeam).FirstOrDefault(x => x.Id == team.Id);
-
                 var playoff = context.GetPlayoff(team.Year);
+                var seasonTeam = context.GetSeasonTeam(team.Id, team.Year);
 
-                context.SavePlayoffTeam(dbTeam, playoff, team.Seed.Value);
+                context.SavePlayoffTeam(seasonTeam, playoff, team.Seed.Value);
             }
         }
 

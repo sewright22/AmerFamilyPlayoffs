@@ -13,5 +13,6 @@
         public bool IsInPlayoffs { get; set; }
         public int Year { get; set; }
         public int? Seed { get; set; }
+        public string Conference { get; set; }
     }
 }
