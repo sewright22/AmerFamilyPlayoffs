@@ -31,6 +31,5 @@
         public DbSet<SeasonTeam> SeasonTeams { get; set; }
         public DbSet<PlayoffTeam> PlayoffTeams { get; set; }
         public DbSet<Conference> Conferences { get; set; }
-        public DbSet<ConferenceTeam> ConferenceTeams { get; set; }
     }
 }

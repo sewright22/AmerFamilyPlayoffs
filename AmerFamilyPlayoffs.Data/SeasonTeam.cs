@@ -13,9 +13,10 @@
         public int Id { get; set; }
         public int SeasonId { get; set; }
         public int TeamId { get; set; }
+        public int ConferenceId { get; set; }
         public virtual Season Season { get; set; }
         public virtual Team Team { get; set; }
-        public virtual ConferenceTeam ConferenceTeam { get; set; }
+        public virtual Conference Conference { get; set; }
         public virtual PlayoffTeam PlayoffTeam { get; set; }
     }
 }

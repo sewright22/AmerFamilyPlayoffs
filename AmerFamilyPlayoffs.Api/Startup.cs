@@ -66,6 +66,7 @@ namespace AmerFamilyPlayoffs.Api
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<AmerFamilyPlayoffContext>();
+                // context.Database.EnsureDeleted();
                 context.Database.Migrate();
                 context.Seed();
             }

@@ -25,18 +25,16 @@ namespace AmerFamilyPlayoffs.Api.Tests
                 context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
 
+                this.SeedConferences(context);
                 this.SeedSeasons(context);
-
                 this.SeedTeams(context);
                 this.SeedSeasonTeams(context);
                 this.SeedPlayoffs(context);
                 this.SeedPlayoffTeams(context);
-                this.SeedConferences(context);
-                this.SeedConferenceTeams(context);
             }
         }
 
-        private void SeedConferences(AmerFamilyPlayoffContext context)
+        public virtual void SeedConferences(AmerFamilyPlayoffContext context)
         {
             context.Conferences.Add(new Conference
             {
@@ -47,10 +45,8 @@ namespace AmerFamilyPlayoffs.Api.Tests
             {
                 Name = "NFC",
             });
-        }
 
-        public virtual void SeedConferenceTeams(AmerFamilyPlayoffContext context)
-        {
+            context.SaveChanges();
         }
 
         public virtual void SeedSeasons(AmerFamilyPlayoffContext context)
@@ -83,19 +79,60 @@ namespace AmerFamilyPlayoffs.Api.Tests
 
         public virtual void SeedSeasonTeams(AmerFamilyPlayoffContext context)
         {
+            var afcConferenceId = context.Conferences.FirstOrDefault(c => c.Name == "AFC").Id;
+            var nfcConferenceId = context.Conferences.FirstOrDefault(c => c.Name == "NFC").Id;
+
             foreach (var season in context.Seasons)
             {
-                foreach (var team in context.Teams)
-                {
-                    context.Add(new SeasonTeam
-                    {
-                        Season = season,
-                        Team = team,
-                    });
-                }
+                SaveConferenceToTeam(context, "BAL", afcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "BUF", afcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "CIN", afcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "CLE", afcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "DEN", afcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "HOU", afcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "IND", afcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "JAX", afcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "KC", afcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "LAC", afcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "LV", afcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "MIA", afcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "NE", afcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "NYJ", afcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "PIT", afcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "TEN", afcConferenceId, season.Id);
+
+                SaveConferenceToTeam(context, "ARI", nfcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "ATL", nfcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "CAR", nfcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "CHI", nfcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "DAL", nfcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "DET", nfcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "GB", nfcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "LAR", nfcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "MIN", nfcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "NO", nfcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "NYG", nfcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "PHI", nfcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "SEA", nfcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "SF", nfcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "TB", nfcConferenceId, season.Id);
+                SaveConferenceToTeam(context, "WAS", nfcConferenceId, season.Id);
             }
 
             context.SaveChanges();
+        }
+
+        private static void SaveConferenceToTeam(AmerFamilyPlayoffContext context, string abbreviation, int conferenceId, int seasonId)
+        {
+            foreach (var team in context.Teams.Where(st => st.Abbreviation == abbreviation).ToList())
+            {
+                context.Add(new SeasonTeam
+                {
+                    SeasonId = seasonId,
+                    Team = team,
+                    ConferenceId = conferenceId
+                });
+            }
         }
 
         public virtual void SeedTeams(AmerFamilyPlayoffContext context)

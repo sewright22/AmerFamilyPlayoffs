@@ -3,14 +3,16 @@ using System;
 using AmerFamilyPlayoffs.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AmerFamilyPlayoffs.Data.Migrations
 {
     [DbContext(typeof(AmerFamilyPlayoffContext))]
-    partial class AmerFamilyPlayoffContextModelSnapshot : ModelSnapshot
+    [Migration("20201213163308_MovedSomeForeignKeys")]
+    partial class MovedSomeForeignKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,6 +31,28 @@ namespace AmerFamilyPlayoffs.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Conferences");
+                });
+
+            modelBuilder.Entity("AmerFamilyPlayoffs.Data.ConferenceTeam", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("ConferenceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SeasonTeamId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConferenceId");
+
+                    b.HasIndex("SeasonTeamId")
+                        .IsUnique();
+
+                    b.ToTable("ConferenceTeams");
                 });
 
             modelBuilder.Entity("AmerFamilyPlayoffs.Data.Matchup", b =>
@@ -165,9 +189,6 @@ namespace AmerFamilyPlayoffs.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("ConferenceId")
-                        .HasColumnType("int");
-
                     b.Property<int>("SeasonId")
                         .HasColumnType("int");
 
@@ -175,8 +196,6 @@ namespace AmerFamilyPlayoffs.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ConferenceId");
 
                     b.HasIndex("SeasonId");
 
@@ -203,6 +222,25 @@ namespace AmerFamilyPlayoffs.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Teams");
+                });
+
+            modelBuilder.Entity("AmerFamilyPlayoffs.Data.ConferenceTeam", b =>
+                {
+                    b.HasOne("AmerFamilyPlayoffs.Data.Conference", "Conference")
+                        .WithMany("ConferenceTeams")
+                        .HasForeignKey("ConferenceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AmerFamilyPlayoffs.Data.SeasonTeam", "SeasonTeam")
+                        .WithOne("ConferenceTeam")
+                        .HasForeignKey("AmerFamilyPlayoffs.Data.ConferenceTeam", "SeasonTeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Conference");
+
+                    b.Navigation("SeasonTeam");
                 });
 
             modelBuilder.Entity("AmerFamilyPlayoffs.Data.Matchup", b =>
@@ -283,12 +321,6 @@ namespace AmerFamilyPlayoffs.Data.Migrations
 
             modelBuilder.Entity("AmerFamilyPlayoffs.Data.SeasonTeam", b =>
                 {
-                    b.HasOne("AmerFamilyPlayoffs.Data.Conference", "Conference")
-                        .WithMany("SeasonTeams")
-                        .HasForeignKey("ConferenceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("AmerFamilyPlayoffs.Data.Season", "Season")
                         .WithMany()
                         .HasForeignKey("SeasonId")
@@ -301,8 +333,6 @@ namespace AmerFamilyPlayoffs.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Conference");
-
                     b.Navigation("Season");
 
                     b.Navigation("Team");
@@ -310,7 +340,7 @@ namespace AmerFamilyPlayoffs.Data.Migrations
 
             modelBuilder.Entity("AmerFamilyPlayoffs.Data.Conference", b =>
                 {
-                    b.Navigation("SeasonTeams");
+                    b.Navigation("ConferenceTeams");
                 });
 
             modelBuilder.Entity("AmerFamilyPlayoffs.Data.Playoff", b =>
@@ -335,6 +365,8 @@ namespace AmerFamilyPlayoffs.Data.Migrations
 
             modelBuilder.Entity("AmerFamilyPlayoffs.Data.SeasonTeam", b =>
                 {
+                    b.Navigation("ConferenceTeam");
+
                     b.Navigation("PlayoffTeam");
                 });
 #pragma warning restore 612, 618

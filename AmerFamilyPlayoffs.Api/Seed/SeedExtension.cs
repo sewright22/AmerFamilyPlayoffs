@@ -79,22 +79,10 @@
 
                 context.AddRange(teamList);
 
-                foreach (var season in context.Seasons.ToList())
-                {
-                    foreach (var team in teamList)
-                    {
-                        context.Add(new SeasonTeam
-                        {
-                            Season = season,
-                            Team = team,
-                        });
-                    }
-                }
-
                 context.SaveChanges();
             }
 
-            if (context.Conferences.Any()==false)
+            if (context.Conferences.Any() == false)
             {
                 context.Conferences.Add(new Conference
                 {
@@ -109,83 +97,60 @@
                 context.SaveChanges();
             }
 
-            if (context.ConferenceTeams.Any() == false)
+            if (context.SeasonTeams.Any() == false)
             {
                 var afcConferenceId = context.Conferences.FirstOrDefault(c => c.Name == "AFC").Id;
                 var nfcConferenceId = context.Conferences.FirstOrDefault(c => c.Name == "NFC").Id;
-                SaveConferenceToTeam(context, "BAL", afcConferenceId);
-                SaveConferenceToTeam(context, "BUF", afcConferenceId);
-                SaveConferenceToTeam(context, "CIN", afcConferenceId);
-                SaveConferenceToTeam(context, "CLE", afcConferenceId);
-                SaveConferenceToTeam(context, "DEN", afcConferenceId);
-                SaveConferenceToTeam(context, "HOU", afcConferenceId);
-                SaveConferenceToTeam(context, "IND", afcConferenceId);
-                SaveConferenceToTeam(context, "JAX", afcConferenceId);
-                SaveConferenceToTeam(context, "KC", afcConferenceId);
-                SaveConferenceToTeam(context, "LAC", afcConferenceId);
-                SaveConferenceToTeam(context, "LV", afcConferenceId);
-                SaveConferenceToTeam(context, "MIA", afcConferenceId);
-                SaveConferenceToTeam(context, "NE", afcConferenceId);
-                SaveConferenceToTeam(context, "NYJ", afcConferenceId);
-                SaveConferenceToTeam(context, "PIT", afcConferenceId);
-                SaveConferenceToTeam(context, "TEN", afcConferenceId);
+                foreach (var season in context.Seasons.ToList())
+                {
+                    SaveConferenceToTeam(context, "BAL", afcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "BUF", afcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "CIN", afcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "CLE", afcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "DEN", afcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "HOU", afcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "IND", afcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "JAX", afcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "KC", afcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "LAC", afcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "LV", afcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "MIA", afcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "NE", afcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "NYJ", afcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "PIT", afcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "TEN", afcConferenceId, season.Id);
 
-                SaveConferenceToTeam(context, "ARI", nfcConferenceId);
-                SaveConferenceToTeam(context, "ATL", nfcConferenceId);
-                SaveConferenceToTeam(context, "CAR", nfcConferenceId);
-                SaveConferenceToTeam(context, "CHI", nfcConferenceId);
-                SaveConferenceToTeam(context, "DAL", nfcConferenceId);
-                SaveConferenceToTeam(context, "DET", nfcConferenceId);
-                SaveConferenceToTeam(context, "GB", nfcConferenceId);
-                SaveConferenceToTeam(context, "LAR", nfcConferenceId);
-                SaveConferenceToTeam(context, "MIN", nfcConferenceId);
-                SaveConferenceToTeam(context, "NO", nfcConferenceId);
-                SaveConferenceToTeam(context, "NYG", nfcConferenceId);
-                SaveConferenceToTeam(context, "PHI", nfcConferenceId);
-                SaveConferenceToTeam(context, "SEA", nfcConferenceId);
-                SaveConferenceToTeam(context, "SF", nfcConferenceId);
-                SaveConferenceToTeam(context, "TB", nfcConferenceId);
-                SaveConferenceToTeam(context, "WAS", nfcConferenceId);
+                    SaveConferenceToTeam(context, "ARI", nfcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "ATL", nfcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "CAR", nfcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "CHI", nfcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "DAL", nfcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "DET", nfcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "GB", nfcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "LAR", nfcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "MIN", nfcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "NO", nfcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "NYG", nfcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "PHI", nfcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "SEA", nfcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "SF", nfcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "TB", nfcConferenceId, season.Id);
+                    SaveConferenceToTeam(context, "WAS", nfcConferenceId, season.Id);
+                }
 
                 context.SaveChanges();
             }
-
-            //{
-            //    Season = twentyNineteenSeason
-            //};
-
-            //entitiesToAdd.Add(twentyNineteenPlayoffs);
-
-            //var wildCardRound = new Round
-            //{
-            //    Name = "Wild Card",
-            //    Number = 1,
-            //    Matchups = new List<Matchup>(),
-            //};
-
-            //wildCardRound.Matchups.Add(new Matchup
-            //{
-            //    AwayTeamId = 2,
-            //    HomeTeamId = 4,
-            //});
-
-            //entitiesToAdd.Add(wildCardRound);
-
-            //entitiesToAdd.Add(new PlayoffRound
-            //{
-            //    Playoff = twentyNineteenPlayoffs,
-            //    Round = wildCardRound,
-            //});
         }
 
-        private static void SaveConferenceToTeam(AmerFamilyPlayoffContext context, string abbreviation, int conferenceId)
+        private static void SaveConferenceToTeam(AmerFamilyPlayoffContext context, string abbreviation, int conferenceId, int seasonId)
         {
-            foreach (var seasonTeam in context.SeasonTeams.Include(st => st.Team).Where(st => st.Team.Abbreviation == abbreviation).ToList())
+            foreach (var team in context.Teams.Where(st => st.Abbreviation == abbreviation).ToList())
             {
-                context.Add(new ConferenceTeam
+                context.Add(new SeasonTeam
                 {
-                    SeasonTeamId = seasonTeam.Id,
-                    ConferenceId = conferenceId,
+                    SeasonId = seasonId,
+                    Team = team,
+                    ConferenceId = conferenceId
                 });
             }
         }

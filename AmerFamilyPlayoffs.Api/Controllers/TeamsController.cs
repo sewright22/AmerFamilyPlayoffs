@@ -53,7 +53,7 @@ namespace AmerFamilyPlayoffs.Api.Controllers
         {
             foreach (var team in teams)
             {
-                var playoff = context.GetPlayoff(team.Year);
+                var playoff = context.GetPlayoffByYear(team.Year);
                 var seasonTeam = context.GetSeasonTeam(team.Id, team.Year);
 
                 context.SavePlayoffTeam(seasonTeam, playoff, team.Seed.Value);

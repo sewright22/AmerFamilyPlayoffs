@@ -10,39 +10,6 @@
 
     public static class TeamExtensions
     {
-        public static void SavePlayoffTeam(this AmerFamilyPlayoffContext context, SeasonTeam seasonTeam, Playoff playoff, int seed)
-        {
-            if (seasonTeam.PlayoffTeam == null)
-            {
-                seasonTeam.PlayoffTeam = new PlayoffTeam
-                {
-                    Playoff = playoff,
-                    SeasonTeam = seasonTeam,
-                };
-            }
-
-            seasonTeam.PlayoffTeam.Seed = seed;
-
-            context.SaveChanges();
-        }
-        public static Playoff GetPlayoff(this AmerFamilyPlayoffContext context, int year)
-        {
-            var playoff = context.Playoffs.Include(p => p.Season).SingleOrDefault(p => p.Season.Year == year);
-
-            if (playoff == null)
-            {
-                var season = context.Seasons.FirstOrDefault(s => s.Year == year);
-
-                playoff = new Playoff
-                {
-                    Season = season,
-                };
-                context.Add(playoff);
-                context.SaveChanges();
-            }
-
-            return playoff;
-        }
 
         public static SeasonTeam GetSeasonTeam(this AmerFamilyPlayoffContext context, int teamId, int year)
         {
@@ -54,7 +21,7 @@
             return context.SeasonTeams.Include(st => st.Season)
                                       .Include(st => st.Team)
                                       .Include(st=>st.PlayoffTeam)
-                                      .Include(st=>st.ConferenceTeam)
+                                      .Include(st=>st.Conference)
                                       .Where(st => st.Season.Year == year)
                                       .Select(st => new TeamModel
                                       {
@@ -65,7 +32,7 @@
                                           Year = st.Season.Year,
                                           IsInPlayoffs = st.PlayoffTeam != null && st.PlayoffTeam.Playoff.Season.Year == year,
                                           Seed = st.PlayoffTeam == null ? null as int? : st.PlayoffTeam.Seed,
-                                          Conference = st.ConferenceTeam.Conference.Name
+                                          Conference = st.Conference.Name
                                       });
         }
 
@@ -74,8 +41,8 @@
             return context.SeasonTeams.Include(st => st.Season)
                                       .Include(st => st.Team)
                                       .Include(t => t.PlayoffTeam)
-                                      .Include(st=>st.ConferenceTeam).ThenInclude(ct=>ct.Conference)
-                                      .Where(st => st.Season.Year == year && st.ConferenceTeam.Id == conferenceId)
+                                      .Include(st=>st.Conference)
+                                      .Where(st => st.Season.Year == year && st.Conference.Id == conferenceId)
                                       .Select(st => new TeamModel
                                       {
                                           Id = st.Team.Id,
@@ -85,7 +52,7 @@
                                           Year = st.Season.Year,
                                           IsInPlayoffs = st.PlayoffTeam != null && st.PlayoffTeam.Playoff.Season.Year == year,
                                           Seed = st.PlayoffTeam == null ? null as int? : st.PlayoffTeam.Seed,
-                                          Conference = st.ConferenceTeam.Conference.Name,
+                                          Conference = st.Conference.Name,
                                       });
         }
     }

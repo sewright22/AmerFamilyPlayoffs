@@ -38,10 +38,10 @@
                 expected.Add(new TeamModel
                 {
                     Id = 2,
-                    Abbreviation = "ATL",
+                    Abbreviation = "BAL",
                     IsInPlayoffs = true,
-                    Location = "Atlanta",
-                    Name = "Falcons",
+                    Location = "Baltimore",
+                    Name = "Ravens",
                     Year = 2019,
                     Seed = 3,
                     Conference = "AFC"
@@ -138,30 +138,59 @@
 
                 expected.Add(new TeamModel
                 {
-                    Id = 1,
-                    Abbreviation = "ARI",
-                    IsInPlayoffs = false,
-                    Location = "Arizona",
-                    Name = "Cardinals",
+                    Id = 2,
+                    Abbreviation = "BAL",
+                    IsInPlayoffs = true,
+                    Location = "Baltimore",
+                    Name = "Ravens",
                     Year = 2019,
-                    Seed = null,
+                    Seed = 3,
+                    Conference = "AFC"
+                });
+
+                var actual = context.GetTeamsByYearAndConference(2019, 1);
+
+                actual.Should().BeEquivalentTo(expected);
+            }
+        }
+
+        [Fact]
+        public void GetSeasonTeamsInConferenceReturnsMoreThanOneRecord()
+        {
+            using (var context = new AmerFamilyPlayoffContext(this.ContextOptions))
+            {
+                var controller = new TeamsController(context);
+                var expected = new List<TeamModel>();
+
+                var titans = new Team { Abbreviation = "TEN", Location = "Tennessee", Name = "Titans" };
+                context.Add(titans);
+                context.Add(new SeasonTeam{ Season = context.GetSeasonByYear(2019), ConferenceId = 1, Team = titans, });
+                context.SaveChanges();
+                expected.Add(new TeamModel
+                {
+                    Id = 2,
+                    Abbreviation = "BAL",
+                    IsInPlayoffs = true,
+                    Location = "Baltimore",
+                    Name = "Ravens",
+                    Year = 2019,
+                    Seed = 3,
+                    Conference = "AFC"
                 });
 
                 expected.Add(new TeamModel
                 {
-                    Id = 2,
-                    Abbreviation = "ATL",
-                    IsInPlayoffs = true,
-                    Location = "Atlanta",
-                    Name = "Falcons",
+                    Id = 3,
+                    Abbreviation = "TEN",
+                    IsInPlayoffs = false,
+                    Location = "Tennessee",
+                    Name = "Titans",
                     Year = 2019,
-                    Seed = 3,
+                    Seed = null,
+                    Conference = "AFC"
                 });
 
-                var actual = controller.Get(new Queries.TeamQuery
-                {
-                    Season = 2019
-                }).Result;
+                var actual = context.GetTeamsByYearAndConference(2019, 1);
 
                 actual.Should().BeEquivalentTo(expected);
             }
@@ -169,7 +198,7 @@
 
         public override void SeedTeams(AmerFamilyPlayoffContext context)
         {
-            context.Add(new Team { Abbreviation = "ATL", Location = "Atlanta", Name = "Falcons" });
+            context.Add(new Team { Abbreviation = "BAL", Location = "Baltimore", Name = "Ravens" });
             context.Add(new Team { Abbreviation = "ARI", Location = "Arizona", Name = "Cardinals" });
             context.SaveChanges();
         }
@@ -179,26 +208,11 @@
             context.Add(new PlayoffTeam
             {
                 PlayoffId = 1,
-                SeasonTeam = context.SeasonTeams.Include(st => st.Team).Include(x => x.Season).FirstOrDefault(st => st.Team.Abbreviation == "ATL" && st.Season.Year == 2019),
+                SeasonTeam = context.SeasonTeams.Include(st => st.Team).Include(x => x.Season).FirstOrDefault(st => st.Team.Abbreviation == "BAL" && st.Season.Year == 2019),
                 Seed = 3,
             });
 
             context.SaveChanges();
-        }
-
-        public override void SeedConferenceTeams(AmerFamilyPlayoffContext context)
-        {
-            context.ConferenceTeams.Add(new ConferenceTeam
-            {
-                ConferenceId = 1, //AFC for the sake of testing.
-                SeasonTeam = context.SeasonTeams.Include(st => st.Team).Include(x => x.Season).FirstOrDefault(st => st.Team.Abbreviation == "ATL" && st.Season.Year == 2019)
-            });
-
-            context.ConferenceTeams.Add(new ConferenceTeam
-            {
-                ConferenceId = 2, //NFC
-                SeasonTeam = context.SeasonTeams.Include(st => st.Team).Include(x => x.Season).FirstOrDefault(st => st.Team.Abbreviation == "ARI" && st.Season.Year == 2019)
-            });
         }
     }
 }

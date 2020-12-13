@@ -1,9 +1,11 @@
 ﻿namespace AmerFamilyPlayoffs.Api.Tests
 {
     using AmerFamilyPlayoffs.Api.Controllers;
+    using AmerFamilyPlayoffs.Api.Extensions;
     using AmerFamilyPlayoffs.Api.Queries;
     using AmerFamilyPlayoffs.Data;
     using AmerFamilyPlayoffs.Models;
+    using FluentAssertions;
     using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
@@ -47,6 +49,18 @@
                 }).Result;
 
                 Assert.True(actual.Count() == 32);
+            }
+        }
+
+        [Fact]
+        public void GetSeasonByYearTest()
+        {
+            using (var context = new AmerFamilyPlayoffContext(this.ContextOptions))
+            {
+                var actual = context.GetSeasonByYear(2019);
+
+                actual.Year.Should().Be(2019);
+                actual.Description.Should().Be("2019-2020");
             }
         }
     }
