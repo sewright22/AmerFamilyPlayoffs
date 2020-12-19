@@ -13,5 +13,7 @@
         public int Id { get; set; }
 
         public int BracketId { get; set; }
+
+        public string Name { get; set; }
     }
 }

@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AmerFamilyPlayoffs.Api.Test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AmerFamilyPlayoffs.Api.Queries", "AmerFamilyPlayoffs.Api.Queries\AmerFamilyPlayoffs.Api.Queries.csproj", "{282EEC13-C9E4-4DC3-ABCD-99CE7DF0C2D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AmerFamilyPlayoffs.Models", "AmerFamilyPlayoffs.Models\AmerFamilyPlayoffs.Models.csproj", "{71470689-004A-46E9-AA45-C824D2D23E26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AmerFamilyPlayoffs.Models", "AmerFamilyPlayoffs.Models\AmerFamilyPlayoffs.Models.csproj", "{71470689-004A-46E9-AA45-C824D2D23E26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

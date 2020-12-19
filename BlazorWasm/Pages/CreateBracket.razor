@@ -1,0 +1,11 @@
+﻿@page "/brackets/create"
+
+<h3>Create Bracket</h3>
+<EditForm Model="@bracket">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText @bind-Value="bracket.Name"></InputText>
+
+    <button type="submit">Submit</button>
+</EditForm>
