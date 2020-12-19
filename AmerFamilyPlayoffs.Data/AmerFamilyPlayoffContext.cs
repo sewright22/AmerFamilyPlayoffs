@@ -31,5 +31,7 @@
         public DbSet<SeasonTeam> SeasonTeams { get; set; }
         public DbSet<PlayoffTeam> PlayoffTeams { get; set; }
         public DbSet<Conference> Conferences { get; set; }
+        public DbSet<Bracket> Brackets { get; set; }
+        public DbSet<BracketPrediction> BracketPredictions { get; set; }
     }
 }

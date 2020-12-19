@@ -14,8 +14,10 @@
 
         public int HomeTeamId { get; set; }
         public int AwayTeamId { get; set; }
+        public int? WinningTeamId { get; set; }
 
-        public virtual Team HomeTeam { get; set; }
-        public virtual Team AwayTeam { get; set; }
+        public virtual PlayoffTeam HomeTeam { get; set; }
+        public virtual PlayoffTeam AwayTeam { get; set; }
+        public virtual PlayoffTeam Winner { get; set; }
     }
 }

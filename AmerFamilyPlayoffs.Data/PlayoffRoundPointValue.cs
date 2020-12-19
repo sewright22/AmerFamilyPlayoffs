@@ -11,7 +11,8 @@
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public int SeasonId { get; set; }
+        public int PlayoffRoundId { get; set; }
         public int PointValueId { get; set; }
+        public virtual PointValue PointValue { get; set; }
     }
 }

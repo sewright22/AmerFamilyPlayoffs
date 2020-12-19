@@ -15,8 +15,8 @@
         public int PlayoffId { get; set; }
 
         public int Seed { get; set; }
-
         public int SeasonTeamId { get; set; }
+
         public virtual SeasonTeam SeasonTeam { get; set; }
         public virtual Playoff Playoff { get; set; }
     }

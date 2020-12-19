@@ -140,6 +140,146 @@
 
                 context.SaveChanges();
             }
+
+            if (context.Rounds.Any() == false)
+            {
+                var wildCardRound = new Round { Number = 1, Name = "Wild Card" };
+                var divisionalRound = new Round { Number = 1, Name = "Divisional Round" };
+                var championshipRound = new Round { Number = 1, Name = "Conference Championship" };
+                var superBowl = new Round { Number = 1, Name = "Super Bowl" };
+
+                context.Add(wildCardRound);
+                context.Add(divisionalRound);
+                context.Add(championshipRound);
+                context.Add(superBowl);
+
+                context.SaveChanges();
+            }
+
+            if (context.Playoffs.Any()==false)
+            {
+                var twentyEighteenPlayoff = new Playoff
+                {
+                    Season = context.Seasons.Single(x => x.Year == 2018),
+                };
+
+                context.Add(twentyEighteenPlayoff);
+
+
+                if (context.PlayoffTeams.Any() == false)
+                {
+                    var year = 2018;
+
+                    var afcSeed1 = new PlayoffTeam
+                    {
+                        Playoff = twentyEighteenPlayoff,
+                        SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "NE"),
+                    };
+
+                    var afcSeed2 = new PlayoffTeam
+                    {
+                        Playoff = twentyEighteenPlayoff,
+                        SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "PIT"),
+                    };
+
+                    var afcSeed3 = new PlayoffTeam
+                    {
+                        Playoff = twentyEighteenPlayoff,
+                        SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "JAX"),
+                    };
+
+                    var afcSeed4 = new PlayoffTeam
+                    {
+                        Playoff = twentyEighteenPlayoff,
+                        SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "KC"),
+                    };
+
+                    var afcSeed5 = new PlayoffTeam
+                    {
+                        Playoff = twentyEighteenPlayoff,
+                        SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "TEN"),
+                    };
+
+                    var afcSeed6 = new PlayoffTeam
+                    {
+                        Playoff = twentyEighteenPlayoff,
+                        SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "BUF"),
+                    };
+
+                    var nfcSeed1 = new PlayoffTeam
+                    {
+                        Playoff = twentyEighteenPlayoff,
+                        SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "PHI"),
+                    };
+
+                    var nfcSeed2 = new PlayoffTeam
+                    {
+                        Playoff = twentyEighteenPlayoff,
+                        SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "MIN"),
+                    };
+
+                    var nfcSeed3 = new PlayoffTeam
+                    {
+                        Playoff = twentyEighteenPlayoff,
+                        SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "LAR"),
+                    };
+
+                    var nfcSeed4 = new PlayoffTeam
+                    {
+                        Playoff = twentyEighteenPlayoff,
+                        SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "NO"),
+                    };
+
+                    var nfcSeed5 = new PlayoffTeam
+                    {
+                        Playoff = twentyEighteenPlayoff,
+                        SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "CAR"),
+                    };
+
+                    var nfcSeed6 = new PlayoffTeam
+                    {
+                        Playoff = twentyEighteenPlayoff,
+                        SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "ATL"),
+                    };
+
+                    var afcMatchups = new List<Matchup>();
+                    var nfcMatchups = new List<Matchup>();
+                    afcMatchups.Add(new Matchup
+                    {
+                        HomeTeam = afcSeed3,
+                        AwayTeam = afcSeed6,
+                    });
+
+                    afcMatchups.Add(new Matchup
+                    {
+                        HomeTeam = afcSeed4,
+                        AwayTeam = afcSeed5,
+                    });
+
+                    nfcMatchups.Add(new Matchup
+                    {
+                        HomeTeam = nfcSeed3,
+                        AwayTeam = nfcSeed6,
+                    });
+
+                    nfcMatchups.Add(new Matchup
+                    {
+                        HomeTeam = nfcSeed4,
+                        AwayTeam = nfcSeed5,
+                    });
+
+                    context.Add(new PlayoffRound
+                    {
+                        Playoff = twentyEighteenPlayoff,
+                        Round = context.Rounds.Single(x=>x.Number==1),
+                        PointValue = 2,
+                        AFCMatchups = afcMatchups,
+                        NFCMatchups = nfcMatchups,
+                    });
+
+                    context.SaveChanges();
+                }
+            }
         }
 
         private static void SaveConferenceToTeam(AmerFamilyPlayoffContext context, string abbreviation, int conferenceId, int seasonId)
