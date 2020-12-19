@@ -1,7 +1,7 @@
 ﻿@page "/brackets/create"
 
 <h3>Create Bracket</h3>
-<EditForm Model="@bracket">
+<EditForm Model="@bracket" OnSubmit="@HandleSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
 

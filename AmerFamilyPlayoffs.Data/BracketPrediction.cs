@@ -12,8 +12,9 @@
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public int BracketId { get; set; }
+        public int PlayoffId { get; set; }
 
         public string Name { get; set; }
+        public virtual Playoff Playoff { get; set; }
     }
 }

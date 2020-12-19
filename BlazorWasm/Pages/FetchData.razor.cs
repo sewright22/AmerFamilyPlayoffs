@@ -16,6 +16,11 @@
         WeatherForecast[] forecasts;
         private string errorMessage;
 
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+        }
+
         protected override async Task OnInitializedAsync()
         {
             try

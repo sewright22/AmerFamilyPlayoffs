@@ -1,5 +1,26 @@
 ﻿@page "/brackets"
 
-<h3>Brackets</h3>
-
 <button @onclick="CreateNewBracket">Add Bracket</button>
+
+@if (BracketList == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+        </tr>
+    </thead>
+
+    @foreach (var bracket in BracketList)
+    {
+        <tr>
+            <td>@bracket.Name</td>
+            <td><button @onclick="@(e=> OpenBracket)">Open</button></td>
+        </tr>
+    }
+</table>
+}
