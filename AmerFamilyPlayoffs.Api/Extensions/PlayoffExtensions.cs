@@ -37,6 +37,7 @@
                 {
                     Season = season,
                 };
+
                 context.Add(playoff);
                 context.SaveChanges();
             }

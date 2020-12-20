@@ -1,6 +1,7 @@
 ﻿namespace AmerFamilyPlayoffs.Api.Extensions
 {
     using AmerFamilyPlayoffs.Data;
+    using AmerFamilyPlayoffs.Model.Extensions;
     using AmerFamilyPlayoffs.Models;
     using Microsoft.EntityFrameworkCore;
     using System;
@@ -13,7 +14,7 @@
         public static async Task<IEnumerable<PlayoffBracketPrediction>> GetBrackets(this AmerFamilyPlayoffContext context)
         {
             var retVal = new List<PlayoffBracketPrediction>();
-            var brackets = await context.BracketPredictions.Where(x => x.Playoff.Season.Year == 2018).ToListAsync();
+            var brackets = await context.BracketPredictions.Include(x=>x.Playoff).ThenInclude(x=>x.PlayoffRounds).Where(x => x.Playoff.Season.Year == 2018).ToListAsync();
 
             foreach (var bracket in brackets)
             {
@@ -57,11 +58,7 @@
         {
             var bracket = await context.BracketPredictions.SingleAsync(x => x.Id == id);
 
-            return new PlayoffBracketPrediction
-            {
-                Id = bracket.Id,
-                Name = bracket.Name,
-            };
+            return BuildBracketPrediction(bracket);
         }
 
         public static RoundModel GetWildCardRoundByPlayoffId(this AmerFamilyPlayoffContext context, int playoffId)
@@ -87,10 +84,33 @@
 
         private static PlayoffBracketPrediction BuildBracketPrediction(BracketPrediction bracket)
         {
+            var wildCardRound = bracket.Playoff.PlayoffRounds.FirstOrDefault(x => x.Round.Number == 1);
+
+            var afcMatchups = new List<GameModel>();
+            var nfcMatchups = new List<GameModel>();
+            wildCardRound.AFCMatchups.ForEach(a => afcMatchups.Add(BuildGameModel(a)));
+            wildCardRound.NFCMatchups.ForEach(a => nfcMatchups.Add(BuildGameModel(a)));
+
             return new PlayoffBracketPrediction
             {
                 Id = bracket.Id,
                 Name = bracket.Name,
+                WildCardRound = new RoundModel
+                {
+                    PointValue= wildCardRound.PointValue,
+                    AFCGames = afcMatchups,
+                    NFCGames = nfcMatchups,
+                }
+            };
+        }
+
+        private static GameModel BuildGameModel(Matchup matchup)
+        {
+            return new GameModel
+            {
+                Id = matchup.Id,
+                HomeTeam = matchup.HomeTeam.BuildTeamModel(),
+                AwayTeam = matchup.AwayTeam.BuildTeamModel(),
             };
         }
     }

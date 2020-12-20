@@ -1,6 +1,27 @@
 ﻿@page "/brackets/{Id:int}"
 
-<h3>Bracket</h3>
-
-<p>@Id</p>
+@if (BracketPrediction == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <p>@BracketPrediction.Name</p>
+    @if (BracketPrediction.WildCardRound != null)
+    {
+        <h4>Wild Card</h4>
+        <h5>AFC</h5>
+        @if (BracketPrediction.WildCardRound.AFCGames == null)
+        {
+            <p>Loading...</p>
+        }
+        else
+        {
+            @foreach (var game in BracketPrediction.WildCardRound.AFCGames)
+            {
+                <p>@game.HomeTeam.Name VS @game.AwayTeam.Name</p>
+            }
+        }
+    }
+}
 

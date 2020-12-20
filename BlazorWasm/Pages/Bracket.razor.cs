@@ -1,6 +1,6 @@
 ﻿namespace AmerFamilyPlayoffs.Pages
 {
-    using AmerFamilyPlayoffs.Data;
+    using AmerFamilyPlayoffs.Models;
     using Microsoft.AspNetCore.Components;
     using System;
     using System.Collections.Generic;
@@ -14,25 +14,19 @@
         [Parameter]
         public int Id { get; set; }
 
+        PlayoffBracketPrediction BracketPrediction { get; set; }
+
         [Inject]
         NavigationManager NavigationManager { get; set; }
 
+        [Inject]
         HttpClient HttpClient { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
             var response = await this.HttpClient.GetAsync($"BracketPrediction/{Id}");
             response.EnsureSuccessStatusCode();
-            var bracket = await response.Content.ReadFromJsonAsync<BracketPrediction>();
-            var test = bracket;
+            BracketPrediction = await response.Content.ReadFromJsonAsync<PlayoffBracketPrediction>();
         }
-
-        //protected override async Task OnParametersSetAsync()
-        //{
-        //    var response = await this.HttpClient.GetAsync($"BracketPrediction/{Id}");
-        //    response.EnsureSuccessStatusCode();
-        //    var bracket = await response.Content.ReadFromJsonAsync<BracketPrediction>();
-        //    var test = bracket;
-        //}
     }
 }
