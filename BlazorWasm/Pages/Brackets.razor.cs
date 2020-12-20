@@ -35,7 +35,7 @@
 
         private void OpenBracket(int bracketId)
         {
-
+            this.NavigationManager.NavigateTo($"brackets/{bracketId}");
         }
 
         private void CreateNewBracket()

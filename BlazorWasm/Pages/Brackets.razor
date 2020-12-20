@@ -19,7 +19,7 @@ else
     {
         <tr>
             <td>@bracket.Name</td>
-            <td><button @onclick="@(e=> OpenBracket)">Open</button></td>
+            <td><button @onclick="@(e=> OpenBracket(bracket.Id))">Open</button></td>
         </tr>
     }
 </table>
