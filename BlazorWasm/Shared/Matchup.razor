@@ -4,5 +4,15 @@
 }
 else
 {
-    <p>@Game.HomeTeam.Name VS @Game.AwayTeam.Name </p>
+    <div class="container">
+        <div>
+            <TeamView Team="Game.HomeTeam" @bind-IsSelected="HomeIsWinner"/> VS <TeamView Team="Game.AwayTeam" @bind-IsSelected="AwayIsWinner"/>
+        </div>
+        @if (Game.Winner != null)
+        {
+            <div>
+                @Game.Winner.Name
+            </div>
+        }
+    </div>
 }
