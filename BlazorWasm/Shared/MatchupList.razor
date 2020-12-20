@@ -1,0 +1,11 @@
+﻿@if (Games == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    @foreach (var game in Games)
+    {
+        <Matchup Game="game"></Matchup>
+    }
+}

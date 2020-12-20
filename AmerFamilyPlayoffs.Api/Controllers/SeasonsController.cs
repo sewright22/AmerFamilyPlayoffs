@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AmerFamilyPlayoffs.Data;
+using Microsoft.AspNetCore.Cors;
 
 namespace AmerFamilyPlayoffs.Api.Controllers
 {

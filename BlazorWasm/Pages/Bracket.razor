@@ -8,21 +8,5 @@ else
 {
     <p>@BracketPrediction.Name</p>
 
-    @if (BracketPrediction.WildCardRound != null)
-    {
-        <h4>Wild Card</h4>
-        <h5>AFC</h5>
-        @if (BracketPrediction.WildCardRound.AFCGames == null)
-        {
-            <p>Loading...</p>
-        }
-        else
-        {
-            @foreach (var game in BracketPrediction.WildCardRound.AFCGames)
-            {
-                <Matchup Game="game"></Matchup>
-            }
-        }
-    }
+    <RoundView Round="BracketPrediction.WildCardRound" RoundName="Wild Card"/>
 }
-
