@@ -97,23 +97,30 @@
                 var matchups = new List<Matchup>();
                 matchups.Add(fixture.Build<Matchup>().With(x => x.HomeTeam, afcSeed3)
                                                         .With(x => x.AwayTeam, afcSeed6)
-                                                        .Without(x => x.Winner)
+                                                        .Without(x => x.WinningTeamId)
+                                                        .Without(x => x.WinningTeam)
                                                         .Create());
 
                 matchups.Add(fixture.Build<Matchup>().With(x => x.HomeTeam, afcSeed4)
                                                         .With(x => x.AwayTeam, afcSeed5)
-                                                        .Without(x => x.Winner)
+                                                        .Without(x => x.WinningTeamId)
+                                                        .Without(x => x.WinningTeam)
                                                         .Create());
 
                 matchups.Add(fixture.Build<Matchup>().With(x => x.HomeTeam, nfcSeed3)
                                                         .With(x => x.AwayTeam, nfcSeed6)
-                                                        .Without(x => x.Winner)
+                                                        .Without(x => x.WinningTeamId)
+                                                        .Without(x => x.WinningTeam)
                                                         .Create());
 
                 matchups.Add(fixture.Build<Matchup>().With(x => x.HomeTeam, nfcSeed4)
                                                         .With(x => x.AwayTeam, nfcSeed5)
-                                                        .Without(x => x.Winner)
+                                                        .Without(x => x.WinningTeamId)
+                                                        .Without(x => x.WinningTeam)
                                                         .Create());
+
+                context.AddRange(matchups);
+                context.SaveChanges();
 
                 var wildCardPlayoffRound = fixture.Build<PlayoffRound>()
                                                   .With(x => x.Playoff, playoff)
