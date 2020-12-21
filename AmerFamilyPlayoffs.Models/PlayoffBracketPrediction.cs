@@ -8,7 +8,7 @@
     public class PlayoffBracketPrediction : PlayoffBracket
     {
         [Required]
-        [StringLength(10, ErrorMessage = "Name is too long.")]
+        [StringLength(1000, ErrorMessage = "Name is too long.")]
         public string Name { get; set; }
     }
 }
