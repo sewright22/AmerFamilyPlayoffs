@@ -3,14 +3,16 @@ using System;
 using AmerFamilyPlayoffs.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AmerFamilyPlayoffs.Data.Migrations
 {
     [DbContext(typeof(AmerFamilyPlayoffContext))]
-    partial class AmerFamilyPlayoffContextModelSnapshot : ModelSnapshot
+    [Migration("20201220235833_FixedMatchupColumnIssue")]
+    partial class FixedMatchupColumnIssue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,6 +83,9 @@ namespace AmerFamilyPlayoffs.Data.Migrations
                     b.Property<int?>("PlayoffRoundId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("WinnerId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("WinningTeamId")
                         .HasColumnType("int");
 
@@ -92,7 +97,7 @@ namespace AmerFamilyPlayoffs.Data.Migrations
 
                     b.HasIndex("PlayoffRoundId");
 
-                    b.HasIndex("WinningTeamId");
+                    b.HasIndex("WinnerId");
 
                     b.ToTable("Matchups");
                 });
@@ -308,15 +313,15 @@ namespace AmerFamilyPlayoffs.Data.Migrations
                         .WithMany("Matchups")
                         .HasForeignKey("PlayoffRoundId");
 
-                    b.HasOne("AmerFamilyPlayoffs.Data.PlayoffTeam", "WinningTeam")
+                    b.HasOne("AmerFamilyPlayoffs.Data.PlayoffTeam", "Winner")
                         .WithMany()
-                        .HasForeignKey("WinningTeamId");
+                        .HasForeignKey("WinnerId");
 
                     b.Navigation("AwayTeam");
 
                     b.Navigation("HomeTeam");
 
-                    b.Navigation("WinningTeam");
+                    b.Navigation("Winner");
                 });
 
             modelBuilder.Entity("AmerFamilyPlayoffs.Data.MatchupPrediction", b =>

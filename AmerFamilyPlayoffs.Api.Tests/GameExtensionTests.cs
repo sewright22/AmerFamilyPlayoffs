@@ -94,24 +94,23 @@
                 context.Add(nfcSeed6);
                 context.SaveChanges();
 
-                var afcMatchups = new List<Matchup>();
-                var nfcMatchups = new List<Matchup>();
-                afcMatchups.Add(fixture.Build<Matchup>().With(x => x.HomeTeam, afcSeed3)
+                var matchups = new List<Matchup>();
+                matchups.Add(fixture.Build<Matchup>().With(x => x.HomeTeam, afcSeed3)
                                                         .With(x => x.AwayTeam, afcSeed6)
                                                         .Without(x => x.Winner)
                                                         .Create());
 
-                afcMatchups.Add(fixture.Build<Matchup>().With(x => x.HomeTeam, afcSeed4)
+                matchups.Add(fixture.Build<Matchup>().With(x => x.HomeTeam, afcSeed4)
                                                         .With(x => x.AwayTeam, afcSeed5)
                                                         .Without(x => x.Winner)
                                                         .Create());
 
-                nfcMatchups.Add(fixture.Build<Matchup>().With(x => x.HomeTeam, nfcSeed3)
+                matchups.Add(fixture.Build<Matchup>().With(x => x.HomeTeam, nfcSeed3)
                                                         .With(x => x.AwayTeam, nfcSeed6)
                                                         .Without(x => x.Winner)
                                                         .Create());
 
-                nfcMatchups.Add(fixture.Build<Matchup>().With(x => x.HomeTeam, nfcSeed4)
+                matchups.Add(fixture.Build<Matchup>().With(x => x.HomeTeam, nfcSeed4)
                                                         .With(x => x.AwayTeam, nfcSeed5)
                                                         .Without(x => x.Winner)
                                                         .Create());
@@ -120,8 +119,7 @@
                                                   .With(x => x.Playoff, playoff)
                                                   .With(x => x.Round, wildCardRound)
                                                   .With(x => x.PointValue, 2)
-                                                  .With(x => x.AFCMatchups, afcMatchups)
-                                                  .With(x => x.NFCMatchups, nfcMatchups)
+                                                  .With(x => x.Matchups, matchups)
                                                   .Create();
 
                 context.Add(wildCardPlayoffRound);

@@ -16,8 +16,6 @@
         public int PointValue { get; set; }
         public virtual Playoff Playoff { get; set; }
         public virtual Round Round { get; set; }
-
-        public virtual List<Matchup> AFCMatchups { get; set; }
-        public virtual List<Matchup> NFCMatchups { get; set; }
+        public virtual List<Matchup> Matchups { get; set; }
     }
 }

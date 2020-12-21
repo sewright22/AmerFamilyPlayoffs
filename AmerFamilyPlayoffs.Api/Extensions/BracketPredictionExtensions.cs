@@ -14,7 +14,7 @@
         public static async Task<IEnumerable<PlayoffBracketPrediction>> GetBrackets(this AmerFamilyPlayoffContext context)
         {
             var retVal = new List<PlayoffBracketPrediction>();
-            var brackets = await context.BracketPredictions.Include(x=>x.Playoff).ThenInclude(x=>x.PlayoffRounds).Where(x => x.Playoff.Season.Year == 2018).ToListAsync();
+            var brackets = await context.BracketPredictions.Include(x => x.Playoff).ThenInclude(x => x.PlayoffRounds).Where(x => x.Playoff.Season.Year == 2018).ToListAsync();
 
             foreach (var bracket in brackets)
             {
@@ -88,8 +88,8 @@
 
             var afcMatchups = new List<GameModel>();
             var nfcMatchups = new List<GameModel>();
-            wildCardRound.AFCMatchups.ForEach(a => afcMatchups.Add(BuildGameModel(a)));
-            wildCardRound.NFCMatchups.ForEach(a => nfcMatchups.Add(BuildGameModel(a)));
+            wildCardRound.Matchups.Where(x => x.HomeTeam.SeasonTeam.Conference.Name == "AFC").ToList().ForEach(a => afcMatchups.Add(BuildGameModel(a)));
+            wildCardRound.Matchups.Where(x => x.HomeTeam.SeasonTeam.Conference.Name == "NFC").ToList().ForEach(a => nfcMatchups.Add(BuildGameModel(a)));
 
             return new PlayoffBracketPrediction
             {
@@ -97,7 +97,7 @@
                 Name = bracket.Name,
                 WildCardRound = new RoundModel
                 {
-                    PointValue= wildCardRound.PointValue,
+                    PointValue = wildCardRound.PointValue,
                     AFCGames = afcMatchups,
                     NFCGames = nfcMatchups,
                 }

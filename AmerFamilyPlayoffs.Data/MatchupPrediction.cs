@@ -13,6 +13,7 @@
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        public int BracketPredictionId { get; set; }
         public int MatchupId { get; set; }
         public int? WinningTeamId { get; set; }
         public virtual Matchup Matchup { get; set; }

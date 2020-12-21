@@ -144,9 +144,9 @@
             if (context.Rounds.Any() == false)
             {
                 var wildCardRound = new Round { Number = 1, Name = "Wild Card" };
-                var divisionalRound = new Round { Number = 1, Name = "Divisional Round" };
-                var championshipRound = new Round { Number = 1, Name = "Conference Championship" };
-                var superBowl = new Round { Number = 1, Name = "Super Bowl" };
+                var divisionalRound = new Round { Number = 2, Name = "Divisional Round" };
+                var championshipRound = new Round { Number = 3, Name = "Conference Championship" };
+                var superBowl = new Round { Number = 4, Name = "Super Bowl" };
 
                 context.Add(wildCardRound);
                 context.Add(divisionalRound);
@@ -164,6 +164,7 @@
                 };
 
                 context.Add(twentyEighteenPlayoff);
+                context.SaveChanges();
             }
 
             if (context.PlayoffTeams.Any() == false)
@@ -244,27 +245,26 @@
                     SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "ATL"),
                 };
 
-                var afcMatchups = new List<Matchup>();
-                var nfcMatchups = new List<Matchup>();
-                afcMatchups.Add(new Matchup
+                var matchups = new List<Matchup>();
+                matchups.Add(new Matchup
                 {
                     HomeTeam = afcSeed3,
                     AwayTeam = afcSeed6,
                 });
 
-                afcMatchups.Add(new Matchup
+                matchups.Add(new Matchup
                 {
                     HomeTeam = afcSeed4,
                     AwayTeam = afcSeed5,
                 });
 
-                nfcMatchups.Add(new Matchup
+                matchups.Add(new Matchup
                 {
                     HomeTeam = nfcSeed3,
                     AwayTeam = nfcSeed6,
                 });
 
-                nfcMatchups.Add(new Matchup
+                matchups.Add(new Matchup
                 {
                     HomeTeam = nfcSeed4,
                     AwayTeam = nfcSeed5,
@@ -275,8 +275,7 @@
                     Playoff = twentyEighteenPlayoff,
                     Round = context.Rounds.Single(x => x.Number == 1),
                     PointValue = 2,
-                    AFCMatchups = afcMatchups,
-                    NFCMatchups = nfcMatchups,
+                    Matchups = matchups,
                 });
 
                 context.SaveChanges();

@@ -16,5 +16,6 @@
 
         public string Name { get; set; }
         public virtual Playoff Playoff { get; set; }
+        public virtual List<MatchupPrediction> MatchupPredictions { get; set; }
     }
 }

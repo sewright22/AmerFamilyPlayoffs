@@ -12,12 +12,12 @@
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public int HomeTeamId { get; set; }
-        public int AwayTeamId { get; set; }
+        public int? HomeTeamId { get; set; }
+        public int? AwayTeamId { get; set; }
         public int? WinningTeamId { get; set; }
 
         public virtual PlayoffTeam HomeTeam { get; set; }
         public virtual PlayoffTeam AwayTeam { get; set; }
-        public virtual PlayoffTeam Winner { get; set; }
+        public virtual PlayoffTeam WinningTeam { get; set; }
     }
 }

@@ -1,8 +1,9 @@
 ﻿@if (Round != null)
 {
     <h4>@RoundName</h4>
+    <button @onclick="SaveRoundClicked">Save Round</button>
     <h5>AFC</h5>
-    <MatchupList Games="Round.AFCGames"></MatchupList>
+    <MatchupList Games="Round.AFCGames" />
     <h5>NFC</h5>
-    <MatchupList Games="Round.NFCGames"></MatchupList>
+    <MatchupList Games="Round.NFCGames" />
 }
