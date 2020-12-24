@@ -1,9 +1,13 @@
-﻿@if (Round != null)
+﻿@if (Round != null &&
+     Round.AFCGames.Any(game => game.AwayTeam.Id == 0) == false &&
+     Round.AFCGames.Any(game => game.HomeTeam.Id == 0) == false &&
+     Round.NFCGames.Any(game => game.AwayTeam.Id == 0) == false &&
+     Round.NFCGames.Any(game => game.HomeTeam.Id == 0) == false)
 {
     <h4>@RoundName</h4>
     <button @onclick="SaveRoundClicked">Save Round</button>
     <h5>AFC</h5>
-    <MatchupList Games="Round.AFCGames" />
+    <MatchupList Games="Round.AFCGames" Save="Save" />
     <h5>NFC</h5>
-    <MatchupList Games="Round.NFCGames" />
+    <MatchupList Games="Round.NFCGames" Save="Save" />
 }

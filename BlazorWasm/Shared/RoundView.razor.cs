@@ -9,6 +9,8 @@
 
     public partial class RoundView : ComponentBase
     {
+        [Parameter] public Action Save { get; set; }
+
         [Parameter]
         public RoundModel Round { get; set; }
 
@@ -17,8 +19,7 @@
 
         private void SaveRoundClicked()
         {
-            var test = "";
-            var test2 = test;
+            this.Save();
         }
     }
 }

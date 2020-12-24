@@ -15,6 +15,8 @@
         [Parameter]
         public GameModel Game { get; set; }
 
+        [Parameter] public Action Save { get; set; }
+
         public bool HomeIsWinner
         {
             get
@@ -74,6 +76,8 @@
             {
                 Game.Winner = null;
             }
+
+            Save();
         }
     }
 }

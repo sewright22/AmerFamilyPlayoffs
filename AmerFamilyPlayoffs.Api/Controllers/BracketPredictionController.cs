@@ -40,5 +40,12 @@
             var created = await this.context.CreateBracketPrediction(playoffBracketPrediction.Name);
             return CreatedAtAction(nameof(CreateBracketPrediction), new { Id = created.Id }, created);
         }
+
+        [HttpPost("{bracketID}")]
+        public async Task<ActionResult<PlayoffBracketPrediction>> UpdateBracketPrediction(int bracketID, PlayoffBracketPrediction playoffBracketPrediction)
+        {
+            var created = await this.context.CreateBracketPrediction(playoffBracketPrediction.Name);
+            return CreatedAtAction(nameof(CreateBracketPrediction), new { Id = created.Id }, created);
+        }
     }
 }

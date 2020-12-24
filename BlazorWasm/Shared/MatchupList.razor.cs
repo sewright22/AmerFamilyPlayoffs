@@ -11,5 +11,6 @@
     {
         [Parameter]
         public List<GameModel> Games { get; set; }
+        [Parameter] public Action Save { get; set; }
     }
 }

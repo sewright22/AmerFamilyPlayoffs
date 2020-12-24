@@ -85,11 +85,18 @@
         private static PlayoffBracketPrediction BuildBracketPrediction(BracketPrediction bracket)
         {
             var wildCardRound = bracket.Playoff.PlayoffRounds.FirstOrDefault(x => x.Round.Number == 1);
+            var divisionalRound = bracket.Playoff.PlayoffRounds.FirstOrDefault(x => x.Round.Number == 2);
 
-            var afcMatchups = new List<GameModel>();
-            var nfcMatchups = new List<GameModel>();
-            wildCardRound.Matchups.Where(x => x.HomeTeam.SeasonTeam.Conference.Name == "AFC").ToList().ForEach(a => afcMatchups.Add(BuildGameModel(a)));
-            wildCardRound.Matchups.Where(x => x.HomeTeam.SeasonTeam.Conference.Name == "NFC").ToList().ForEach(a => nfcMatchups.Add(BuildGameModel(a)));
+            var afcWildCardMatchups = new List<GameModel>();
+            var nfcWildCardMatchups = new List<GameModel>();
+            var afcDivisionalMatchups = new List<GameModel>();
+            var nfcDivisionalMatchups = new List<GameModel>();
+            var afcConferenceMatchups = new List<GameModel>();
+            var nfcConferenceMatchups = new List<GameModel>();
+            wildCardRound.Matchups.Where(x => x.HomeTeam.SeasonTeam.Conference.Name == "AFC").ToList().ForEach(game => afcWildCardMatchups.Add(BuildGameModel(game)));
+            wildCardRound.Matchups.Where(x => x.HomeTeam.SeasonTeam.Conference.Name == "NFC").ToList().ForEach(game => nfcWildCardMatchups.Add(BuildGameModel(game)));
+            divisionalRound.Matchups.Where(x => x.HomeTeam.SeasonTeam.Conference.Name == "AFC").ToList().ForEach(game => afcDivisionalMatchups.Add(BuildGameModel(game)));
+            divisionalRound.Matchups.Where(x => x.HomeTeam.SeasonTeam.Conference.Name == "NFC").ToList().ForEach(game => nfcDivisionalMatchups.Add(BuildGameModel(game)));
 
             return new PlayoffBracketPrediction
             {
@@ -98,19 +105,38 @@
                 WildCardRound = new RoundModel
                 {
                     PointValue = wildCardRound.PointValue,
-                    AFCGames = afcMatchups,
-                    NFCGames = nfcMatchups,
-                }
+                    AFCGames = afcWildCardMatchups,
+                    NFCGames = nfcWildCardMatchups,
+                },
+                DivisionalRound = new RoundModel
+                {
+                    PointValue = divisionalRound.PointValue,
+                    AFCGames = afcDivisionalMatchups,
+                    NFCGames = nfcDivisionalMatchups,
+                },
             };
         }
 
         private static GameModel BuildGameModel(Matchup matchup)
         {
+            var homeTeam = new TeamModel();
+            var awayTeam = new TeamModel();
+
+            if (matchup.HomeTeam != null)
+            {
+                homeTeam = matchup.HomeTeam.BuildTeamModel();
+            }
+
+            if (matchup.AwayTeam != null)
+            {
+                awayTeam = matchup.AwayTeam.BuildTeamModel();
+            }
+
             return new GameModel
             {
                 Id = matchup.Id,
-                HomeTeam = matchup.HomeTeam.BuildTeamModel(),
-                AwayTeam = matchup.AwayTeam.BuildTeamModel(),
+                HomeTeam = homeTeam,
+                AwayTeam = awayTeam,
             };
         }
     }

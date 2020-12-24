@@ -176,98 +176,131 @@
                 var afcSeed1 = new PlayoffTeam
                 {
                     Playoff = twentyEighteenPlayoff,
+                    Seed = 1,
                     SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "NE"),
                 };
 
                 var afcSeed2 = new PlayoffTeam
                 {
                     Playoff = twentyEighteenPlayoff,
+                    Seed = 2,
                     SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "PIT"),
                 };
 
                 var afcSeed3 = new PlayoffTeam
                 {
                     Playoff = twentyEighteenPlayoff,
+                    Seed = 3,
                     SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "JAX"),
                 };
 
                 var afcSeed4 = new PlayoffTeam
                 {
                     Playoff = twentyEighteenPlayoff,
+                    Seed = 4,
                     SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "KC"),
                 };
 
                 var afcSeed5 = new PlayoffTeam
                 {
                     Playoff = twentyEighteenPlayoff,
+                    Seed = 5,
                     SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "TEN"),
                 };
 
                 var afcSeed6 = new PlayoffTeam
                 {
                     Playoff = twentyEighteenPlayoff,
+                    Seed = 6,
                     SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "BUF"),
                 };
 
                 var nfcSeed1 = new PlayoffTeam
                 {
                     Playoff = twentyEighteenPlayoff,
+                    Seed = 1,
                     SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "PHI"),
                 };
 
                 var nfcSeed2 = new PlayoffTeam
                 {
                     Playoff = twentyEighteenPlayoff,
+                    Seed = 2,
                     SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "MIN"),
                 };
 
                 var nfcSeed3 = new PlayoffTeam
                 {
                     Playoff = twentyEighteenPlayoff,
+                    Seed = 3,
                     SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "LAR"),
                 };
 
                 var nfcSeed4 = new PlayoffTeam
                 {
                     Playoff = twentyEighteenPlayoff,
+                    Seed = 4,
                     SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "NO"),
                 };
 
                 var nfcSeed5 = new PlayoffTeam
                 {
                     Playoff = twentyEighteenPlayoff,
+                    Seed = 5,
                     SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "CAR"),
                 };
 
                 var nfcSeed6 = new PlayoffTeam
                 {
                     Playoff = twentyEighteenPlayoff,
+                    Seed = 6,
                     SeasonTeam = context.SeasonTeams.Single(x => x.Season.Year == year && x.Team.Abbreviation == "ATL"),
                 };
 
-                var matchups = new List<Matchup>();
-                matchups.Add(new Matchup
+                var wildCardMatchups = new List<Matchup>();
+                var divisonalMatchups = new List<Matchup>();
+                wildCardMatchups.Add(new Matchup
                 {
                     HomeTeam = afcSeed3,
                     AwayTeam = afcSeed6,
                 });
 
-                matchups.Add(new Matchup
+                wildCardMatchups.Add(new Matchup
                 {
                     HomeTeam = afcSeed4,
                     AwayTeam = afcSeed5,
                 });
 
-                matchups.Add(new Matchup
+                wildCardMatchups.Add(new Matchup
                 {
                     HomeTeam = nfcSeed3,
                     AwayTeam = nfcSeed6,
                 });
 
-                matchups.Add(new Matchup
+                wildCardMatchups.Add(new Matchup
                 {
                     HomeTeam = nfcSeed4,
                     AwayTeam = nfcSeed5,
+                });
+
+                divisonalMatchups.Add(new Matchup
+                {
+                    HomeTeam = afcSeed1,
+                });
+
+                divisonalMatchups.Add(new Matchup
+                {
+                    HomeTeam = afcSeed2,
+                });
+
+                divisonalMatchups.Add(new Matchup
+                {
+                    HomeTeam = nfcSeed1,
+                });
+
+                divisonalMatchups.Add(new Matchup
+                {
+                    HomeTeam = nfcSeed2,
                 });
 
                 context.Add(new PlayoffRound
@@ -275,7 +308,15 @@
                     Playoff = twentyEighteenPlayoff,
                     Round = context.Rounds.Single(x => x.Number == 1),
                     PointValue = 2,
-                    Matchups = matchups,
+                    Matchups = wildCardMatchups,
+                });
+
+                context.Add(new PlayoffRound
+                {
+                    Playoff = twentyEighteenPlayoff,
+                    Round = context.Rounds.Single(x => x.Number == 2),
+                    PointValue = 3,
+                    Matchups = divisonalMatchups,
                 });
 
                 context.SaveChanges();
