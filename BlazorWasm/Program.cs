@@ -10,6 +10,9 @@ namespace AmerFamilyPlayoffs
     using System.Text;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// Main Program.
+    /// </summary>
     public class Program
     {
         public static async Task Main(string[] args)
