@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30717.126
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33103.184
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AmerFamilyPlayoffs", "BlazorWasm\AmerFamilyPlayoffs.csproj", "{B4114405-81BE-4E33-9054-10A5E1171372}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AmerFamilyPlayoffs.Models", "AmerFamilyPlayoffs.Models\AmerFamilyPlayoffs.Models.csproj", "{71470689-004A-46E9-AA45-C824D2D23E26}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AmerFamilyPlayoffs.Model.Extensions", "AmerFamilyPlayoffs.Model.Extensions\AmerFamilyPlayoffs.Model.Extensions.csproj", "{963F162D-4D3D-449A-9C2B-A621E3A5A6C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayoffPool.BlazorApp", "PlayoffPool.BlazorApp\PlayoffPool.BlazorApp.csproj", "{7D2A8E1D-27FF-4676-B807-8A47E610F8B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{963F162D-4D3D-449A-9C2B-A621E3A5A6C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{963F162D-4D3D-449A-9C2B-A621E3A5A6C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{963F162D-4D3D-449A-9C2B-A621E3A5A6C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D2A8E1D-27FF-4676-B807-8A47E610F8B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D2A8E1D-27FF-4676-B807-8A47E610F8B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D2A8E1D-27FF-4676-B807-8A47E610F8B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D2A8E1D-27FF-4676-B807-8A47E610F8B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
