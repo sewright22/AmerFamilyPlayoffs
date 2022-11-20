@@ -6,7 +6,7 @@ name: Azure App Service - fjapool(Production), Build and deploy DotnetCore app
 on:
   push:
     branches:
-      - main
+      - deploy-development
 
 jobs:
   build-and-deploy:
@@ -29,11 +29,10 @@ jobs:
     - name: dotnet publish
       run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
-    - name: Run Azure webapp deploy action using publish profile credentials
-      uses: azure/webapps-deploy@v2
+    - name: 📂 Sync files
+      uses: SamKirkland/FTP-Deploy-Action@4.3.2
       with:
-        app-name: fjapool
-        slot-name: Production
-        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C956D01111784E1B9FEC702D5D398AF2 }}
-        package: ${{env.DOTNET_ROOT}}/myapp
+        server: ftp://stevencodeswright.com
+        username: u499604262.playoffpool_dev
+        password: ${{ secrets.ftp_password }}
 
