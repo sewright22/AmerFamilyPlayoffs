@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AmerFamilyPlayoffs.Models",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AmerFamilyPlayoffs.Model.Extensions", "AmerFamilyPlayoffs.Model.Extensions\AmerFamilyPlayoffs.Model.Extensions.csproj", "{963F162D-4D3D-449A-9C2B-A621E3A5A6C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayoffPool.MVC", "PlayoffPool.MVC\PlayoffPool.MVC.csproj", "{9286A00C-F708-4979-BF3D-3054F236C8AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{963F162D-4D3D-449A-9C2B-A621E3A5A6C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{963F162D-4D3D-449A-9C2B-A621E3A5A6C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{963F162D-4D3D-449A-9C2B-A621E3A5A6C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9286A00C-F708-4979-BF3D-3054F236C8AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9286A00C-F708-4979-BF3D-3054F236C8AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9286A00C-F708-4979-BF3D-3054F236C8AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9286A00C-F708-4979-BF3D-3054F236C8AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

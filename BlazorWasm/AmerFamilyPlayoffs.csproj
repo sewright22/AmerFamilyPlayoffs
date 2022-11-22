@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
 		<ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+		<UserSecretsId>69d1dc03-717e-4c29-9172-bf40755dc3d6</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
