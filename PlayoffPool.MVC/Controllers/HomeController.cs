@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using AmerFamilyPlayoffs.Data;
+using AmerFamilyPlayoffs.Data.SeedExtensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlayoffPool.MVC.Models;
@@ -16,6 +17,7 @@ namespace PlayoffPool.MVC.Controllers
             _logger = logger;
             this.dataContext = dataContext;
             this.dataContext.Database.Migrate();
+            this.dataContext.SeedData();
         }
 
         public IActionResult Index()

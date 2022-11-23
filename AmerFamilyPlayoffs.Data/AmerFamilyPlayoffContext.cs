@@ -1,13 +1,16 @@
 ﻿namespace AmerFamilyPlayoffs.Data
 {
+    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
     using System.Text;
 
-    public class AmerFamilyPlayoffContext : DbContext
+    public class AmerFamilyPlayoffContext : IdentityDbContext<User>
     {
-        public AmerFamilyPlayoffContext(DbContextOptions options)
+        public AmerFamilyPlayoffContext() { }
+
+        public AmerFamilyPlayoffContext(DbContextOptions<AmerFamilyPlayoffContext> options)
                : base(options)
         {
         }
