@@ -15,6 +15,7 @@ namespace PlayoffPool.MVC.Controllers
         public HomeController(ILogger<HomeController> logger, AmerFamilyPlayoffContext dataContext)
         {
             _logger = logger;
+            _logger.Log(LogLevel.Error, "Test");
             this.dataContext = dataContext;
             this.dataContext.Database.Migrate();
             this.dataContext.SeedData();
