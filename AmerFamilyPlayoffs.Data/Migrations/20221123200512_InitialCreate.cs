@@ -15,6 +15,8 @@ namespace AmerFamilyPlayoffs.Data.Migrations
             migrationBuilder.AlterDatabase()
                 .Annotation("MySql:CharSet", "utf8mb4");
 
+            migrationBuilder.Sql("SET default_storage_engine=INNODB");
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
