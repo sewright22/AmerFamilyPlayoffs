@@ -3,6 +3,10 @@ using AmerFamilyPlayoffs.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PlayoffPool.MVC.Models;
+using NLog.Extensions.Logging;
+using NLog;
+using System;
+using NLog.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +36,16 @@ builder.Services.AddIdentity<User, IdentityRole>(
 //var config = new MapperConfiguration(cfg => cfg.CreateMap<User, RegistrationUserViewModel>());
 
 builder.Services.AddAutoMapper(typeof(Program));
+
+var config = new ConfigurationBuilder()
+   .SetBasePath(System.IO.Directory.GetCurrentDirectory())
+   .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+   .Build();
+
+NLog.LogManager.Configuration = new NLogLoggingConfiguration(config.GetSection("NLog"));
+
+builder.Logging.ClearProviders();
+builder.Host.UseNLog();
 
 var app = builder.Build();
 
