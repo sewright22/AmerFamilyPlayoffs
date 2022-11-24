@@ -15,10 +15,21 @@ namespace PlayoffPool.MVC.Controllers
         public HomeController(ILogger<HomeController> logger, AmerFamilyPlayoffContext dataContext)
         {
             _logger = logger;
-            _logger.Log(LogLevel.Error, "Test");
             this.dataContext = dataContext;
-            this.dataContext.Database.Migrate();
-            this.dataContext.SeedData();
+            SetupDatabase();
+        }
+
+        private void SetupDatabase()
+        {
+            try
+            {
+                this.dataContext.Database.Migrate();
+                this.dataContext.SeedData();
+            }
+            catch (Exception e)
+            {
+                this._logger.LogError(e, "Failed to setup database.");
+            }
         }
 
         public IActionResult Index()
