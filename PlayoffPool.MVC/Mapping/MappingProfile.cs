@@ -10,6 +10,9 @@ namespace PlayoffPool.MVC.Mapping
         {
             this.CreateMap<RegisterViewModel, User>()
                 .ForMember(u => u.UserName, opt => opt.MapFrom(x => x.Email));
+
+            this.CreateMap<LoginViewModel, User>()
+                .ForMember(u => u.Email, opt => opt.MapFrom(x => x.Email));
         }
     }
 }

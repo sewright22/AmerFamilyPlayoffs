@@ -40,7 +40,7 @@ namespace PlayoffPool.MVC.Controllers
         {
             if (this.signInManager.IsSignedIn(this.User) == false)
             {
-                return this.Redirect($"../{Constants.Controllers.ACCOUNT}/{Constants.Actions.LOGIN}");
+                return this.RedirectToAction(Constants.Actions.LOGIN, Constants.Controllers.ACCOUNT);
             }
             return View();
         }
