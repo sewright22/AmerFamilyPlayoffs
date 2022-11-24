@@ -1,21 +1,25 @@
 ﻿using System.Diagnostics;
 using AmerFamilyPlayoffs.Data;
 using AmerFamilyPlayoffs.Data.SeedExtensions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PlayoffPool.MVC.Extensions;
 using PlayoffPool.MVC.Models;
 
 namespace PlayoffPool.MVC.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<HomeController> logger;
         private readonly AmerFamilyPlayoffContext dataContext;
+        private readonly SignInManager<User> signInManager;
 
-        public HomeController(ILogger<HomeController> logger, AmerFamilyPlayoffContext dataContext)
+        public HomeController(ILogger<HomeController> logger, AmerFamilyPlayoffContext dataContext, SignInManager<User> signInManager)
         {
-            _logger = logger;
+            this.logger = logger;
             this.dataContext = dataContext;
+            this.signInManager = signInManager;
             SetupDatabase();
         }
 
@@ -28,12 +32,16 @@ namespace PlayoffPool.MVC.Controllers
             }
             catch (Exception e)
             {
-                this._logger.LogError(e, "Failed to setup database.");
+                this.logger.LogError(e, "Failed to setup database.");
             }
         }
 
         public IActionResult Index()
         {
+            if (this.signInManager.IsSignedIn(this.User) == false)
+            {
+                return this.Redirect($"../{Constants.Controllers.ACCOUNT}/{Constants.Actions.LOGIN}");
+            }
             return View();
         }
 

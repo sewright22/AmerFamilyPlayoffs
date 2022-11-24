@@ -8,7 +8,7 @@ namespace PlayoffPool.MVC.Mapping
     {
         public MappingProfile()
         {
-            this.CreateMap<RegistrationUserViewModel, User>()
+            this.CreateMap<RegisterViewModel, User>()
                 .ForMember(u => u.UserName, opt => opt.MapFrom(x => x.Email));
         }
     }

@@ -25,6 +25,13 @@ namespace PlayoffPool.MVC.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Login()
+        {
+            return this.View();
+        }
+
+        [HttpGet]
         public IActionResult Register()
         {
             return View();
@@ -33,7 +40,7 @@ namespace PlayoffPool.MVC.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegistrationUserViewModel model)
+        public async Task<ActionResult> Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
             {
