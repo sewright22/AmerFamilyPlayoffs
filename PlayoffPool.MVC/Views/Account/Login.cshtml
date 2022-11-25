@@ -1,6 +1,10 @@
 ﻿@using PlayoffPool.MVC.Controllers;
 @model PlayoffPool.MVC.Models.LoginViewModel;
 
+@{
+	Layout = "_Layout";
+}
+
 <div class="row">
 	<div class="col-md-9">
 		<form asp-action="@nameof(AccountController.Login)">
