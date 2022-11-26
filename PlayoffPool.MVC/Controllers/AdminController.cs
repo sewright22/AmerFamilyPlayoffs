@@ -2,7 +2,9 @@
 {
 	using AmerFamilyPlayoffs.Data;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.EntityFrameworkCore;
     using PlayoffPool.MVC.Models;
     using PlayoffPool.MVC.Models.Admin;
@@ -10,7 +12,7 @@
 
     public class AdminController : Controller
 	{
-		public AdminController(ILogger<AdminController> logger, AmerFamilyPlayoffContext context)
+		public AdminController(ILogger<AdminController> logger, AmerFamilyPlayoffContext context, RoleManager<IdentityRole> roleManager)
         {
             if (logger is null)
             {
@@ -18,10 +20,12 @@
             }
             Logger = logger;
             Context = context ?? throw new ArgumentNullException(nameof(context));
+            RoleManager = roleManager;
         }
 
         public ILogger<AdminController> Logger { get; }
         public AmerFamilyPlayoffContext Context { get; }
+        public RoleManager<IdentityRole> RoleManager { get; }
 
         [HttpGet]
         [Authorize]
@@ -31,14 +35,16 @@
             model.ManageUsersViewModel = new ManageUsersViewModel();
 
             var users = await this.Context.Users.ToListAsync().ConfigureAwait(false);
+            var roles = this.RoleManager.Roles.Select(x => new SelectListItem(x.Id, x.Name)).ToList();
 
             foreach (var user in users)
             {
-                model.ManageUsersViewModel.Users.Add(new Models.Admin.UserModel
+                model.ManageUsersViewModel.Users.Add(new Models.UserModel
                 {
                     Email = user.Email,
                     FirstName= user.FirstName,
                     LastName= user.LastName,
+                    Roles = roles,
                 });
             }
 
