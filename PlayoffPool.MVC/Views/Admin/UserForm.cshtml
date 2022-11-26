@@ -1,0 +1,9 @@
+﻿@using PlayoffPool.MVC.Models;
+@model UserModel
+
+<div class="sg-card">
+    <input asp-for="FirstName" />
+    <input asp-for="LastName" />
+    <input asp-for="Email" />
+    <select asp-for="RoleId" asp-items="@(new SelectList(Model.Roles, nameof(Model.RoleId)))" />
+</div>

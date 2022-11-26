@@ -7,7 +7,6 @@
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.EntityFrameworkCore;
     using PlayoffPool.MVC.Models;
-    using PlayoffPool.MVC.Models.Admin;
     using System;
 
     public class AdminController : Controller
