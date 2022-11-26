@@ -1,8 +1,14 @@
 ﻿@model ManageUsersViewModel
 
-<form asp-action="UpdateUsers">
-    @foreach (var user in this.Model.Users)
-    {
-        <partial name="UserForm" model="user" />
-    }
-</form>
+<div class="section section-admin">
+    <h6>Manage Users</h6>
+    <form asp-action="UpdateUsers">
+        @foreach (var user in this.Model.Users)
+        {
+            <partial name="UserForm" model="user" />
+        }
+
+        <button class="btn button-primary" type="submit">Submit</button>
+        <button class="btn button-secondary" type="reset">Reset</button>
+    </form>
+</div>

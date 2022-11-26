@@ -1,9 +1,12 @@
-﻿@using PlayoffPool.MVC.Models;
+﻿@using Microsoft.AspNetCore.Identity;
+@using PlayoffPool.MVC.Models;
 @model UserModel
 
 <div class="sg-card">
     <input asp-for="FirstName" />
     <input asp-for="LastName" />
     <input asp-for="Email" />
-    <select asp-for="RoleId" asp-items="@(new SelectList(Model.Roles, nameof(Model.RoleId)))" />
+    <select asp-for="RoleId" asp-items="@(new SelectList(this.Model.Roles, nameof(SelectListItem.Value), nameof(SelectListItem.Text)))" >
+        <option>Select One</option>
+    </select>
 </div>
