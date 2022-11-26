@@ -55,5 +55,11 @@ namespace PlayoffPool.MVC.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        public async Task<IActionResult> LogOut()
+        {
+            await this.signInManager.SignOutAsync().ConfigureAwait(false);
+            return this.RedirectToAction(Constants.Actions.LOGIN, Constants.Controllers.ACCOUNT);
+        }
     }
 }
