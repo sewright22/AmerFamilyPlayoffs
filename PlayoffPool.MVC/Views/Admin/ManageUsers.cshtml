@@ -1,0 +1,10 @@
+﻿@model ManageUsersViewModel
+
+@foreach (var user in this.Model.Users)
+{
+    <div class="sg-card">
+        <span>@user.FirstName</span>
+        <span>@user.LastName</span>
+        <span>@user.Email</span>
+    </div>
+}
