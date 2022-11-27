@@ -1,11 +1,11 @@
-﻿@model ManageUsersViewModel
+﻿@model ManageRolesViewModel
 
 <div class="section section-admin">
-    <h6>Manage Users</h6>
-    <form asp-action="UpdateUsers">
-        @for (int i=0; i<this.Model.Users.Count(); i++)
+    <h6>Manage Roles</h6>
+    <form asp-action="UpdateRoles">
+        @for (int i=0; i<this.Model.Roles.Count(); i++)
         {
-            <partial name="UserForm" model="this.Model.Users[i]"/>
+            <partial name="RoleForm" model="this.Model.Roles[i]"/>
         }
 
         <span class="button-group">

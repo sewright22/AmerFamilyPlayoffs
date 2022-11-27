@@ -34,15 +34,27 @@
         {
             var model = new AdminViewModel();
             model.ManageUsersViewModel = new ManageUsersViewModel();
+            model.ManageRolesViewModel = new ManageRolesViewModel();
 
             var users = await this.Context.Users.ToListAsync().ConfigureAwait(false);
             var roles = this.RoleManager.Roles.Select(x => new SelectListItem(x.Name, x.Id)).ToList();
+
+            foreach (var role in roles)
+            {
+                model.ManageRolesViewModel.Roles.Add(new RoleModel
+                {
+                    Id = role.Value,
+                    Name = role.Text,
+                });
+            }
+
             foreach (var user in users)
             {
                 var userRoles = await this.UserManager.GetRolesAsync(user).ConfigureAwait(false);
 
                 model.ManageUsersViewModel.Users.Add(new Models.UserModel
                 {
+                    Id = user.Id,
                     Email = user.Email,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
@@ -51,6 +63,63 @@
                 });
             }
 
+            return this.View(model);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> UpdateUsers(UserModel model)
+        {
+            if (this.ModelState.IsValid == false)
+            {
+                return this.View(model);
+            }
+
+            var user = model;
+
+            //foreach (var user in model.Users)
+            //{
+            try
+            {
+                var dbUser = await this.Context.Users.SingleOrDefaultAsync(x => x.Id == user.Id).ConfigureAwait(false);
+
+                if (dbUser == null)
+                {
+                    return this.View(model);
+                }
+
+                dbUser.FirstName = user.FirstName;
+                dbUser.LastName = user.LastName;
+                dbUser.Email = user.Email;
+
+                await this.Context.SaveChangesAsync().ConfigureAwait(false);
+
+                var userRoles = await this.UserManager.GetRolesAsync(dbUser).ConfigureAwait(false);
+
+                if (userRoles.Contains(user.RoleId))
+                {
+                    return this.View(model);
+                }
+
+                var result = await this.UserManager.RemoveFromRoleAsync(dbUser, userRoles.First()).ConfigureAwait(false);
+                if (result.Succeeded)
+                {
+                    await this.UserManager.AddToRoleAsync(dbUser, user.RoleId).ConfigureAwait(false);
+                }
+            }
+            catch (Exception ex)
+            {
+                this.Logger.LogError(ex, ex.Message);
+            }
+            //}
+
+            return this.RedirectToAction(nameof(this.Index));
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> UpdateRoles(RoleModel model)
+        {
             return this.View(model);
         }
     }
