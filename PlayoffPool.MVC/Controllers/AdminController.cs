@@ -32,6 +32,7 @@
         [Authorize]
         public async Task<IActionResult> Index()
         {
+            await this.Seed().ConfigureAwait(false);
             var model = new AdminViewModel();
             model.ManageUsersViewModel = new ManageUsersViewModel();
             model.ManageRolesViewModel = new ManageRolesViewModel();
@@ -59,7 +60,7 @@
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Roles = roles,
-                    RoleId = roles.Where(x=>userRoles.Contains(x.Text)).Select(x=>x.Value).FirstOrDefault(),
+                    RoleId = roles.Where(x => userRoles.Contains(x.Text)).Select(x => x.Value).FirstOrDefault(),
                 });
             }
 
@@ -121,6 +122,20 @@
         public async Task<IActionResult> UpdateRoles(RoleModel model)
         {
             return this.View(model);
+        }
+
+        private async Task Seed()
+        {
+            if (await this.RoleManager.RoleExistsAsync("Admin").ConfigureAwait(false) == false)
+            {
+                await this.RoleManager.CreateAsync(new IdentityRole("Admin")).ConfigureAwait(false);
+            }
+
+
+            if (await this.RoleManager.RoleExistsAsync("Player").ConfigureAwait(false) == false)
+            {
+                await this.RoleManager.CreateAsync(new IdentityRole("Player")).ConfigureAwait(false);
+            }
         }
     }
 }
