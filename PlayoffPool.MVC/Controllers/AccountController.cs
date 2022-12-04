@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PlayoffPool.MVC.Helpers;
 using PlayoffPool.MVC.Models;
 
 namespace PlayoffPool.MVC.Controllers
@@ -12,24 +13,18 @@ namespace PlayoffPool.MVC.Controllers
     {
         public AccountController(
             IMapper mapper,
-            UserManager<User> userManager,
-            RoleManager<IdentityRole> roleManager,
-            SignInManager<User> signInManager,
             ILogger<AccountController> logger,
-            AmerFamilyPlayoffContext context)
+            IDataManager dataManager)
         {
             this.Mapper = mapper;
-            this.UserManager = userManager;
-            SignInManager = signInManager;
-            Logger = logger;
-            Context = context;
-            roleManager.CreateAsync(new IdentityRole("Test"));
+            this.Logger = logger;
+            this.DataManager = dataManager;
+            this.Context = dataManager.DataContext;
         }
 
         public IMapper Mapper { get; }
-        public UserManager<User> UserManager { get; }
-        public SignInManager<User> SignInManager { get; }
         public ILogger<AccountController> Logger { get; }
+        public IDataManager DataManager { get; }
         public AmerFamilyPlayoffContext Context { get; }
 
         public IActionResult Index()
@@ -39,8 +34,9 @@ namespace PlayoffPool.MVC.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
+            await this.DataManager.Seed().ConfigureAwait(false);
             return this.View();
         }
 
@@ -62,13 +58,11 @@ namespace PlayoffPool.MVC.Controllers
 
             var user = await this.Context.Users.SingleOrDefaultAsync(x => x.Email == model.Email).ConfigureAwait(false);
 
-            // var user = await this.UserManager.FindByIdAsync(model.Email).ConfigureAwait(false);
-
-            if (user is not null && await this.UserManager.CheckPasswordAsync(user, model.Password).ConfigureAwait(false))
+            if (user is not null && await this.DataManager.UserManager.CheckPasswordAsync(user, model.Password).ConfigureAwait(false))
             {
                 try
                 {
-                    await this.SignInManager.SignInAsync(user, true).ConfigureAwait(false);
+                    await this.DataManager.SignInManager.SignInAsync(user, true).ConfigureAwait(false);
                 }
                 catch (Exception e)
                 {
@@ -78,7 +72,7 @@ namespace PlayoffPool.MVC.Controllers
             }
 
 
-            return RedirectToAction(nameof(HomeController.Index), "Home");
+            return RedirectToAction(nameof(HomeController.Index), Constants.Controllers.HOME);
 
         }
 
@@ -94,7 +88,7 @@ namespace PlayoffPool.MVC.Controllers
 
             var user = this.Mapper.Map<User>(model);
 
-            var result = await this.UserManager.CreateAsync(user, model.Password);
+            var result = await this.DataManager.UserManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
@@ -105,9 +99,9 @@ namespace PlayoffPool.MVC.Controllers
                 return View(model);
             }
 
-            await this.UserManager.AddToRoleAsync(user, "Test").ConfigureAwait(false);
+            await this.DataManager.UserManager.AddToRoleAsync(user, Constants.Roles.Player).ConfigureAwait(false);
 
-            return RedirectToAction(nameof(HomeController.Index), "Home");
+            return RedirectToAction(nameof(HomeController.Index), Constants.Controllers.HOME);
 
         }
     }

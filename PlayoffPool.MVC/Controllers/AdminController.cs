@@ -6,27 +6,24 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.EntityFrameworkCore;
+    using PlayoffPool.MVC.Helpers;
     using PlayoffPool.MVC.Models;
     using System;
 
     public class AdminController : Controller
     {
-        public AdminController(ILogger<AdminController> logger, AmerFamilyPlayoffContext context, RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
+        public AdminController(ILogger<AdminController> logger, IDataManager dataManager)
         {
             if (logger is null)
             {
                 throw new ArgumentNullException(nameof(logger));
             }
             Logger = logger;
-            Context = context ?? throw new ArgumentNullException(nameof(context));
-            RoleManager = roleManager;
-            UserManager = userManager;
+            this.DataManager = dataManager;
         }
 
         public ILogger<AdminController> Logger { get; }
-        public AmerFamilyPlayoffContext Context { get; }
-        public RoleManager<IdentityRole> RoleManager { get; }
-        public UserManager<User> UserManager { get; }
+        public IDataManager DataManager { get; }
 
         [HttpGet]
         [Authorize]
@@ -37,8 +34,8 @@
             model.ManageUsersViewModel = new ManageUsersViewModel();
             model.ManageRolesViewModel = new ManageRolesViewModel();
 
-            var users = await this.Context.Users.ToListAsync().ConfigureAwait(false);
-            var roles = this.RoleManager.Roles.Select(x => new SelectListItem(x.Name, x.Id)).ToList();
+            var users = await this.DataManager.DataContext.Users.AsNoTracking().ToListAsync().ConfigureAwait(false);
+            var roles = this.DataManager.RoleManager.Roles.Select(x => new SelectListItem(x.Name, x.Id)).ToList();
 
             foreach (var role in roles)
             {
@@ -51,7 +48,7 @@
 
             foreach (var user in users)
             {
-                var userRoles = await this.UserManager.GetRolesAsync(user).ConfigureAwait(false);
+                var userRoles = await this.DataManager.UserManager.GetRolesAsync(user).ConfigureAwait(false);
 
                 model.ManageUsersViewModel.Users.Add(new Models.UserModel
                 {
@@ -67,6 +64,12 @@
             return this.View(model);
         }
 
+        private Task Seed()
+        {
+            return Task.CompletedTask;
+            //throw new NotImplementedException();
+        }
+
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> UpdateUsers(UserModel model)
@@ -76,43 +79,43 @@
                 return this.View(model);
             }
 
-            var user = model;
-
-            //foreach (var user in model.Users)
-            //{
             try
             {
-                var dbUser = await this.Context.Users.SingleOrDefaultAsync(x => x.Id == user.Id).ConfigureAwait(false);
+                var dbUser = await this.DataManager.UserManager.FindByIdAsync(model.Id).ConfigureAwait(false);
 
                 if (dbUser == null)
                 {
                     return this.View(model);
                 }
 
-                dbUser.FirstName = user.FirstName;
-                dbUser.LastName = user.LastName;
-                dbUser.Email = user.Email;
+                dbUser.FirstName = model.FirstName;
+                dbUser.LastName = model.LastName;
+                dbUser.Email = model.Email;
 
-                await this.Context.SaveChangesAsync().ConfigureAwait(false);
+                await this.DataManager.UserManager.UpdateAsync(dbUser).ConfigureAwait(false);
 
-                var userRoles = await this.UserManager.GetRolesAsync(dbUser).ConfigureAwait(false);
+                var userRoles = await this.DataManager.UserManager.GetRolesAsync(dbUser).ConfigureAwait(false);
 
-                if (userRoles.Contains(user.RoleId))
+                if (userRoles.Contains(model.RoleId))
                 {
                     return this.View(model);
                 }
 
-                var result = await this.UserManager.RemoveFromRoleAsync(dbUser, userRoles.First()).ConfigureAwait(false);
-                if (result.Succeeded)
+                if (userRoles.Any())
                 {
-                    await this.UserManager.AddToRoleAsync(dbUser, user.RoleId).ConfigureAwait(false);
+                    var result = await this.DataManager.UserManager.RemoveFromRoleAsync(dbUser, userRoles.First()).ConfigureAwait(false);
                 }
+
+                var newRole = await this.DataManager.RoleManager.FindByIdAsync(model.RoleId).ConfigureAwait(false);
+
+                await this.DataManager.UserManager.AddToRoleAsync(dbUser, newRole.Name).ConfigureAwait(false);
+                var claims = await this.DataManager.UserManager.GetClaimsAsync(dbUser).ConfigureAwait(false);
+                var test = claims;
             }
             catch (Exception ex)
             {
                 this.Logger.LogError(ex, ex.Message);
             }
-            //}
 
             return this.RedirectToAction(nameof(this.Index));
         }
@@ -122,20 +125,6 @@
         public async Task<IActionResult> UpdateRoles(RoleModel model)
         {
             return this.View(model);
-        }
-
-        private async Task Seed()
-        {
-            if (await this.RoleManager.RoleExistsAsync("Admin").ConfigureAwait(false) == false)
-            {
-                await this.RoleManager.CreateAsync(new IdentityRole("Admin")).ConfigureAwait(false);
-            }
-
-
-            if (await this.RoleManager.RoleExistsAsync("Player").ConfigureAwait(false) == false)
-            {
-                await this.RoleManager.CreateAsync(new IdentityRole("Player")).ConfigureAwait(false);
-            }
         }
     }
 }
