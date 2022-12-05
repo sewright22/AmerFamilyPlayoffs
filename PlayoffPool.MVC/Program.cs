@@ -7,6 +7,7 @@ using NLog.Extensions.Logging;
 using NLog;
 using System;
 using NLog.Web;
+using PlayoffPool.MVC.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,8 @@ builder.Services.AddIdentity<User, IdentityRole>(
         options.User.RequireUniqueEmail = true;
     })
     .AddEntityFrameworkStores<AmerFamilyPlayoffContext>().AddRoles<IdentityRole>();
+
+builder.Services.AddTransient<IDataManager, ApplicationDataManager>();
 
 //var config = new MapperConfiguration(cfg => cfg.CreateMap<User, RegistrationUserViewModel>());
 
