@@ -20,11 +20,6 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Publish MVC Site
       run: dotnet publish ".\PlayoffPool.MVC\PlayoffPool.MVC.csproj" -c Release -o publishMVC --self-contained true -a x86
-      
-  deploy:
-    runs-on: ubuntu-latest
-    
-    steps:
     - name: FTP Deploy MVC
       uses: SamKirkland/FTP-Deploy-Action@4.3.2
       with:
