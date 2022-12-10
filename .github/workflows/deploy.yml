@@ -6,7 +6,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -19,8 +18,17 @@ jobs:
       run: dotnet restore
     - name: Build Solution
       run: dotnet build --configuration Release --no-restore
+  publish:
+    runs-on: ubuntu-latest
+    
+    steps:
     - name: Publish MVC Site
       run: dotnet publish ".\PlayoffPool.MVC\PlayoffPool.MVC.csproj" -c Release -o publishMVC --self-contained true -r win-x86
+      
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
     - name: FTP Deploy MVC
       uses: SamKirkland/FTP-Deploy-Action@4.3.2
       with:
