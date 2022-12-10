@@ -19,8 +19,6 @@ jobs:
       run: dotnet restore
     - name: Build Solution
       run: dotnet build --configuration Release --no-restore
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
     - name: Publish MVC Site
       run: dotnet publish ".\PlayoffPool.MVC\PlayoffPool.MVC.csproj" -c Release -o publishMVC --self-contained true -r win-x86
     - name: FTP Deploy MVC
