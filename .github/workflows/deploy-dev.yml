@@ -2,10 +2,10 @@ name: .NET Core
 
 on:
   push:
-    branches: [ AdminPage ]
+    branches: [ release/dev/* ]
 
 jobs:
-  build:
+  deploy-dev:
     runs-on: windows-latest
 
     steps:
