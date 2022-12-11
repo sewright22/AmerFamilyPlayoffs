@@ -20,6 +20,14 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Publish MVC Site
       run: dotnet publish ".\PlayoffPool.MVC\PlayoffPool.MVC.csproj" -c Release -o publishMVC --self-contained true -a x86
+    - name: App Settings Variable Substitution
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: './publishMVC/appsettings.json'
+      env:
+        ConnectionStrings.PlayoffPoolContext: ${{ secrets.DEV_DB_CONNECTION_STRING }}
+        SeedData.AdminUser.Email: ${{secrets.AdminEmail}}
+        SeedData.AdminUser.Password: ${{secrets.AdminEmail}}
     - name: FTP Deploy MVC
       uses: SamKirkland/FTP-Deploy-Action@4.3.2
       with:
