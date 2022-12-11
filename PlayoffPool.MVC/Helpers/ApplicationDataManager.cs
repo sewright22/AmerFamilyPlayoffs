@@ -39,6 +39,9 @@ namespace PlayoffPool.MVC.Helpers
             await this.SeedRole(Constants.Roles.Admin).ConfigureAwait(false);
             await this.SeedRole(Constants.Roles.Player).ConfigureAwait(false);
             await this.SeedAdminUser().ConfigureAwait(false);
+#if DEBUG
+            await this.SeedPlayerUser().ConfigureAwait(false);
+#endif
         }
 
         private async Task SeedAdminUser()
@@ -59,6 +62,26 @@ namespace PlayoffPool.MVC.Helpers
             if (result.Succeeded)
             {
                 await this.UserManager.AddToRoleAsync(userToAdd, Constants.Roles.Admin).ConfigureAwait(false);
+            }
+        }
+
+        private async Task SeedPlayerUser()
+        {
+            var seedDataSection = this.Configuration.GetSection("SeedData");
+
+            var userToAdd = new User
+            {
+                UserName = "player@email.com",
+                Email = "player@email.com",
+                FirstName = "Player",
+                LastName = "User",
+            };
+
+            var result = await this.UserManager.CreateAsync(userToAdd, "P@ssword!23").ConfigureAwait(false);
+
+            if (result.Succeeded)
+            {
+                await this.UserManager.AddToRoleAsync(userToAdd, Constants.Roles.Player).ConfigureAwait(false);
             }
         }
 
