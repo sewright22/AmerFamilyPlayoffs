@@ -1,13 +1,14 @@
-﻿@{
+﻿@using AmerFamilyPlayoffs.Data;
+@using PlayoffPool.MVC.Models.Home;
+@{
     ViewData["Title"] = "Home Page";
     Layout = "_AuthenticatedLayout";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@model HomeViewModel
 
-<form asp-action="@Constants.Actions.LOGOUT">
-    <button type="submit">Logout</button>
-</form>
+@if (this.Model.Brackets.Any() == false)
+{
+    <p>It looks like you haven't made any picks.</p>
+    <a href="#">Create your first bracket</a>
+}

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlayoffPool.MVC.Extensions;
 using PlayoffPool.MVC.Models;
+using PlayoffPool.MVC.Models.Home;
 
 namespace PlayoffPool.MVC.Controllers
 {
@@ -42,7 +43,10 @@ namespace PlayoffPool.MVC.Controllers
             {
                 return this.RedirectToAction(Constants.Actions.LOGIN, Constants.Controllers.ACCOUNT);
             }
-            return View();
+
+            var model = new HomeViewModel();
+            model.Brackets = new List<BracketSummaryModel>();
+            return View(model);
         }
 
         public IActionResult Privacy()
