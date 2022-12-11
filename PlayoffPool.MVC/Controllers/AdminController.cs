@@ -85,6 +85,8 @@
             {
                 var dbUser = await this.DataManager.UserManager.FindByIdAsync(model.Id).ConfigureAwait(false);
 
+                this.Logger.LogDebug($"Got user from db: {dbUser.Id}");
+
                 if (dbUser == null)
                 {
                     return this.View(model);
@@ -96,25 +98,47 @@
 
                 await this.DataManager.UserManager.UpdateAsync(dbUser).ConfigureAwait(false);
 
+                this.Logger.LogDebug($"Updated user info.");
+
                 var userRoles = await this.DataManager.UserManager.GetRolesAsync(dbUser).ConfigureAwait(false);
+
+                this.Logger.LogDebug($"Got roles for user.");
+
+                foreach (var role in userRoles)
+                {
+                    this.Logger.LogDebug($"Role: {role})");
+                }
 
                 if (userRoles.Contains(model.RoleId))
                 {
+                    this.Logger.LogDebug($"User already contains role.)");
                     return this.View(model);
                 }
 
                 if (userRoles.Any())
                 {
+                    var firstRoleForUser = userRoles.First();
+                    this.Logger.LogDebug($"First role: {firstRoleForUser}");
                     var result = await this.DataManager.UserManager.RemoveFromRoleAsync(dbUser, userRoles.First()).ConfigureAwait(false);
 
                     if (result.Succeeded)
                     {
+                        this.Logger.LogDebug($"Removed role.");
                         var newRole = await this.DataManager.RoleManager.FindByIdAsync(model.RoleId).ConfigureAwait(false);
                         await this.DataManager.UserManager.AddToRoleAsync(dbUser, newRole.Name).ConfigureAwait(false);
+                        this.Logger.LogDebug($"Added new role: {newRole.Name}");
+                    }
+                    else
+                    {
+                        this.Logger.LogDebug($"Unable to remove role.");
                     }
                 }
+                else
+                {
+                    this.Logger.LogDebug($"No roles found.");
+                }
 
-                 await this.DataManager.DataContext.SaveChangesAsync().ConfigureAwait(false);
+                await this.DataManager.DataContext.SaveChangesAsync().ConfigureAwait(false);
 
             }
             catch (Exception ex)
