@@ -26,6 +26,8 @@ jobs:
         files: './publishMVC/appsettings.json'
       env:
         ConnectionStrings.PlayoffPoolContext: ${{ secrets.DEV_DB_CONNECTION_STRING }}
+        SeedData.AdminUser.Email: ${{secrets.AdminEmail}}
+        SeedData.AdminUser.Password: ${{secrets.AdminEmail}}
     - name: FTP Deploy MVC
       uses: SamKirkland/FTP-Deploy-Action@4.3.2
       with:

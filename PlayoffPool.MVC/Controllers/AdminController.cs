@@ -9,6 +9,8 @@
     using PlayoffPool.MVC.Helpers;
     using PlayoffPool.MVC.Models;
     using System;
+    using System.Security.Claims;
+    using System.Security.Principal;
 
     public class AdminController : Controller
     {
@@ -107,10 +109,9 @@
                 }
 
                 var newRole = await this.DataManager.RoleManager.FindByIdAsync(model.RoleId).ConfigureAwait(false);
-
                 await this.DataManager.UserManager.AddToRoleAsync(dbUser, newRole.Name).ConfigureAwait(false);
-                var claims = await this.DataManager.UserManager.GetClaimsAsync(dbUser).ConfigureAwait(false);
-                var test = claims;
+                await this.DataManager.DataContext.SaveChangesAsync().ConfigureAwait(false);
+
             }
             catch (Exception ex)
             {
