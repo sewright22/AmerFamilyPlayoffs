@@ -34,11 +34,11 @@ namespace PlayoffPool.MVC.Helpers
         {
 #if DEBUG
             await this.DataContext.Database.EnsureDeletedAsync().ConfigureAwait(false);
+#endif
             await this.DataContext.Database.MigrateAsync().ConfigureAwait(false);
             await this.SeedRole(Constants.Roles.Admin).ConfigureAwait(false);
             await this.SeedRole(Constants.Roles.Player).ConfigureAwait(false);
             await this.SeedAdminUser().ConfigureAwait(false);
-#endif
         }
 
         private async Task SeedAdminUser()
