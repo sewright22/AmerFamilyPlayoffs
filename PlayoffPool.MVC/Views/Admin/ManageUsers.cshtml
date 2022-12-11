@@ -3,9 +3,17 @@
 <div class="section section-admin">
     <h6>Manage Users</h6>
     <form asp-action="UpdateUsers">
-        @for (int i=0; i<this.Model.Users.Count(); i++)
+        @for (int i = 0; i < this.Model.Users.Count(); i++)
         {
-            <partial name="UserForm" model="this.Model.Users[i]"/>
+            <div class="sg-card">
+                <input type="hidden" asp-for="@this.Model.Users[i].Id" />
+                <input asp-for="@this.Model.Users[i].FirstName" />
+                <input asp-for="@this.Model.Users[i].LastName" />
+                <input asp-for="@this.Model.Users[i].Email" />
+                <select asp-for="@this.Model.Users[i].RoleId" asp-items="@(new SelectList(this.Model.Users[i].Roles, nameof(SelectListItem.Value), nameof(SelectListItem.Text)))">
+                    <option>Select One</option>
+                </select>
+            </div>
         }
 
         <span class="button-group">

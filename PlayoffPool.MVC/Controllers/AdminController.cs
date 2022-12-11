@@ -31,7 +31,6 @@
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            await this.Seed().ConfigureAwait(false);
             var model = new AdminViewModel();
             model.ManageUsersViewModel = new ManageUsersViewModel();
             model.ManageRolesViewModel = new ManageRolesViewModel();
@@ -74,7 +73,7 @@
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> UpdateUsers(UserModel model)
+        public async Task<IActionResult> UpdateUsers(ManageUsersViewModel model)
         {
             if (this.ModelState.IsValid == false)
             {
@@ -83,63 +82,65 @@
 
             try
             {
-                var dbUser = await this.DataManager.UserManager.FindByIdAsync(model.Id).ConfigureAwait(false);
-
-                this.Logger.LogDebug($"Got user from db: {dbUser.Id}");
-
-                if (dbUser == null)
+                foreach (var modelUser in model.Users)
                 {
-                    return this.View(model);
-                }
+                    var dbUser = await this.DataManager.UserManager.FindByIdAsync(modelUser.Id).ConfigureAwait(false);
 
-                dbUser.FirstName = model.FirstName;
-                dbUser.LastName = model.LastName;
-                dbUser.Email = model.Email;
+                    this.Logger.LogDebug($"Got user from db: {dbUser.Id}");
 
-                await this.DataManager.UserManager.UpdateAsync(dbUser).ConfigureAwait(false);
-
-                this.Logger.LogDebug($"Updated user info.");
-
-                var userRoles = await this.DataManager.UserManager.GetRolesAsync(dbUser).ConfigureAwait(false);
-
-                this.Logger.LogDebug($"Got roles for user.");
-
-                foreach (var role in userRoles)
-                {
-                    this.Logger.LogDebug($"Role: {role})");
-                }
-
-                if (userRoles.Contains(model.RoleId))
-                {
-                    this.Logger.LogDebug($"User already contains role.)");
-                    return this.View(model);
-                }
-
-                if (userRoles.Any())
-                {
-                    var firstRoleForUser = userRoles.First();
-                    this.Logger.LogDebug($"First role: {firstRoleForUser}");
-                    var result = await this.DataManager.UserManager.RemoveFromRoleAsync(dbUser, userRoles.First()).ConfigureAwait(false);
-
-                    if (result.Succeeded)
+                    if (dbUser == null)
                     {
-                        this.Logger.LogDebug($"Removed role.");
-                        var newRole = await this.DataManager.RoleManager.FindByIdAsync(model.RoleId).ConfigureAwait(false);
-                        await this.DataManager.UserManager.AddToRoleAsync(dbUser, newRole.Name).ConfigureAwait(false);
-                        this.Logger.LogDebug($"Added new role: {newRole.Name}");
+                        return this.View(model);
+                    }
+
+                    dbUser.FirstName = modelUser.FirstName;
+                    dbUser.LastName = modelUser.LastName;
+                    dbUser.Email = modelUser.Email;
+
+                    await this.DataManager.UserManager.UpdateAsync(dbUser).ConfigureAwait(false);
+
+                    this.Logger.LogDebug($"Updated user info.");
+
+                    var userRoles = await this.DataManager.UserManager.GetRolesAsync(dbUser).ConfigureAwait(false);
+
+                    this.Logger.LogDebug($"Got roles for user.");
+
+                    foreach (var role in userRoles)
+                    {
+                        this.Logger.LogDebug($"Role: {role})");
+                    }
+
+                    if (userRoles.Contains(modelUser.RoleId))
+                    {
+                        this.Logger.LogDebug($"User already contains role.)");
+                        return this.View(model);
+                    }
+
+                    if (userRoles.Any())
+                    {
+                        var firstRoleForUser = userRoles.First();
+                        this.Logger.LogDebug($"First role: {firstRoleForUser}");
+                        var result = await this.DataManager.UserManager.RemoveFromRoleAsync(dbUser, userRoles.First()).ConfigureAwait(false);
+
+                        if (result.Succeeded)
+                        {
+                            this.Logger.LogDebug($"Removed role.");
+                            var newRole = await this.DataManager.RoleManager.FindByIdAsync(modelUser.RoleId).ConfigureAwait(false);
+                            await this.DataManager.UserManager.AddToRoleAsync(dbUser, newRole.Name).ConfigureAwait(false);
+                            this.Logger.LogDebug($"Added new role: {newRole.Name}");
+                        }
+                        else
+                        {
+                            this.Logger.LogDebug($"Unable to remove role.");
+                        }
                     }
                     else
                     {
-                        this.Logger.LogDebug($"Unable to remove role.");
+                        this.Logger.LogDebug($"No roles found.");
                     }
-                }
-                else
-                {
-                    this.Logger.LogDebug($"No roles found.");
-                }
 
-                await this.DataManager.DataContext.SaveChangesAsync().ConfigureAwait(false);
-
+                    await this.DataManager.DataContext.SaveChangesAsync().ConfigureAwait(false);
+                }
             }
             catch (Exception ex)
             {
