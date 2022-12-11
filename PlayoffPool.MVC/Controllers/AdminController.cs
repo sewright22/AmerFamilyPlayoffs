@@ -106,11 +106,15 @@
                 if (userRoles.Any())
                 {
                     var result = await this.DataManager.UserManager.RemoveFromRoleAsync(dbUser, userRoles.First()).ConfigureAwait(false);
+
+                    if (result.Succeeded)
+                    {
+                        var newRole = await this.DataManager.RoleManager.FindByIdAsync(model.RoleId).ConfigureAwait(false);
+                        await this.DataManager.UserManager.AddToRoleAsync(dbUser, newRole.Name).ConfigureAwait(false);
+                    }
                 }
 
-                var newRole = await this.DataManager.RoleManager.FindByIdAsync(model.RoleId).ConfigureAwait(false);
-                await this.DataManager.UserManager.AddToRoleAsync(dbUser, newRole.Name).ConfigureAwait(false);
-                await this.DataManager.DataContext.SaveChangesAsync().ConfigureAwait(false);
+                 await this.DataManager.DataContext.SaveChangesAsync().ConfigureAwait(false);
 
             }
             catch (Exception ex)
