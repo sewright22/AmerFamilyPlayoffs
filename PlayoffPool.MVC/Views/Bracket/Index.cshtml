@@ -1,0 +1,11 @@
+﻿@using PlayoffPool.MVC.Models.Bracket;
+@model BracketViewModel
+
+@if (this.Model.CanEdit)
+{
+    <partial name="EditableBracket" model="this.Model"/>
+}
+else
+{
+    <partial name="ReadOnlyBracket" model="this.Model" />
+}

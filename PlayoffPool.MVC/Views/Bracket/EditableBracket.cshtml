@@ -1,0 +1,22 @@
+﻿@using PlayoffPool.MVC.Models.Bracket;
+@model BracketViewModel
+<div class="container">
+    <div class="row">
+        <form method="post">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" />
+        </form>
+    </div>
+
+    <div class="row">
+        <input type="radio" name="game1" value="Tennessee Titans" />
+        <label for="html">Tennessee Titans</label>
+        <input type="radio" name="game1" value="Baltimore Ravens"/>
+        <label for="html">Baltimore Ravens</label>
+    </div>
+
+    <div class="pp-button-bar">
+        <button type="submit">Save</button>
+        <button type="reset">Cancel</button>
+    </div>
+</div>
