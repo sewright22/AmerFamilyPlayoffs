@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AmerFamilyPlayoffs.Data.Migrations
 {
     [DbContext(typeof(AmerFamilyPlayoffContext))]
-    [Migration("20221123200512_InitialCreate")]
+    [Migration("20221216002646_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
