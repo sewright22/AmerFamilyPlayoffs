@@ -9,9 +9,18 @@
     </div>
 
     <div class="row">
+        <div>
+            <input type="radio" name="@this.Model.AfcRound1Game1.Name" asp-for="AfcRound1Game1.HomeTeam.Name" value="@this.Model.AfcRound1Game1.HomeTeam.Name" />
+            <label asp-for="AfcRound1Game1.HomeTeam.Name">@this.Model.AfcRound1Game1.HomeTeam.Name</label>
+            <input type="radio" name="@this.Model.AfcRound1Game1.Name" asp-for="AfcRound1Game1.AwayTeam.Name" value="@this.Model.AfcRound1Game1.AwayTeam.Name" />
+            <label asp-for="AfcRound1Game1.AwayTeam.Name">@this.Model.AfcRound1Game1.AwayTeam.Name</label>
+        </div>
+    </div>
+
+    <div class="row">
         <input type="radio" name="game1" value="Tennessee Titans" />
         <label for="html">Tennessee Titans</label>
-        <input type="radio" name="game1" value="Baltimore Ravens"/>
+        <input type="radio" name="game1" value="Baltimore Ravens" />
         <label for="html">Baltimore Ravens</label>
     </div>
 

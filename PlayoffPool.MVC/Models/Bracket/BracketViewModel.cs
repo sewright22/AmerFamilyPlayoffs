@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using AmerFamilyPlayoffs.Data;
 
 namespace PlayoffPool.MVC.Models.Bracket
 {
@@ -8,6 +9,10 @@ namespace PlayoffPool.MVC.Models.Bracket
         [Required]
         public string? Name { get; set; }
 
+        public List<Round> Rounds { get; set; }
+
         public bool CanEdit { get; set; }
+
+        public Matchup AfcRound1Game1 { get; set; }
     }
 }
