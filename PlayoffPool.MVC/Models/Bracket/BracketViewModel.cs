@@ -13,6 +13,23 @@ namespace PlayoffPool.MVC.Models.Bracket
 
         public bool CanEdit { get; set; }
 
-        public Matchup AfcRound1Game1 { get; set; }
+        public Matchup? AfcWildCardGame1 { get; set; }
+        public Matchup? NfcWildCardGame1 { get; set; }
+
+        public Matchup? AfcWildCardGame2 { get; set; }
+        public Matchup? NfcWildCardGame2 { get; set; }
+
+        public Matchup? AfcWildCardGame3 { get; set; }
+        public Matchup? NfcWildCardGame3 { get; set; }
+
+        public Matchup? AfcDivisionalGame1 { get; set; }
+        public Matchup? NfcDivisionalGame1 { get; set; }
+
+        public Matchup? AfcDivisionalGame2 { get; set; }
+        public Matchup? NfcDivisionalGame2 { get; set; }
+
+        public Matchup? AfcChampionship { get; set; }
+        public Matchup? NfcChampionship { get; set; }
+        public Matchup? SuperBowl { get; set; }
     }
 }

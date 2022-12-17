@@ -2,30 +2,57 @@
 @model BracketViewModel
 <div class="container">
     <div class="row">
-        <form method="post">
+        <form method="post" action="Bracket/Submit">
             <label asp-for="Name"></label>
             <input asp-for="Name" />
+
+            <div class="row">
+                <div class="row">
+                    <input type="radio" name="@this.Model.AfcWildCardGame1.Name" asp-for="AfcWildCardGame1.HomeTeam.Name" value="@this.Model.AfcWildCardGame1.HomeTeam.Name" />
+                    <label asp-for="AfcWildCardGame1.HomeTeam.Name">@this.Model.AfcWildCardGame1.HomeTeam.Name</label>
+                    <input type="radio" name="@this.Model.AfcWildCardGame1.Name" asp-for="AfcWildCardGame1.AwayTeam.Name" value="@this.Model.AfcWildCardGame1.AwayTeam.Name" />
+                    <label asp-for="AfcWildCardGame1.AwayTeam.Name">@this.Model.AfcWildCardGame1.AwayTeam.Name</label>
+                </div>
+
+                <div class="row">
+                    <input type="radio" name="@this.Model.NfcWildCardGame1.Name" asp-for="NfcWildCardGame1.HomeTeam.Name" value="@this.Model.NfcWildCardGame1.HomeTeam.Name" />
+                    <label asp-for="NfcWildCardGame1.HomeTeam.Name">@this.Model.NfcWildCardGame1.HomeTeam.Name</label>
+                    <input type="radio" name="@this.Model.NfcWildCardGame1.Name" asp-for="NfcWildCardGame1.AwayTeam.Name" value="@this.Model.NfcWildCardGame1.AwayTeam.Name" />
+                    <label asp-for="NfcWildCardGame1.AwayTeam.Name">@this.Model.NfcWildCardGame1.AwayTeam.Name</label>
+                </div>
+                <div class="row">
+                    <input type="radio" name="@this.Model.AfcWildCardGame2.Name" asp-for="AfcWildCardGame2.HomeTeam.Name" value="@this.Model.AfcWildCardGame2.HomeTeam.Name" />
+                    <label asp-for="AfcWildCardGame2.HomeTeam.Name">@this.Model.AfcWildCardGame2.HomeTeam.Name</label>
+                    <input type="radio" name="@this.Model.AfcWildCardGame2.Name" asp-for="AfcWildCardGame2.AwayTeam.Name" value="@this.Model.AfcWildCardGame2.AwayTeam.Name" />
+                    <label asp-for="AfcWildCardGame2.AwayTeam.Name">@this.Model.AfcWildCardGame2.AwayTeam.Name</label>
+                </div>
+
+                <div class="row">
+                    <input type="radio" name="@this.Model.NfcWildCardGame2.Name" asp-for="NfcWildCardGame2.HomeTeam.Name" value="@this.Model.NfcWildCardGame2.HomeTeam.Name" />
+                    <label asp-for="NfcWildCardGame2.HomeTeam.Name">@this.Model.NfcWildCardGame2.HomeTeam.Name</label>
+                    <input type="radio" name="@this.Model.NfcWildCardGame2.Name" asp-for="NfcWildCardGame2.AwayTeam.Name" value="@this.Model.NfcWildCardGame2.AwayTeam.Name" />
+                    <label asp-for="NfcWildCardGame2.AwayTeam.Name">@this.Model.NfcWildCardGame2.AwayTeam.Name</label>
+                </div>
+
+                <div class="row">
+                    <input type="radio" name="@this.Model.AfcWildCardGame3.Name" asp-for="AfcWildCardGame3.HomeTeam.Name" value="@this.Model.AfcWildCardGame3.HomeTeam.Name" />
+                    <label asp-for="AfcWildCardGame3.HomeTeam.Name">@this.Model.AfcWildCardGame3.HomeTeam.Name</label>
+                    <input type="radio" name="@this.Model.AfcWildCardGame3.Name" asp-for="AfcWildCardGame3.AwayTeam.Name" value="@this.Model.AfcWildCardGame3.AwayTeam.Name" />
+                    <label asp-for="AfcWildCardGame3.AwayTeam.Name">@this.Model.AfcWildCardGame3.AwayTeam.Name</label>
+                </div>
+
+                <div class="row">
+                    <input type="radio" name="@this.Model.NfcWildCardGame3.Name" asp-for="NfcWildCardGame3.HomeTeam.Name" value="@this.Model.NfcWildCardGame3.HomeTeam.Name" />
+                    <label asp-for="NfcWildCardGame3.HomeTeam.Name">@this.Model.NfcWildCardGame3.HomeTeam.Name</label>
+                    <input type="radio" name="@this.Model.NfcWildCardGame3.Name" asp-for="NfcWildCardGame3.AwayTeam.Name" value="@this.Model.NfcWildCardGame3.AwayTeam.Name" />
+                    <label asp-for="NfcWildCardGame3.AwayTeam.Name">@this.Model.NfcWildCardGame3.AwayTeam.Name</label>
+                </div>
+            </div>
+
+            <div class="pp-button-bar">
+                <button type="submit">Save</button>
+                <button type="reset">Cancel</button>
+            </div>
         </form>
-    </div>
-
-    <div class="row">
-        <div>
-            <input type="radio" name="@this.Model.AfcRound1Game1.Name" asp-for="AfcRound1Game1.HomeTeam.Name" value="@this.Model.AfcRound1Game1.HomeTeam.Name" />
-            <label asp-for="AfcRound1Game1.HomeTeam.Name">@this.Model.AfcRound1Game1.HomeTeam.Name</label>
-            <input type="radio" name="@this.Model.AfcRound1Game1.Name" asp-for="AfcRound1Game1.AwayTeam.Name" value="@this.Model.AfcRound1Game1.AwayTeam.Name" />
-            <label asp-for="AfcRound1Game1.AwayTeam.Name">@this.Model.AfcRound1Game1.AwayTeam.Name</label>
-        </div>
-    </div>
-
-    <div class="row">
-        <input type="radio" name="game1" value="Tennessee Titans" />
-        <label for="html">Tennessee Titans</label>
-        <input type="radio" name="game1" value="Baltimore Ravens" />
-        <label for="html">Baltimore Ravens</label>
-    </div>
-
-    <div class="pp-button-bar">
-        <button type="submit">Save</button>
-        <button type="reset">Cancel</button>
     </div>
 </div>
