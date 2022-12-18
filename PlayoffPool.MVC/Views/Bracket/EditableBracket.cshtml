@@ -13,15 +13,17 @@
 
         <div class="container">
             <div class="row">
-                <div class="col">
+                <div class="col afc">
+                    <span class ="pp-conference-name">AFC</span>
                     @for (int i = 0; i < this.Model.AfcRounds.Count(); i++)
                     {
                         <input type="hidden" asp-for="AfcRounds[i].Conference" />
                         <input type="hidden" asp-for="AfcRounds[i].RoundNumber" />
                         <div class="row">
+                            <span class="pp-round-name">Round @this.Model.AfcRounds[i].RoundNumber</span>
                             @for (int j = 0; j < this.Model.AfcRounds[i].Games.Count(); j++)
                             {
-                                <div class="pp-matchup">
+                                <div class="pp-matchup pp-matchup-afc">
                                     <input type="hidden" asp-for="AfcRounds[i].Games[j].Name" />
                                     <span class="pp-game-name">@this.Model.AfcRounds[i].Games[j].Name</span>
                                     <div class="form-check">
@@ -48,16 +50,17 @@
                     }
                 </div>
 
-                <div class="col">
+                <div class="col nfc">
+                    <span class="pp-conference-name">NFC</span>
                     @for (int i = 0; i < this.Model.NfcRounds.Count(); i++)
                     {
                         <input type="hidden" asp-for="NfcRounds[i].Conference" />
                         <input type="hidden" asp-for="NfcRounds[i].RoundNumber" />
                         <div class="row">
-
+                            <span class="pp-round-name">Round @this.Model.NfcRounds[i].RoundNumber</span>
                             @for (int j = 0; j < this.Model.NfcRounds[i].Games.Count(); j++)
                             {
-                                <div class="pp-matchup">
+                                <div class="pp-matchup pp-matchup-nfc">
                                     <input type="hidden" asp-for="NfcRounds[i].Games[j].Name" />
                                     <span class="pp-game-name">@this.Model.NfcRounds[i].Games[j].Name</span>
                                     <div class="form-check">

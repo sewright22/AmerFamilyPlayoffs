@@ -56,6 +56,47 @@ body {
     padding-bottom: .5rem;
 }
 
+.pp-conference-name {
+    font-weight: bold;
+    font-size: 3rem;
+    color: white;
+}
+
+.afc {
+    background-color: rgba(213,10,10,0.50);
+    padding: 0.5rem 2rem 2rem 2rem;
+    border: 1px solid white;
+}
+
+.nfc {
+    background-color: rgba(1,51,105, 0.70);
+    padding: 0.5rem 2rem 2rem 2rem;
+}
+
+.pp-round-name {
+    font-weight: 200;
+    font-size: 1.25rem;
+    color: white;
+    text-align: center;
+}
+
+.pp-matchup {
+    border: 1px solid transparent;
+    padding: 1rem;
+    border-radius: 0.8rem;
+    margin: 0.5rem auto 0.5rem auto;
+    width: 75%;
+    background-color: white;
+}
+
+.pp-matchup-afc {
+    box-shadow: 0.25rem 0.25rem 0.25rem darkred;
+}
+
+.pp-matchup-nfc {
+    box-shadow: 0.25rem 0.25rem 0.25rem #031d45;
+}
+
 p {
     padding: 2rem;
     text-align: center;
