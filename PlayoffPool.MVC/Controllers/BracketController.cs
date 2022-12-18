@@ -32,56 +32,37 @@ namespace PlayoffPool.MVC.Controllers
             BracketViewModel.Name = "Test";
             BracketViewModel.CanEdit = true;
 
-            BracketViewModel.AfcWildCardGame1 = this.BuildMatchup(nameof(BracketViewModel.AfcWildCardGame1), afcTeams, 4, 5);
-            BracketViewModel.AfcWildCardGame2 = this.BuildMatchup(nameof(BracketViewModel.AfcWildCardGame2), afcTeams, 3, 6);
-            BracketViewModel.AfcWildCardGame3 = this.BuildMatchup(nameof(BracketViewModel.AfcWildCardGame3), afcTeams, 2, 7);
+            var afcWildcardRound = new RoundViewModel
+            {
+                RoundNumber = 1,
+                Conference = "AFC",
+            };
 
-            BracketViewModel.NfcWildCardGame1 = this.BuildMatchup(nameof(BracketViewModel.NfcWildCardGame1), nfcTeams, 4, 5);
-            BracketViewModel.NfcWildCardGame2 = this.BuildMatchup(nameof(BracketViewModel.NfcWildCardGame2), nfcTeams, 3, 6);
-            BracketViewModel.NfcWildCardGame3 = this.BuildMatchup(nameof(BracketViewModel.NfcWildCardGame3), nfcTeams, 2, 7);
+            var nfcWildcardRound = new RoundViewModel
+            {
+                RoundNumber = 1,
+                Conference = "NFC",
+            };
 
-            //model.NfcWildCardGame1 = new Models.Bracket.Matchup
-            //{
-            //    Name = nameof(model.NfcWildCardGame1),
-            //    HomeTeam = nfcTeams.GetTeamFromSeed(4),
-            //    AwayTeam = nfcTeams.GetTeamFromSeed(5),
-            //};
+            afcWildcardRound.Games.Add(this.BuildMatchup("AFC Wildcard Game 1", afcTeams, 1, 4, 5));
+            afcWildcardRound.Games.Add(this.BuildMatchup("AFC Wildcard Game 2", afcTeams, 2, 3, 6));
+            afcWildcardRound.Games.Add(this.BuildMatchup("AFC Wildcard Game 3", afcTeams, 3, 2, 7));
 
-            //model.AfcWildCardGame2 = new Models.Bracket.Matchup
-            //{
-            //    Name = nameof(model.AfcWildCardGame2),
-            //    HomeTeam = afcTeams.GetTeamFromSeed(3),
-            //    AwayTeam = afcTeams.GetTeamFromSeed(6),
-            //};
+            nfcWildcardRound.Games.Add(this.BuildMatchup("NFC Wildcard Game 1", nfcTeams, 1, 4, 5));
+            nfcWildcardRound.Games.Add(this.BuildMatchup("NFC Wildcard Game 2", nfcTeams, 2, 3, 6));
+            nfcWildcardRound.Games.Add(this.BuildMatchup("NFC Wildcard Game 3", nfcTeams, 3, 2, 7));
 
-            //model.NfcWildCardGame2 = new Models.Bracket.Matchup
-            //{
-            //    Name = nameof(model.NfcWildCardGame2),
-            //    HomeTeam = nfcTeams.GetTeamFromSeed(3),
-            //    AwayTeam = nfcTeams.GetTeamFromSeed(6),
-            //};
-
-            //model.AfcWildCardGame3 = new Models.Bracket.Matchup
-            //{
-            //    Name = nameof(model.AfcWildCardGame3),
-            //    HomeTeam = afcTeams.GetTeamFromSeed(2),
-            //    AwayTeam = afcTeams.GetTeamFromSeed(7),
-            //};
-
-            //model.NfcWildCardGame3 = new Models.Bracket.Matchup
-            //{
-            //    Name = nameof(model.NfcWildCardGame3),
-            //    HomeTeam = nfcTeams.GetTeamFromSeed(2),
-            //    AwayTeam = nfcTeams.GetTeamFromSeed(7),
-            //};
+            BracketViewModel.AfcRounds.Add(afcWildcardRound);
+            BracketViewModel.NfcRounds.Add(nfcWildcardRound);
 
             return View(BracketViewModel);
         }
 
-        private MatchupViewModel BuildMatchup(string name, IQueryable<PlayoffTeam> teams, int seed1, int seed2)
+        private MatchupViewModel BuildMatchup(string name, IQueryable<PlayoffTeam> teams, int gameNumber, int seed1, int seed2)
         {
             return new MatchupViewModel
             {
+                GameNumber = gameNumber,
                 Name = name,
                 HomeTeam = this.Mapper.Map<TeamViewModel>(teams.GetTeamFromSeed(Math.Min(seed1, seed2))),
                 AwayTeam = this.Mapper.Map<TeamViewModel>(teams.GetTeamFromSeed(Math.Max(seed1, seed2))),
@@ -93,12 +74,97 @@ namespace PlayoffPool.MVC.Controllers
         [Authorize]
         public IActionResult Create(BracketViewModel BracketViewModel)
         {
-            if (this.ModelState.IsValid == false)
+            if (this.ModelState.IsValid)
             {
-                return this.View(BracketViewModel);
+                var afcTeams = this.Context.PlayoffTeams.AsNoTracking().Include("SeasonTeam.Team").FilterConference("AFC");
+                var nfcTeams = this.Context.PlayoffTeams.AsNoTracking().Include("SeasonTeam.Team").FilterConference("NFC");
+                var afcRounds = new List<RoundViewModel>(BracketViewModel.AfcRounds);
+                var nfcRounds = new List<RoundViewModel>(BracketViewModel.NfcRounds);
+
+                if (afcRounds.Max(x => x.RoundNumber) == 1)
+                {
+                    var afcDivisionalRound = new RoundViewModel
+                    {
+                        RoundNumber = 2,
+                        Conference = "AFC",
+                    };
+
+                    List<MatchupViewModel> afcWildcardGames = afcRounds.Single(x => x.RoundNumber == 1).Games.ToList();
+
+                    var pickedAfcWinners = this.GetWinners(afcWildcardGames).OrderByDescending(x => x.Seed).ToList();
+
+                    afcDivisionalRound.Games.Add(this.BuildMatchup("AFC Divisional Game 1", afcTeams, 1, 1, pickedAfcWinners[0].Seed));
+                    afcDivisionalRound.Games.Add(this.BuildMatchup("AFC Divisional Game 2", afcTeams, 1, pickedAfcWinners[2].Seed, pickedAfcWinners[1].Seed));
+                    BracketViewModel.AfcRounds.Add(afcDivisionalRound);
+                }
+
+                if (nfcRounds.Max(x => x.RoundNumber) == 1)
+                {
+                    var nfcDivisionalRound = new RoundViewModel
+                    {
+                        RoundNumber = 2,
+                        Conference = "AFC",
+                    };
+                    List<MatchupViewModel> nfcWildcardGames = nfcRounds.Single(x => x.RoundNumber == 1).Games.ToList();
+                    var pickedNfcWinners = this.GetWinners(nfcWildcardGames).OrderByDescending(x => x.Seed).ToList();
+                    nfcDivisionalRound.Games.Add(this.BuildMatchup("NFC Divisional Game 1", nfcTeams, 1, 1, pickedNfcWinners[0].Seed));
+                    nfcDivisionalRound.Games.Add(this.BuildMatchup("NFC Divisional Game 2", nfcTeams, 1, pickedNfcWinners[2].Seed, pickedNfcWinners[1].Seed));
+                    BracketViewModel.NfcRounds.Add(nfcDivisionalRound);
+                }
+
+                if (afcRounds.Max(x => x.RoundNumber) == 2)
+                {
+                    var afcChampionship = new RoundViewModel
+                    {
+                        RoundNumber = 3,
+                        Conference = "AFC",
+                    };
+
+                    List<MatchupViewModel> afcDivisionalGames = afcRounds.Single(x => x.RoundNumber == 2).Games.ToList();
+                    var pickedAfcWinners = this.GetWinners(afcDivisionalGames).OrderByDescending(x => x.Seed).ToList();
+                    afcChampionship.Games.Add(this.BuildMatchup("AFC Championship Game", afcTeams, 1, pickedAfcWinners[1].Seed, pickedAfcWinners[0].Seed));
+                    BracketViewModel.AfcRounds.Add(afcChampionship);
+                }
+
+                if (nfcRounds.Max(x => x.RoundNumber) == 2)
+                {
+                    var nfcChampionship = new RoundViewModel
+                    {
+                        RoundNumber = 3,
+                        Conference = "NFC",
+                    };
+                    List<MatchupViewModel> nfcDivisionalGames = nfcRounds.Single(x => x.RoundNumber == 2).Games.ToList();
+                    var pickedNfcWinners = this.GetWinners(nfcDivisionalGames).OrderByDescending(x => x.Seed).ToList();
+                    nfcChampionship.Games.Add(this.BuildMatchup("NFC Championship Game", nfcTeams, 1, pickedNfcWinners[1].Seed, pickedNfcWinners[0].Seed));
+                    BracketViewModel.NfcRounds.Add(nfcChampionship);
+                }
+
+                if (afcRounds.Max(x => x.RoundNumber) == 3 && nfcRounds.Max(x => x.RoundNumber) == 3 && BracketViewModel.SuperBowl == null)
+                {
+                    List<MatchupViewModel> afcChampionshipGame = afcRounds.Single(x => x.RoundNumber == 3).Games.ToList();
+                    List<MatchupViewModel> nfcChampionshipGame = nfcRounds.Single(x => x.RoundNumber == 3).Games.ToList();
+                    var pickedAfcWinner = this.GetWinners(afcChampionshipGame).Single();
+                    var pickedNfcWinner = this.GetWinners(nfcChampionshipGame).Single();
+                    pickedAfcWinner.ViewId = Guid.NewGuid().ToString();
+                    pickedNfcWinner.ViewId = Guid.NewGuid().ToString();
+                    BracketViewModel.SuperBowl = new MatchupViewModel
+                    {
+                        Name = "Super Bowl",
+                        GameNumber = 1,
+                        HomeTeam = pickedAfcWinner,
+                        AwayTeam = pickedNfcWinner,
+                    };
+                }
             }
 
-            return View(BracketViewModel);
+            return this.View(BracketViewModel);
+        }
+
+        private List<TeamViewModel> GetWinners(List<MatchupViewModel> games)
+        {
+            var winningIds = games.Select(x => x.SelectedWinner.Value).ToList();
+
+            return games.Select(x => winningIds.Contains(x.HomeTeam.Id) ? x.HomeTeam : x.AwayTeam).ToList();
         }
     }
 }

@@ -14,183 +14,105 @@
         <div class="container">
             <div class="row">
                 <div class="col">
-                    <div class="row">
-                        @if (this.Model.AfcWildCardGame1 != null)
-                        {
-                            <div class="pp-matchup">
-                                <input type="hidden" asp-for="AfcWildCardGame1!.Name" />
-                                <span class="pp-game-name">AFC Wildcard Game 1</span>
-                                <div class="form-check">
-                                    <input type="hidden" asp-for="AfcWildCardGame1!.HomeTeam.ViewId" />
-                                    <input type="hidden" asp-for="AfcWildCardGame1!.HomeTeam.Id" />
-                                    <input type="hidden" asp-for="AfcWildCardGame1!.HomeTeam.Name" />
-                                    <input class="form-check-input" type="radio" asp-for="AfcWildCardGame1!.SelectedWinner" id="@this.Model.AfcWildCardGame1.HomeTeam.ViewId" value="@this.Model.AfcWildCardGame1.HomeTeam.Id" />
-                                    <label for="@this.Model.AfcWildCardGame1.HomeTeam.ViewId">@this.Model.AfcWildCardGame1.HomeTeam.Name</label>
+                    @for (int i = 0; i < this.Model.AfcRounds.Count(); i++)
+                    {
+                        <input type="hidden" asp-for="AfcRounds[i].Conference" />
+                        <input type="hidden" asp-for="AfcRounds[i].RoundNumber" />
+                        <div class="row">
+                            @for (int j = 0; j < this.Model.AfcRounds[i].Games.Count(); j++)
+                            {
+                                <div class="pp-matchup">
+                                    <input type="hidden" asp-for="AfcRounds[i].Games[j].Name" />
+                                    <span class="pp-game-name">@this.Model.AfcRounds[i].Games[j].Name</span>
+                                    <div class="form-check">
+                                        <input type="hidden" asp-for="AfcRounds[i].Games[j].HomeTeam.ViewId" />
+                                        <input type="hidden" asp-for="AfcRounds[i].Games[j].HomeTeam.Id" />
+                                        <input type="hidden" asp-for="AfcRounds[i].Games[j].HomeTeam.Name" />
+                                        <input type="hidden" asp-for="AfcRounds[i].Games[j].HomeTeam.Seed" />
+                                        <input class="form-check-input" type="radio" asp-for="AfcRounds[i].Games[j].SelectedWinner" id="@this.Model.AfcRounds[i].Games[j].HomeTeam.ViewId" value="@this.Model.AfcRounds[i].Games[j].HomeTeam.Id" />
+                                        <label for="@this.Model.AfcRounds[i].Games[j].HomeTeam.ViewId">@this.Model.AfcRounds[i].Games[j].HomeTeam.Name</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="hidden" asp-for="AfcRounds[i].Games[j].AwayTeam.ViewId" />
+                                        <input type="hidden" asp-for="AfcRounds[i].Games[j].AwayTeam.Id" />
+                                        <input type="hidden" asp-for="AfcRounds[i].Games[j].AwayTeam.Name" />
+                                        <input type="hidden" asp-for="AfcRounds[i].Games[j].AwayTeam.Seed" />
+                                        <input class="form-check-input" type="radio" asp-for="AfcRounds[i].Games[j].SelectedWinner" id="@this.Model.AfcRounds[i].Games[j].AwayTeam.ViewId" value="@this.Model.AfcRounds[i].Games[j].AwayTeam.Id" />
+                                        <label for="@this.Model.AfcRounds[i].Games[j].AwayTeam.ViewId">@this.Model.AfcRounds[i].Games[j].AwayTeam.Name</label>
+                                    </div>
+                                    <span asp-validation-for="AfcRounds[i].Games[j].SelectedWinner" class="text-danger"></span>
                                 </div>
-                                <div class="form-check">
-                                    <input type="hidden" asp-for="AfcWildCardGame1!.AwayTeam.ViewId" />
-                                    <input type="hidden" asp-for="AfcWildCardGame1!.AwayTeam.Id" />
-                                    <input type="hidden" asp-for="AfcWildCardGame1!.AwayTeam.Name" />
-                                    <input class="form-check-input" type="radio" asp-for="AfcWildCardGame1!.SelectedWinner" id="@this.Model.AfcWildCardGame1.AwayTeam.ViewId" value="@this.Model.AfcWildCardGame1.AwayTeam.Id" />
-                                    <label for="@this.Model.AfcWildCardGame1.AwayTeam.ViewId">@this.Model.AfcWildCardGame1.AwayTeam.Name</label>
-                                </div>
-                                <span asp-validation-for="AfcWildCardGame1!.SelectedWinner" class="text-danger"></span>
-                            </div>
-                        }
-                        else
-                        {
-                            <span class="pp-error">@error</span>
-                        }
-                    </div>
+                            }
 
-                    <div class="row">
-                        @if (this.Model.AfcWildCardGame2 != null)
-                        {
-                            <div class="pp-matchup">
-                                <input type="hidden" asp-for="AfcWildCardGame2!.Name" />
-                                <span class="pp-game-name">AFC Wildcard Game 2</span>
-                                <div class="form-check">
-                                    <input type="hidden" asp-for="AfcWildCardGame2!.HomeTeam.ViewId" />
-                                    <input type="hidden" asp-for="AfcWildCardGame2!.HomeTeam.Id" />
-                                    <input type="hidden" asp-for="AfcWildCardGame2!.HomeTeam.Name" />
-                                    <input class="form-check-input" type="radio" asp-for="AfcWildCardGame2!.SelectedWinner" id="@this.Model.AfcWildCardGame2.HomeTeam.ViewId" value="@this.Model.AfcWildCardGame2.HomeTeam.Id" />
-                                    <label for="@this.Model.AfcWildCardGame2.HomeTeam.ViewId">@this.Model.AfcWildCardGame2.HomeTeam.Name</label>
-                                </div>
-                                <div class="form-check">
-                                    <input type="hidden" asp-for="AfcWildCardGame2!.AwayTeam.ViewId" />
-                                    <input type="hidden" asp-for="AfcWildCardGame2!.AwayTeam.Id" />
-                                    <input type="hidden" asp-for="AfcWildCardGame2!.AwayTeam.Name" />
-                                    <input class="form-check-input" type="radio" asp-for="AfcWildCardGame2!.SelectedWinner" id="@this.Model.AfcWildCardGame2.AwayTeam.ViewId" value="@this.Model.AfcWildCardGame2.AwayTeam.Id" />
-                                    <label for="@this.Model.AfcWildCardGame2.AwayTeam.ViewId">@this.Model.AfcWildCardGame2.AwayTeam.Name</label>
-                                </div>
-                                <span asp-validation-for="AfcWildCardGame2!.SelectedWinner" class="text-danger"></span>
-                            </div>
-                        }
-                        else
-                        {
-                            <span class="pp-error">@error</span>
-                        }
-                    </div>
-
-                    <div class="row">
-                        @if (this.Model.AfcWildCardGame3 != null)
-                        {
-                            <div class="pp-matchup">
-                                <input type="hidden" asp-for="AfcWildCardGame3!.Name" />
-                                <span class="pp-game-name">AFC Wildcard Game 3</span>
-                                <div class="form-check">
-                                    <input type="hidden" asp-for="AfcWildCardGame3!.HomeTeam.ViewId" />
-                                    <input type="hidden" asp-for="AfcWildCardGame3!.HomeTeam.Id" />
-                                    <input type="hidden" asp-for="AfcWildCardGame3!.HomeTeam.Name" />
-                                    <input class="form-check-input" type="radio" asp-for="AfcWildCardGame3!.SelectedWinner" id="@this.Model.AfcWildCardGame3.HomeTeam.ViewId" value="@this.Model.AfcWildCardGame3.HomeTeam.Id" />
-                                    <label for="@this.Model.AfcWildCardGame3.HomeTeam.ViewId">@this.Model.AfcWildCardGame3.HomeTeam.Name</label>
-                                </div>
-                                <div class="form-check">
-                                    <input type="hidden" asp-for="AfcWildCardGame3!.AwayTeam.ViewId" />
-                                    <input type="hidden" asp-for="AfcWildCardGame3!.AwayTeam.Id" />
-                                    <input type="hidden" asp-for="AfcWildCardGame3!.AwayTeam.Name" />
-                                    <input class="form-check-input" type="radio" asp-for="AfcWildCardGame3!.SelectedWinner" id="@this.Model.AfcWildCardGame3.AwayTeam.ViewId" value="@this.Model.AfcWildCardGame3.AwayTeam.Id" />
-                                    <label for="@this.Model.AfcWildCardGame3.AwayTeam.ViewId">@this.Model.AfcWildCardGame3.AwayTeam.Name</label>
-                                </div>
-                                <span asp-validation-for="AfcWildCardGame3!.SelectedWinner" class="text-danger"></span>
-                            </div>
-                        }
-                        else
-                        {
-                            <span class="pp-error">@error</span>
-                        }
-                    </div>
+                        </div>
+                    }
                 </div>
 
                 <div class="col">
-                    <div class="row">
-                        @if (this.Model.NfcWildCardGame1 != null)
-                        {
-                            <div class="pp-matchup">
-                                <input type="hidden" asp-for="NfcWildCardGame1!.Name" />
-                                <span class="pp-game-name">Nfc Wildcard Game 1</span>
-                                <div class="form-check">
-                                    <input type="hidden" asp-for="NfcWildCardGame1!.HomeTeam.ViewId" />
-                                    <input type="hidden" asp-for="NfcWildCardGame1!.HomeTeam.Id" />
-                                    <input type="hidden" asp-for="NfcWildCardGame1!.HomeTeam.Name" />
-                                    <input class="form-check-input" type="radio" asp-for="NfcWildCardGame1!.SelectedWinner" id="@this.Model.NfcWildCardGame1.HomeTeam.ViewId" value="@this.Model.NfcWildCardGame1.HomeTeam.Id" />
-                                    <label for="@this.Model.NfcWildCardGame1.HomeTeam.ViewId">@this.Model.NfcWildCardGame1.HomeTeam.Name</label>
-                                </div>
-                                <div class="form-check">
-                                    <input type="hidden" asp-for="NfcWildCardGame1!.AwayTeam.ViewId" />
-                                    <input type="hidden" asp-for="NfcWildCardGame1!.AwayTeam.Id" />
-                                    <input type="hidden" asp-for="NfcWildCardGame1!.AwayTeam.Name" />
-                                    <input class="form-check-input" type="radio" asp-for="NfcWildCardGame1!.SelectedWinner" id="@this.Model.NfcWildCardGame1.AwayTeam.ViewId" value="@this.Model.NfcWildCardGame1.AwayTeam.Id" />
-                                    <label for="@this.Model.NfcWildCardGame1.AwayTeam.ViewId">@this.Model.NfcWildCardGame1.AwayTeam.Name</label>
-                                </div>
-                                <span asp-validation-for="NfcWildCardGame1!.SelectedWinner" class="text-danger"></span>
-                            </div>
-                        }
-                        else
-                        {
-                            <span class="pp-error">@error</span>
-                        }
-                    </div>
+                    @for (int i = 0; i < this.Model.NfcRounds.Count(); i++)
+                    {
+                        <input type="hidden" asp-for="NfcRounds[i].Conference" />
+                        <input type="hidden" asp-for="NfcRounds[i].RoundNumber" />
+                        <div class="row">
 
-                    <div class="row">
-                        @if (this.Model.NfcWildCardGame2 != null)
-                        {
-                            <div class="pp-matchup">
-                                <input type="hidden" asp-for="NfcWildCardGame2!.Name" />
-                                <span class="pp-game-name">Nfc Wildcard Game 2</span>
-                                <div class="form-check">
-                                    <input type="hidden" asp-for="NfcWildCardGame2!.HomeTeam.ViewId" />
-                                    <input type="hidden" asp-for="NfcWildCardGame2!.HomeTeam.Id" />
-                                    <input type="hidden" asp-for="NfcWildCardGame2!.HomeTeam.Name" />
-                                    <input class="form-check-input" type="radio" asp-for="NfcWildCardGame2!.SelectedWinner" id="@this.Model.NfcWildCardGame2.HomeTeam.ViewId" value="@this.Model.NfcWildCardGame2.HomeTeam.Id" />
-                                    <label for="@this.Model.NfcWildCardGame2.HomeTeam.ViewId">@this.Model.NfcWildCardGame2.HomeTeam.Name</label>
+                            @for (int j = 0; j < this.Model.NfcRounds[i].Games.Count(); j++)
+                            {
+                                <div class="pp-matchup">
+                                    <input type="hidden" asp-for="NfcRounds[i].Games[j].Name" />
+                                    <span class="pp-game-name">@this.Model.NfcRounds[i].Games[j].Name</span>
+                                    <div class="form-check">
+                                        <input type="hidden" asp-for="NfcRounds[i].Games[j].HomeTeam.ViewId" />
+                                        <input type="hidden" asp-for="NfcRounds[i].Games[j].HomeTeam.Id" />
+                                        <input type="hidden" asp-for="NfcRounds[i].Games[j].HomeTeam.Name" />
+                                        <input type="hidden" asp-for="NfcRounds[i].Games[j].HomeTeam.Seed" />
+                                        <input class="form-check-input" type="radio" asp-for="NfcRounds[i].Games[j].SelectedWinner" id="@this.Model.NfcRounds[i].Games[j].HomeTeam.ViewId" value="@this.Model.NfcRounds[i].Games[j].HomeTeam.Id" />
+                                        <label for="@this.Model.NfcRounds[i].Games[j].HomeTeam.ViewId">@this.Model.NfcRounds[i].Games[j].HomeTeam.Name</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="hidden" asp-for="NfcRounds[i].Games[j].AwayTeam.ViewId" />
+                                        <input type="hidden" asp-for="NfcRounds[i].Games[j].AwayTeam.Id" />
+                                        <input type="hidden" asp-for="NfcRounds[i].Games[j].AwayTeam.Name" />
+                                        <input type="hidden" asp-for="NfcRounds[i].Games[j].AwayTeam.Seed" />
+                                        <input class="form-check-input" type="radio" asp-for="NfcRounds[i].Games[j].SelectedWinner" id="@this.Model.NfcRounds[i].Games[j].AwayTeam.ViewId" value="@this.Model.NfcRounds[i].Games[j].AwayTeam.Id" />
+                                        <label for="@this.Model.NfcRounds[i].Games[j].AwayTeam.ViewId">@this.Model.NfcRounds[i].Games[j].AwayTeam.Name</label>
+                                    </div>
+                                    <span asp-validation-for="NfcRounds[i].Games[j].SelectedWinner" class="text-danger"></span>
                                 </div>
-                                <div class="form-check">
-                                    <input type="hidden" asp-for="NfcWildCardGame2!.AwayTeam.ViewId" />
-                                    <input type="hidden" asp-for="NfcWildCardGame2!.AwayTeam.Id" />
-                                    <input type="hidden" asp-for="NfcWildCardGame2!.AwayTeam.Name" />
-                                    <input class="form-check-input" type="radio" asp-for="NfcWildCardGame2!.SelectedWinner" id="@this.Model.NfcWildCardGame2.AwayTeam.ViewId" value="@this.Model.NfcWildCardGame2.AwayTeam.Id" />
-                                    <label for="@this.Model.NfcWildCardGame2.AwayTeam.ViewId">@this.Model.NfcWildCardGame2.AwayTeam.Name</label>
-                                </div>
-                                <span asp-validation-for="NfcWildCardGame2!.SelectedWinner" class="text-danger"></span>
-                            </div>
-                        }
-                        else
-                        {
-                            <span class="pp-error">@error</span>
-                        }
-                    </div>
+                            }
 
-                    <div class="row">
-                        @if (this.Model.NfcWildCardGame3 != null)
-                        {
-                            <div class="pp-matchup">
-                                <input type="hidden" asp-for="NfcWildCardGame3!.Name" />
-                                <span class="pp-game-name">Nfc Wildcard Game 3</span>
-                                <div class="form-check">
-                                    <input type="hidden" asp-for="NfcWildCardGame3!.HomeTeam.ViewId" />
-                                    <input type="hidden" asp-for="NfcWildCardGame3!.HomeTeam.Id" />
-                                    <input type="hidden" asp-for="NfcWildCardGame3!.HomeTeam.Name" />
-                                    <input class="form-check-input" type="radio" asp-for="NfcWildCardGame3!.SelectedWinner" id="@this.Model.NfcWildCardGame3.HomeTeam.ViewId" value="@this.Model.NfcWildCardGame3.HomeTeam.Id" />
-                                    <label for="@this.Model.NfcWildCardGame3.HomeTeam.ViewId">@this.Model.NfcWildCardGame3.HomeTeam.Name</label>
-                                </div>
-                                <div class="form-check">
-                                    <input type="hidden" asp-for="NfcWildCardGame3!.AwayTeam.ViewId" />
-                                    <input type="hidden" asp-for="NfcWildCardGame3!.AwayTeam.Id" />
-                                    <input type="hidden" asp-for="NfcWildCardGame3!.AwayTeam.Name" />
-                                    <input class="form-check-input" type="radio" asp-for="NfcWildCardGame3!.SelectedWinner" id="@this.Model.NfcWildCardGame3.AwayTeam.ViewId" value="@this.Model.NfcWildCardGame3.AwayTeam.Id" />
-                                    <label for="@this.Model.NfcWildCardGame3.AwayTeam.ViewId">@this.Model.NfcWildCardGame3.AwayTeam.Name</label>
-                                </div>
-                                <span asp-validation-for="NfcWildCardGame3!.SelectedWinner" class="text-danger"></span>
-                            </div>
-                        }
-                        else
-                        {
-                            <span class="pp-error">@error</span>
-                        }
-                    </div>
+                        </div>
+                    }
                 </div>
             </div>
+
+            @if (this.Model.SuperBowl != null)
+            {
+                <div class="row">
+                    <div class="container">
+                        <div class="pp-matchup">
+                            <input type="hidden" asp-for="SuperBowl.Name" />
+                            <span class="pp-game-name">@this.Model.SuperBowl.Name</span>
+                            <div class="form-check">
+                                <input type="hidden" asp-for="SuperBowl.HomeTeam.ViewId" />
+                                <input type="hidden" asp-for="SuperBowl.HomeTeam.Id" />
+                                <input type="hidden" asp-for="SuperBowl.HomeTeam.Name" />
+                                <input type="hidden" asp-for="SuperBowl.HomeTeam.Seed" />
+                                <input class="form-check-input" type="radio" asp-for="SuperBowl.SelectedWinner" id="@this.Model.SuperBowl.HomeTeam.ViewId" value="@this.Model.SuperBowl.HomeTeam.Id" />
+                                <label for="@this.Model.SuperBowl.HomeTeam.ViewId">@this.Model.SuperBowl.HomeTeam.Name</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="hidden" asp-for="SuperBowl.AwayTeam.ViewId" />
+                                <input type="hidden" asp-for="SuperBowl.AwayTeam.Id" />
+                                <input type="hidden" asp-for="SuperBowl.AwayTeam.Name" />
+                                <input type="hidden" asp-for="SuperBowl.AwayTeam.Seed" />
+                                <input class="form-check-input" type="radio" asp-for="SuperBowl.SelectedWinner" id="@this.Model.SuperBowl.AwayTeam.ViewId" value="@this.Model.SuperBowl.AwayTeam.Id" />
+                                <label for="@this.Model.SuperBowl.AwayTeam.ViewId">@this.Model.SuperBowl.AwayTeam.Name</label>
+                            </div>
+                            <span asp-validation-for="SuperBowl.SelectedWinner" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
 
         <div class="pp-button-bar">

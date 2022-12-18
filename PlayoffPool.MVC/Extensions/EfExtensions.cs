@@ -9,7 +9,7 @@ namespace PlayoffPool.MVC.Extensions
             return playoffTeams.Where(x=>x.SeasonTeam.Conference.Name== conference);
         }
 
-        public static Team GetTeamFromSeed(this IQueryable<PlayoffTeam> conferenceTeams, int seed)
+        public static PlayoffTeam GetTeamFromSeed(this IQueryable<PlayoffTeam> conferenceTeams, int seed)
         {
             var playoffTeam = conferenceTeams.FirstOrDefault(x => x.Seed == seed);
 
@@ -18,7 +18,7 @@ namespace PlayoffPool.MVC.Extensions
                 throw new KeyNotFoundException(nameof(seed));
             }
 
-            return playoffTeam.SeasonTeam.Team;
+            return playoffTeam;
         }
     }
 }

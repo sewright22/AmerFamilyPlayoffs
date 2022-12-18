@@ -11,23 +11,26 @@ namespace PlayoffPool.MVC.Models.Bracket
 
         public bool CanEdit { get; set; }
 
-        public MatchupViewModel? AfcWildCardGame1 { get; set; }
-        public MatchupViewModel? NfcWildCardGame1 { get; set; }
+        public List<RoundViewModel> AfcRounds { get; set; } = new List<RoundViewModel>();
+        public List<RoundViewModel> NfcRounds { get; set; } = new List<RoundViewModel>();
 
-        public MatchupViewModel? AfcWildCardGame2 { get; set; }
-        public MatchupViewModel? NfcWildCardGame2 { get; set; }
+        //public MatchupViewModel? AfcWildCardGame1 { get; set; }
+        //public MatchupViewModel? NfcWildCardGame1 { get; set; }
 
-        public MatchupViewModel? AfcWildCardGame3 { get; set; }
-        public MatchupViewModel? NfcWildCardGame3 { get; set; }
+        //public MatchupViewModel? AfcWildCardGame2 { get; set; }
+        //public MatchupViewModel? NfcWildCardGame2 { get; set; }
 
-        public MatchupViewModel? AfcDivisionalGame1 { get; set; }
-        public MatchupViewModel? NfcDivisionalGame1 { get; set; }
+        //public MatchupViewModel? AfcWildCardGame3 { get; set; }
+        //public MatchupViewModel? NfcWildCardGame3 { get; set; }
 
-        public MatchupViewModel? AfcDivisionalGame2 { get; set; }
-        public MatchupViewModel? NfcDivisionalGame2 { get; set; }
+        //public MatchupViewModel? AfcDivisionalGame1 { get; set; }
+        //public MatchupViewModel? NfcDivisionalGame1 { get; set; }
 
-        public MatchupViewModel? AfcChampionship { get; set; }
-        public MatchupViewModel? NfcChampionship { get; set; }
+        //public MatchupViewModel? AfcDivisionalGame2 { get; set; }
+        //public MatchupViewModel? NfcDivisionalGame2 { get; set; }
+
+        //public MatchupViewModel? AfcChampionship { get; set; }
+        //public MatchupViewModel? NfcChampionship { get; set; }
         public MatchupViewModel? SuperBowl { get; set; }
     }
 }

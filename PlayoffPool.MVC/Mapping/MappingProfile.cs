@@ -16,7 +16,16 @@ namespace PlayoffPool.MVC.Mapping
                 .ForMember(u => u.Email, opt => opt.MapFrom(x => x.Email));
 
             this.CreateMap<Team, TeamViewModel>()
-                .ForMember(vm => vm.Name, opt => opt.MapFrom(t => $"{t.Location} {t.Name}"));
+                .ForMember(vm => vm.Name, opt => opt.MapFrom(t => $"{t.Location} {t.Name}"))
+                .ForPath(x => x.Id, opt => opt.MapFrom(x => x.Id));
+
+            this.CreateMap<PlayoffTeam, TeamViewModel>()
+                .IncludeMembers(x => x.SeasonTeam)
+                .ForMember(x => x.Id, opt => opt.Ignore());
+
+            this.CreateMap<SeasonTeam, TeamViewModel>()
+                .IncludeMembers(x => x.Team)
+                .ForMember(x => x.Id, opt => opt.Ignore());
         }
     }
 }
