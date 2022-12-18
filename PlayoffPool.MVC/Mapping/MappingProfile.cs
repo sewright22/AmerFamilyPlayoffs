@@ -1,6 +1,7 @@
 ﻿using AmerFamilyPlayoffs.Data;
 using AutoMapper;
 using PlayoffPool.MVC.Models;
+using PlayoffPool.MVC.Models.Bracket;
 
 namespace PlayoffPool.MVC.Mapping
 {
@@ -13,6 +14,9 @@ namespace PlayoffPool.MVC.Mapping
 
             this.CreateMap<LoginViewModel, User>()
                 .ForMember(u => u.Email, opt => opt.MapFrom(x => x.Email));
+
+            this.CreateMap<Team, TeamViewModel>()
+                .ForMember(vm => vm.Name, opt => opt.MapFrom(t => $"{t.Location} {t.Name}"));
         }
     }
 }
