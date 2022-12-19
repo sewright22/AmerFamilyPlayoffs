@@ -58,17 +58,6 @@ namespace PlayoffPool.MVC.Controllers
             return View(BracketViewModel);
         }
 
-        private MatchupViewModel BuildMatchup(string name, IQueryable<PlayoffTeam> teams, int gameNumber, int seed1, int seed2)
-        {
-            return new MatchupViewModel
-            {
-                GameNumber = gameNumber,
-                Name = name,
-                HomeTeam = this.Mapper.Map<TeamViewModel>(teams.GetTeamFromSeed(Math.Min(seed1, seed2))),
-                AwayTeam = this.Mapper.Map<TeamViewModel>(teams.GetTeamFromSeed(Math.Max(seed1, seed2))),
-            };
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -143,21 +132,47 @@ namespace PlayoffPool.MVC.Controllers
                 {
                     List<MatchupViewModel> afcChampionshipGame = afcRounds.Single(x => x.RoundNumber == 3).Games.ToList();
                     List<MatchupViewModel> nfcChampionshipGame = nfcRounds.Single(x => x.RoundNumber == 3).Games.ToList();
-                    var pickedAfcWinner = this.GetWinners(afcChampionshipGame).Single();
-                    var pickedNfcWinner = this.GetWinners(nfcChampionshipGame).Single();
-                    pickedAfcWinner.ViewId = Guid.NewGuid().ToString();
-                    pickedNfcWinner.ViewId = Guid.NewGuid().ToString();
+                    var pickedAfcWinner = this.GetWinners(afcChampionshipGame).Single().Seed;
+                    var pickedNfcWinner = this.GetWinners(nfcChampionshipGame).Single().Seed;
+                    var homeTeam = this.Mapper.Map<TeamViewModel>(afcTeams.GetTeamFromSeed(pickedAfcWinner));
+                    var awayTeam = this.Mapper.Map<TeamViewModel>(nfcTeams.GetTeamFromSeed(pickedNfcWinner));
                     BracketViewModel.SuperBowl = new MatchupViewModel
                     {
                         Name = "Super Bowl",
                         GameNumber = 1,
-                        HomeTeam = pickedAfcWinner,
-                        AwayTeam = pickedNfcWinner,
+                        HomeTeam = homeTeam,
+                        AwayTeam = awayTeam,
                     };
+                }
+
+                if (BracketViewModel.SuperBowl is not null && BracketViewModel.SuperBowl.SelectedWinner.HasValue)
+                {
+                    // Save to database.
+                    if (BracketViewModel.Id == 0)
+                    {
+                        BracketPrediction prediction = this.Mapper.Map<BracketPrediction>(BracketViewModel);
+                        prediction.Playoff = this.Context.Playoffs.FirstOrDefault(x => x.Season.Year == 2021);
+                        prediction.MatchupPredictions = new List<MatchupPrediction>();
+                        prediction.MatchupPredictions.Add(this.Mapper.Map<MatchupPrediction>(BracketViewModel.AfcRounds[0].Games[0]));
+                        this.Context.Add(prediction);
+                        this.Context.SaveChanges();
+                        var test = prediction;
+                    }
                 }
             }
 
             return this.View(BracketViewModel);
+        }
+
+        private MatchupViewModel BuildMatchup(string name, IQueryable<PlayoffTeam> teams, int gameNumber, int seed1, int seed2)
+        {
+            return new MatchupViewModel
+            {
+                GameNumber = gameNumber,
+                Name = name,
+                HomeTeam = this.Mapper.Map<TeamViewModel>(teams.GetTeamFromSeed(Math.Min(seed1, seed2))),
+                AwayTeam = this.Mapper.Map<TeamViewModel>(teams.GetTeamFromSeed(Math.Max(seed1, seed2))),
+            };
         }
 
         private List<TeamViewModel> GetWinners(List<MatchupViewModel> games)
