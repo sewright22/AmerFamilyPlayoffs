@@ -80,13 +80,36 @@ body {
     text-align: center;
 }
 
+.pp-game-name {
+    font-style: italic;
+    font-weight: bold;
+    font-size: 1.1rem;
+    justify-self: end;
+    color: gray;
+}
+
+.pp-game-name-super-bowl {
+    display: block;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.pp-team-name {
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
 .pp-matchup {
     border: 1px solid transparent;
-    padding: 1rem;
+    padding: 0.25rem 1rem 0.5rem 1rem;
     border-radius: 0.8rem;
     margin: 0.5rem auto 0.5rem auto;
     width: 75%;
     background-color: white;
+}
+
+.pp-matchup-super-bowl {
+    width: 50%;
 }
 
 .pp-matchup-afc {
@@ -96,6 +119,7 @@ body {
 .pp-matchup-nfc {
     box-shadow: 0.25rem 0.25rem 0.25rem #031d45;
 }
+
 
 p {
     padding: 2rem;
