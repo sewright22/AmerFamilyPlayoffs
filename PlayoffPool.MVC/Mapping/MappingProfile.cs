@@ -17,19 +17,20 @@ namespace PlayoffPool.MVC.Mapping
 
             this.CreateMap<Team, TeamViewModel>()
                 .ForMember(vm => vm.Name, opt => opt.MapFrom(t => $"{t.Location} {t.Name}"))
-                .ForPath(x => x.Id, opt => opt.MapFrom(x => x.Id));
+                .ForPath(x => x.Id, opt => opt.Ignore());
 
             this.CreateMap<PlayoffTeam, TeamViewModel>()
                 .IncludeMembers(x => x.SeasonTeam)
-                .ForMember(x => x.Id, opt => opt.Ignore());
+                .ForMember(x => x.Id, opt => opt.MapFrom(x=>x.Id));
 
             this.CreateMap<SeasonTeam, TeamViewModel>()
                 .IncludeMembers(x => x.Team)
                 .ForMember(x => x.Id, opt => opt.Ignore());
 
+            this.CreateMap<BracketPrediction, BracketViewModel>();
+
             this.CreateMap<BracketViewModel, BracketPrediction>();
-            this.CreateMap<MatchupViewModel, MatchupPrediction>()
-                .ForMember(s=>s.WinningTeamId, obj=>obj.MapFrom(x=>x.SelectedWinner));
+            this.CreateMap<MatchupViewModel, MatchupPrediction>();
         }
     }
 }

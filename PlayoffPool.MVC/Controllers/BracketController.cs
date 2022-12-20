@@ -29,7 +29,7 @@ namespace PlayoffPool.MVC.Controllers
             var afcTeams = this.Context.PlayoffTeams.AsNoTracking().Include("SeasonTeam.Team").FilterConference("AFC");
             var nfcTeams = this.Context.PlayoffTeams.AsNoTracking().Include("SeasonTeam.Team").FilterConference("NFC");
 
-            BracketViewModel.Name = "Test";
+            BracketViewModel.Name = "";
             BracketViewModel.CanEdit = true;
 
             var afcWildcardRound = new RoundViewModel
@@ -65,8 +65,8 @@ namespace PlayoffPool.MVC.Controllers
         {
             if (this.ModelState.IsValid)
             {
-                var afcTeams = this.Context.PlayoffTeams.AsNoTracking().Include("SeasonTeam.Team").FilterConference("AFC");
-                var nfcTeams = this.Context.PlayoffTeams.AsNoTracking().Include("SeasonTeam.Team").FilterConference("NFC");
+                var afcTeams = this.Context.PlayoffTeams.Include("SeasonTeam.Team").FilterConference("AFC");
+                var nfcTeams = this.Context.PlayoffTeams.Include("SeasonTeam.Team").FilterConference("NFC");
                 var afcRounds = new List<RoundViewModel>(BracketViewModel.AfcRounds);
                 var nfcRounds = new List<RoundViewModel>(BracketViewModel.NfcRounds);
 
@@ -153,12 +153,69 @@ namespace PlayoffPool.MVC.Controllers
                         BracketPrediction prediction = this.Mapper.Map<BracketPrediction>(BracketViewModel);
                         prediction.Playoff = this.Context.Playoffs.FirstOrDefault(x => x.Season.Year == 2021);
                         prediction.MatchupPredictions = new List<MatchupPrediction>();
-                        prediction.MatchupPredictions.Add(this.Mapper.Map<MatchupPrediction>(BracketViewModel.AfcRounds[0].Games[0]));
+
+                        foreach (var round in BracketViewModel.AfcRounds)
+                        {
+                            foreach (var afcGame in round.Games)
+                            {
+                                var afcMatchupPrediction = this.Mapper.Map<MatchupPrediction>(afcGame);
+                                afcMatchupPrediction.PredictedWinner = afcTeams.FirstOrDefault(x => x.Id == afcGame.SelectedWinner);
+                                prediction.MatchupPredictions.Add(afcMatchupPrediction);
+                            }
+                        }
+
+                        foreach (var round in BracketViewModel.NfcRounds)
+                        {
+                            foreach (var nfcGame in round.Games)
+                            {
+                                var nfcMatchupPrediction = this.Mapper.Map<MatchupPrediction>(nfcGame);
+                                nfcMatchupPrediction.PredictedWinner = nfcTeams.FirstOrDefault(x => x.Id == nfcGame.SelectedWinner);
+                                prediction.MatchupPredictions.Add(nfcMatchupPrediction);
+                            }
+                        }
+
+                        var game = BracketViewModel.SuperBowl;
+
+                        var matchupPrediction = this.Mapper.Map<MatchupPrediction>(game);
+                        matchupPrediction.PredictedWinner = afcTeams.FirstOrDefault(x => x.Id == game.SelectedWinner) == null ? nfcTeams.FirstOrDefault(x => x.Id == game.SelectedWinner) : afcTeams.FirstOrDefault(x => x.Id == game.SelectedWinner);
+                        prediction.MatchupPredictions.Add(matchupPrediction);
+
                         this.Context.Add(prediction);
                         this.Context.SaveChanges();
-                        var test = prediction;
                     }
                 }
+            }
+
+            return this.View(BracketViewModel);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult Update(int id)
+        {
+            var bracketPrediction = this.Context.BracketPredictions.FirstOrDefault(x => x.Id == id);
+
+            if (bracketPrediction == null) 
+            {
+                return this.RedirectToAction(nameof(this.Create));
+            }
+
+            var bracketViewModel = this.Mapper.Map<BracketViewModel>(bracketPrediction);
+
+            return this.View(bracketViewModel);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public IActionResult Update(int id, BracketViewModel BracketViewModel)
+        {
+            var bracketPrediction = this.Context.BracketPredictions.FirstOrDefault(x => x.Id == id);
+
+            if (bracketPrediction == null)
+            {
+
             }
 
             return this.View(BracketViewModel);
