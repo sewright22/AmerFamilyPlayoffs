@@ -1,0 +1,37 @@
+﻿@using PlayoffPool.MVC.Models.Bracket;
+@using PlayoffPool.MVC.Helpers.TagHelpers;
+
+@model MatchupViewModel
+
+<pp-partial name="_BracketGameHiddenFields" model="@this.Model" pp-prefix="@this.ViewData.TemplateInfo.HtmlFieldPrefix" />
+
+<div class="pp-matchup pp-matchup">
+    <span class="pp-game-name">@this.Model.Name</span>
+    <div class="form-check">
+        <label>
+            @if (this.Model.IsLocked)
+            {
+                <input class="form-check-input" type="radio" asp-for="SelectedWinner" id="@this.Model.HomeTeam.ViewId" value="@this.Model.HomeTeam.Id" disabled />
+            }
+            else
+            {
+                <input class="form-check-input" type="radio" asp-for="SelectedWinner" id="@this.Model.HomeTeam.ViewId" value="@this.Model.HomeTeam.Id" />
+            }
+        </label>
+        <label class="pp-team-name" for="@this.Model.HomeTeam.ViewId">@this.Model.HomeTeam.Name (@this.Model.HomeTeam.Seed)</label>
+    </div>
+    <div class="form-check">
+        <label>
+            @if (this.Model.IsLocked)
+            {
+                <input class="form-check-input" type="radio" asp-for="SelectedWinner" id="@this.Model.AwayTeam.ViewId" value="@this.Model.AwayTeam.Id" disabled />
+            }
+            else
+            {
+                <input class="form-check-input" type="radio" asp-for="SelectedWinner" id="@this.Model.AwayTeam.ViewId" value="@this.Model.AwayTeam.Id" />
+            }
+        </label>
+        <label class="pp-team-name" for="@this.Model.AwayTeam.ViewId">@this.Model.AwayTeam.Name (@this.Model.AwayTeam.Seed)</label>
+    </div>
+    <span asp-validation-for="SelectedWinner" class="text-danger"></span>
+</div>

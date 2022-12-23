@@ -72,10 +72,21 @@ namespace PlayoffPool.MVC.Controllers
 
                 if (afcRounds.Max(x => x.RoundNumber) == 1)
                 {
+                    foreach (var round in BracketViewModel.AfcRounds)
+                    {
+                        round.IsLocked = true;
+
+                        foreach (var game in round.Games)
+                        {
+                            game.IsLocked = true;
+                        }
+                    }
+
                     var afcDivisionalRound = new RoundViewModel
                     {
                         RoundNumber = 2,
                         Conference = "AFC",
+                        IsLocked = false,
                     };
 
                     List<MatchupViewModel> afcWildcardGames = afcRounds.Single(x => x.RoundNumber == 1).Games.ToList();
@@ -89,6 +100,16 @@ namespace PlayoffPool.MVC.Controllers
 
                 if (nfcRounds.Max(x => x.RoundNumber) == 1)
                 {
+                    foreach (var round in BracketViewModel.NfcRounds)
+                    {
+                        round.IsLocked = true;
+
+                        foreach (var game in round.Games)
+                        {
+                            game.IsLocked = true;
+                        }
+                    }
+
                     var nfcDivisionalRound = new RoundViewModel
                     {
                         RoundNumber = 2,
@@ -103,6 +124,17 @@ namespace PlayoffPool.MVC.Controllers
 
                 if (afcRounds.Max(x => x.RoundNumber) == 2)
                 {
+                    // Lock previous rounds
+                    foreach (var round in BracketViewModel.AfcRounds)
+                    {
+                        round.IsLocked = true;
+
+                        foreach (var game in round.Games)
+                        {
+                            game.IsLocked = true;
+                        }
+                    }
+
                     var afcChampionship = new RoundViewModel
                     {
                         RoundNumber = 3,
@@ -117,6 +149,17 @@ namespace PlayoffPool.MVC.Controllers
 
                 if (nfcRounds.Max(x => x.RoundNumber) == 2)
                 {
+                    // Lock previous rounds
+                    foreach (var round in BracketViewModel.NfcRounds)
+                    {
+                        round.IsLocked = true;
+
+                        foreach (var game in round.Games)
+                        {
+                            game.IsLocked = true;
+                        }
+                    }
+
                     var nfcChampionship = new RoundViewModel
                     {
                         RoundNumber = 3,
@@ -130,6 +173,27 @@ namespace PlayoffPool.MVC.Controllers
 
                 if (afcRounds.Max(x => x.RoundNumber) == 3 && nfcRounds.Max(x => x.RoundNumber) == 3 && BracketViewModel.SuperBowl == null)
                 {
+                    // Lock previous rounds
+                    foreach (var round in BracketViewModel.AfcRounds)
+                    {
+                        round.IsLocked = true;
+
+                        foreach (var game in round.Games)
+                        {
+                            game.IsLocked = true;
+                        }
+                    }
+
+                    foreach (var round in BracketViewModel.NfcRounds)
+                    {
+                        round.IsLocked = true;
+
+                        foreach (var game in round.Games)
+                        {
+                            game.IsLocked = true;
+                        }
+                    }
+
                     List<MatchupViewModel> afcChampionshipGame = afcRounds.Single(x => x.RoundNumber == 3).Games.ToList();
                     List<MatchupViewModel> nfcChampionshipGame = nfcRounds.Single(x => x.RoundNumber == 3).Games.ToList();
                     var pickedAfcWinner = this.GetWinners(afcChampionshipGame).Single().Seed;
@@ -147,6 +211,27 @@ namespace PlayoffPool.MVC.Controllers
 
                 if (BracketViewModel.SuperBowl is not null && BracketViewModel.SuperBowl.SelectedWinner.HasValue)
                 {
+                    // Lock previous rounds
+                    foreach (var round in BracketViewModel.AfcRounds)
+                    {
+                        round.IsLocked = true;
+
+                        foreach (var game in round.Games)
+                        {
+                            game.IsLocked = true;
+                        }
+                    }
+
+                    foreach (var round in BracketViewModel.NfcRounds)
+                    {
+                        round.IsLocked = true;
+
+                        foreach (var game in round.Games)
+                        {
+                            game.IsLocked = true;
+                        }
+                    }
+
                     // Save to database.
                     if (BracketViewModel.Id == 0)
                     {
@@ -195,7 +280,7 @@ namespace PlayoffPool.MVC.Controllers
         {
             var bracketPrediction = this.Context.BracketPredictions.FirstOrDefault(x => x.Id == id);
 
-            if (bracketPrediction == null) 
+            if (bracketPrediction == null)
             {
                 return this.RedirectToAction(nameof(this.Create));
             }

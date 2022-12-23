@@ -1,0 +1,17 @@
+﻿@using PlayoffPool.MVC.Models.Bracket;
+@model RoundViewModel
+
+<input type="hidden" asp-for="Conference" />
+<input type="hidden" asp-for="RoundNumber" />
+<input type="hidden" asp-for="IsLocked" />
+<div class="row">
+    <span class="pp-round-name">Round @this.Model.RoundNumber</span>
+
+    @for (int j = 0; j < this.Model.Games.Count(); j++)
+    {
+        var prefix = $"{this.ViewData.TemplateInfo.HtmlFieldPrefix}.{nameof(RoundViewModel.Games)}[{j}]";
+        <pp-partial name="_BracketGame.cshtml"
+                model="this.Model.Games[j]"
+                pp-prefix="@prefix" />
+    }
+</div>

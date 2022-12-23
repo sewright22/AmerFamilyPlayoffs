@@ -4,6 +4,7 @@
     {
         public required int RoundNumber { get; set; }
         public string? Conference { get; set; }
+        public bool IsLocked { get; set; }
         public List<MatchupViewModel> Games { get; set; } = new List<MatchupViewModel>();
     }
 }

@@ -13,5 +13,6 @@ namespace PlayoffPool.MVC.Models.Bracket
         [Required(ErrorMessage = "Pick a winner for this game")]
         public int? SelectedWinner { get; set; }
         public int ActualWinner { get; set; }
+        public bool IsLocked { get; set; }
     }
 }

@@ -65,12 +65,33 @@ body {
 .afc {
     background-color: rgba(213,10,10,0.50);
     padding: 0.5rem 2rem 2rem 2rem;
-    border: 1px solid white;
 }
 
 .nfc {
     background-color: rgba(1,51,105, 0.70);
     padding: 0.5rem 2rem 2rem 2rem;
+}
+
+.pp-matchup {
+    border: 1px solid transparent;
+    padding: 0.25rem 1rem 0.5rem 1rem;
+    border-radius: 0.8rem;
+    margin: 0.5rem auto 0.5rem auto;
+    width: 75%;
+    background-color: white;
+}
+
+.afc .pp-matchup {
+    box-shadow: 0.25rem 0.25rem 0.25rem darkred;
+}
+
+.nfc .pp-matchup {
+    box-shadow: 0.25rem 0.25rem 0.25rem #031d45;
+}
+
+.super-bowl {
+    padding: 2rem;
+    background-image: linear-gradient(to right, rgba(213,10,10,0.50), rgba(1,51,105, 0.70));
 }
 
 .pp-round-name {
@@ -99,27 +120,11 @@ body {
     font-size: 1.25rem;
 }
 
-.pp-matchup {
-    border: 1px solid transparent;
-    padding: 0.25rem 1rem 0.5rem 1rem;
-    border-radius: 0.8rem;
-    margin: 0.5rem auto 0.5rem auto;
-    width: 75%;
-    background-color: white;
-}
+
 
 .pp-matchup-super-bowl {
     width: 50%;
 }
-
-.pp-matchup-afc {
-    box-shadow: 0.25rem 0.25rem 0.25rem darkred;
-}
-
-.pp-matchup-nfc {
-    box-shadow: 0.25rem 0.25rem 0.25rem #031d45;
-}
-
 
 p {
     padding: 2rem;

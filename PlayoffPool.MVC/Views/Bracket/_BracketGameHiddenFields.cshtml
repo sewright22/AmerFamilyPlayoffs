@@ -1,0 +1,18 @@
+﻿@using PlayoffPool.MVC.Models.Bracket;
+
+@model MatchupViewModel
+
+<input type="hidden" asp-for="Name" />
+<input type="hidden" asp-for="HomeTeam.ViewId" />
+<input type="hidden" asp-for="HomeTeam.Id" />
+<input type="hidden" asp-for="HomeTeam.Name" />
+<input type="hidden" asp-for="HomeTeam.Seed" />
+<input type="hidden" asp-for="AwayTeam.ViewId" />
+<input type="hidden" asp-for="AwayTeam.Id" />
+<input type="hidden" asp-for="AwayTeam.Name" />
+<input type="hidden" asp-for="AwayTeam.Seed" />
+
+@if (this.Model.IsLocked)
+{
+    <input class="form-check-input" type="hidden" asp-for="SelectedWinner" />
+}
