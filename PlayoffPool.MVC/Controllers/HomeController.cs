@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using AmerFamilyPlayoffs.Data;
 using AmerFamilyPlayoffs.Data.SeedExtensions;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,11 +18,14 @@ namespace PlayoffPool.MVC.Controllers
         private readonly AmerFamilyPlayoffContext dataContext;
         private readonly SignInManager<User> signInManager;
 
-        public HomeController(ILogger<HomeController> logger, AmerFamilyPlayoffContext dataContext, SignInManager<User> signInManager)
+        public IMapper Mapper { get; }
+
+        public HomeController(ILogger<HomeController> logger, AmerFamilyPlayoffContext dataContext, SignInManager<User> signInManager, IMapper mapper)
         {
             this.logger = logger;
             this.dataContext = dataContext;
             this.signInManager = signInManager;
+            Mapper = mapper;
             SetupDatabase();
         }
 
@@ -45,7 +50,7 @@ namespace PlayoffPool.MVC.Controllers
             }
 
             var model = new HomeViewModel();
-            model.Brackets = new List<BracketSummaryModel>();
+            model.Brackets = this.dataContext.BracketPredictions.ProjectTo<BracketSummaryModel>(this.Mapper.ConfigurationProvider).ToList();
             return View(model);
         }
 

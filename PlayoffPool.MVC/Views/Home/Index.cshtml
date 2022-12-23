@@ -12,3 +12,16 @@
     <p>It looks like you haven't made any picks.</p>
     <a href="/Bracket/Create">Create your first bracket</a>
 }
+else
+{
+    <div class="container">
+        foreach (var bracket in this.Model.Brackets)
+        {
+            <div class="row">
+            <span>bracket.Name</span>
+            <span>bracket.PredictedWinner</span>
+                <span><a href="#">Update</a></span>
+            </div>
+        }
+    </div>
+}

@@ -2,6 +2,7 @@
 using AutoMapper;
 using PlayoffPool.MVC.Models;
 using PlayoffPool.MVC.Models.Bracket;
+using PlayoffPool.MVC.Models.Home;
 
 namespace PlayoffPool.MVC.Mapping
 {
@@ -28,9 +29,11 @@ namespace PlayoffPool.MVC.Mapping
                 .ForMember(x => x.Id, opt => opt.Ignore());
 
             this.CreateMap<BracketPrediction, BracketViewModel>();
+            this.CreateMap<BracketPrediction, BracketSummaryModel>();
 
             this.CreateMap<BracketViewModel, BracketPrediction>();
             this.CreateMap<MatchupViewModel, MatchupPrediction>();
+            this.CreateMap<BracketSummaryModel, BracketPrediction>();
         }
     }
 }
