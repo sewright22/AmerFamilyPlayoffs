@@ -14,8 +14,11 @@
 
         public int PlayoffId { get; set; }
 
+        public string UserId { get; set; }
+
         public string Name { get; set; }
         public virtual Playoff Playoff { get; set; }
         public virtual List<MatchupPrediction> MatchupPredictions { get; set; }
+        public virtual User User { get; set; }
     }
 }

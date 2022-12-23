@@ -46,6 +46,7 @@ namespace PlayoffPool.MVC.Helpers
             await this.SeedSeasonTeams().ConfigureAwait(false);
             this.SeedRounds();
             await this.SeedPlayoffs().ConfigureAwait(false);
+            this.SeedPlayoffRounds();
             this.SeedPlayoffTeams();
 #if DEBUG
             await this.SeedPlayerUser().ConfigureAwait(false);
@@ -126,6 +127,24 @@ namespace PlayoffPool.MVC.Helpers
             });
 
             await this.DataContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        private void SeedPlayoffRounds()
+        {
+            foreach (var playoff in this.DataContext.Playoffs.ToList())
+            {
+                foreach (var round in this.DataContext.Rounds)
+                {
+                    this.DataContext.Add(new PlayoffRound
+                    {
+                        PlayoffId = playoff.Id,
+                        RoundId = round.Id,
+                        PointValue = round.Number,
+                    });
+                }
+            }
+
+            this.DataContext.SaveChanges();
         }
 
         private async Task SeedPlayoffs()

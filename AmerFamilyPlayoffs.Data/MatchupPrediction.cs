@@ -14,6 +14,7 @@
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public int BracketPredictionId { get; set; }
+        public int PlayoffRoundId { get; set; }
         public virtual PlayoffTeam PredictedWinner { get; set; }
     }
 }

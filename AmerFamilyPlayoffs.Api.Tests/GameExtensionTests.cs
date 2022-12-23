@@ -126,7 +126,7 @@
                                                   .With(x => x.Playoff, playoff)
                                                   .With(x => x.Round, wildCardRound)
                                                   .With(x => x.PointValue, 2)
-                                                  .With(x => x.Matchups, matchups)
+                                                  //.With(x => x.Matchups, matchups)
                                                   .Create();
 
                 context.Add(wildCardPlayoffRound);

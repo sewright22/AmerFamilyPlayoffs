@@ -93,10 +93,10 @@
             var nfcDivisionalMatchups = new List<GameModel>();
             var afcConferenceMatchups = new List<GameModel>();
             var nfcConferenceMatchups = new List<GameModel>();
-            wildCardRound.Matchups.Where(x => x.HomeTeam.SeasonTeam.Conference.Name == "AFC").ToList().ForEach(game => afcWildCardMatchups.Add(BuildGameModel(game)));
-            wildCardRound.Matchups.Where(x => x.HomeTeam.SeasonTeam.Conference.Name == "NFC").ToList().ForEach(game => nfcWildCardMatchups.Add(BuildGameModel(game)));
-            divisionalRound.Matchups.Where(x => x.HomeTeam.SeasonTeam.Conference.Name == "AFC").ToList().ForEach(game => afcDivisionalMatchups.Add(BuildGameModel(game)));
-            divisionalRound.Matchups.Where(x => x.HomeTeam.SeasonTeam.Conference.Name == "NFC").ToList().ForEach(game => nfcDivisionalMatchups.Add(BuildGameModel(game)));
+            //wildCardRound.Matchups.Where(x => x.HomeTeam.SeasonTeam.Conference.Name == "AFC").ToList().ForEach(game => afcWildCardMatchups.Add(BuildGameModel(game)));
+            //wildCardRound.Matchups.Where(x => x.HomeTeam.SeasonTeam.Conference.Name == "NFC").ToList().ForEach(game => nfcWildCardMatchups.Add(BuildGameModel(game)));
+            //divisionalRound.Matchups.Where(x => x.HomeTeam.SeasonTeam.Conference.Name == "AFC").ToList().ForEach(game => afcDivisionalMatchups.Add(BuildGameModel(game)));
+            //divisionalRound.Matchups.Where(x => x.HomeTeam.SeasonTeam.Conference.Name == "NFC").ToList().ForEach(game => nfcDivisionalMatchups.Add(BuildGameModel(game)));
 
             return new PlayoffBracketPrediction
             {

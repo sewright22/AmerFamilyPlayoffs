@@ -308,7 +308,7 @@
                     Playoff = twentyEighteenPlayoff,
                     Round = context.Rounds.Single(x => x.Number == 1),
                     PointValue = 2,
-                    Matchups = wildCardMatchups,
+                    //Matchups = wildCardMatchups,
                 });
 
                 context.Add(new PlayoffRound
@@ -316,7 +316,7 @@
                     Playoff = twentyEighteenPlayoff,
                     Round = context.Rounds.Single(x => x.Number == 2),
                     PointValue = 3,
-                    Matchups = divisonalMatchups,
+                    //Matchups = divisonalMatchups,
                 });
 
                 context.SaveChanges();
