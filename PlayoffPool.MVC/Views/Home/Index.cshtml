@@ -15,11 +15,11 @@
 else
 {
     <div class="container">
-        foreach (var bracket in this.Model.Brackets)
+        @foreach (var bracket in this.Model.Brackets)
         {
             <div class="row">
-            <span>bracket.Name</span>
-            <span>bracket.PredictedWinner</span>
+            <span>@bracket.Name</span>
+            <span>@bracket.PredictedWinner.Name</span>
                 <span><a href="#">Update</a></span>
             </div>
         }

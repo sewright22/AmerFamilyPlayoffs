@@ -16,5 +16,6 @@
         public int BracketPredictionId { get; set; }
         public int PlayoffRoundId { get; set; }
         public virtual PlayoffTeam PredictedWinner { get; set; }
+        public virtual PlayoffRound PlayoffRound { get; set; }
     }
 }

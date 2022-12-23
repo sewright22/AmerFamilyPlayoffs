@@ -19,13 +19,15 @@ namespace PlayoffPool.MVC.Controllers
         private readonly SignInManager<User> signInManager;
 
         public IMapper Mapper { get; }
+        public UserManager<User> UserManager { get; }
 
-        public HomeController(ILogger<HomeController> logger, AmerFamilyPlayoffContext dataContext, SignInManager<User> signInManager, IMapper mapper)
+        public HomeController(ILogger<HomeController> logger, AmerFamilyPlayoffContext dataContext, SignInManager<User> signInManager, IMapper mapper, UserManager<User> userManager)
         {
             this.logger = logger;
             this.dataContext = dataContext;
             this.signInManager = signInManager;
             Mapper = mapper;
+            UserManager = userManager;
             SetupDatabase();
         }
 
@@ -50,7 +52,10 @@ namespace PlayoffPool.MVC.Controllers
             }
 
             var model = new HomeViewModel();
-            model.Brackets = this.dataContext.BracketPredictions.ProjectTo<BracketSummaryModel>(this.Mapper.ConfigurationProvider).ToList();
+            model.Brackets = this.dataContext.BracketPredictions.AsNoTracking()
+                .Include("MatchupPredictions.PlayoffRound.Round")
+                .Include("MatchupPredictions.PredictedWinner.SeasonTeam.Team")
+                .Where(x => x.UserId == this.UserManager.GetUserId(this.User)).ProjectTo<BracketSummaryModel>(this.Mapper.ConfigurationProvider).ToList();
             return View(model);
         }
 

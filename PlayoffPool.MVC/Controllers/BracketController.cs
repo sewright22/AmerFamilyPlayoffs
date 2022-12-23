@@ -7,19 +7,22 @@ using Microsoft.EntityFrameworkCore;
 using PlayoffPool.MVC.Extensions;
 using PlayoffPool.MVC.Models.Bracket;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace PlayoffPool.MVC.Controllers
 {
     public class BracketController : Controller
     {
-        public BracketController(AmerFamilyPlayoffContext amerFamilyPlayoffContext, IMapper mapper)
+        public BracketController(AmerFamilyPlayoffContext amerFamilyPlayoffContext, IMapper mapper, UserManager<User> userManager)
         {
             this.Context = amerFamilyPlayoffContext;
             this.Mapper = mapper;
+            UserManager = userManager;
         }
 
         public AmerFamilyPlayoffContext Context { get; }
         public IMapper Mapper { get; }
+        public UserManager<User> UserManager { get; }
 
         [HttpGet]
         public IActionResult Create()
@@ -32,17 +35,11 @@ namespace PlayoffPool.MVC.Controllers
             BracketViewModel.Name = "";
             BracketViewModel.CanEdit = true;
 
-            var afcWildcardRound = new RoundViewModel
-            {
-                RoundNumber = 1,
-                Conference = "AFC",
-            };
+            var afcWildcardRound = this.Context.PlayoffRounds.Where(x => x.Round.Number == 1).ProjectTo<RoundViewModel>(this.Mapper.ConfigurationProvider).FirstOrDefault();
+            afcWildcardRound.Conference = "AFC";
 
-            var nfcWildcardRound = new RoundViewModel
-            {
-                RoundNumber = 1,
-                Conference = "NFC",
-            };
+            var nfcWildcardRound = this.Context.PlayoffRounds.Where(x => x.Round.Number == 1).ProjectTo<RoundViewModel>(this.Mapper.ConfigurationProvider).FirstOrDefault();
+            nfcWildcardRound.Conference = "NFC";
 
             afcWildcardRound.Games.Add(this.BuildMatchup("AFC Wildcard Game 1", afcTeams, 1, 4, 5));
             afcWildcardRound.Games.Add(this.BuildMatchup("AFC Wildcard Game 2", afcTeams, 2, 3, 6));
@@ -82,12 +79,9 @@ namespace PlayoffPool.MVC.Controllers
                         }
                     }
 
-                    var afcDivisionalRound = new RoundViewModel
-                    {
-                        RoundNumber = 2,
-                        Conference = "AFC",
-                        IsLocked = false,
-                    };
+                    var afcDivisionalRound = this.Context.PlayoffRounds.Where(x => x.Round.Number == 2).ProjectTo<RoundViewModel>(this.Mapper.ConfigurationProvider).FirstOrDefault();
+                    afcDivisionalRound.Conference = "AFC";
+                    afcDivisionalRound.IsLocked = false;
 
                     List<MatchupViewModel> afcWildcardGames = afcRounds.Single(x => x.RoundNumber == 1).Games.ToList();
 
@@ -110,11 +104,10 @@ namespace PlayoffPool.MVC.Controllers
                         }
                     }
 
-                    var nfcDivisionalRound = new RoundViewModel
-                    {
-                        RoundNumber = 2,
-                        Conference = "AFC",
-                    };
+                    var nfcDivisionalRound = this.Context.PlayoffRounds.Where(x => x.Round.Number == 2).ProjectTo<RoundViewModel>(this.Mapper.ConfigurationProvider).FirstOrDefault();
+                    nfcDivisionalRound.Conference = "NFC";
+                    nfcDivisionalRound.IsLocked = false;
+
                     List<MatchupViewModel> nfcWildcardGames = nfcRounds.Single(x => x.RoundNumber == 1).Games.ToList();
                     var pickedNfcWinners = this.GetWinners(nfcWildcardGames).OrderByDescending(x => x.Seed).ToList();
                     nfcDivisionalRound.Games.Add(this.BuildMatchup("NFC Divisional Game 1", nfcTeams, 1, 1, pickedNfcWinners[0].Seed));
@@ -135,11 +128,9 @@ namespace PlayoffPool.MVC.Controllers
                         }
                     }
 
-                    var afcChampionship = new RoundViewModel
-                    {
-                        RoundNumber = 3,
-                        Conference = "AFC",
-                    };
+                    var afcChampionship = this.Context.PlayoffRounds.Where(x => x.Round.Number == 3).ProjectTo<RoundViewModel>(this.Mapper.ConfigurationProvider).FirstOrDefault();
+                    afcChampionship.Conference = "AFC";
+                    afcChampionship.IsLocked = false;
 
                     List<MatchupViewModel> afcDivisionalGames = afcRounds.Single(x => x.RoundNumber == 2).Games.ToList();
                     var pickedAfcWinners = this.GetWinners(afcDivisionalGames).OrderByDescending(x => x.Seed).ToList();
@@ -160,11 +151,10 @@ namespace PlayoffPool.MVC.Controllers
                         }
                     }
 
-                    var nfcChampionship = new RoundViewModel
-                    {
-                        RoundNumber = 3,
-                        Conference = "NFC",
-                    };
+                    var nfcChampionship = this.Context.PlayoffRounds.Where(x => x.Round.Number == 3).ProjectTo<RoundViewModel>(this.Mapper.ConfigurationProvider).FirstOrDefault();
+                    nfcChampionship.Conference = "NFC";
+                    nfcChampionship.IsLocked = false;
+
                     List<MatchupViewModel> nfcDivisionalGames = nfcRounds.Single(x => x.RoundNumber == 2).Games.ToList();
                     var pickedNfcWinners = this.GetWinners(nfcDivisionalGames).OrderByDescending(x => x.Seed).ToList();
                     nfcChampionship.Games.Add(this.BuildMatchup("NFC Championship Game", nfcTeams, 1, pickedNfcWinners[1].Seed, pickedNfcWinners[0].Seed));
@@ -236,6 +226,7 @@ namespace PlayoffPool.MVC.Controllers
                     if (BracketViewModel.Id == 0)
                     {
                         BracketPrediction prediction = this.Mapper.Map<BracketPrediction>(BracketViewModel);
+                        prediction.UserId = this.UserManager.GetUserId(this.User);
                         prediction.Playoff = this.Context.Playoffs.FirstOrDefault(x => x.Season.Year == 2021);
                         prediction.MatchupPredictions = new List<MatchupPrediction>();
 
@@ -244,6 +235,7 @@ namespace PlayoffPool.MVC.Controllers
                             foreach (var afcGame in round.Games)
                             {
                                 var afcMatchupPrediction = this.Mapper.Map<MatchupPrediction>(afcGame);
+                                afcMatchupPrediction.PlayoffRoundId = round.Id;
                                 afcMatchupPrediction.PredictedWinner = afcTeams.FirstOrDefault(x => x.Id == afcGame.SelectedWinner);
                                 prediction.MatchupPredictions.Add(afcMatchupPrediction);
                             }
@@ -254,6 +246,7 @@ namespace PlayoffPool.MVC.Controllers
                             foreach (var nfcGame in round.Games)
                             {
                                 var nfcMatchupPrediction = this.Mapper.Map<MatchupPrediction>(nfcGame);
+                                nfcMatchupPrediction.PlayoffRoundId = round.Id;
                                 nfcMatchupPrediction.PredictedWinner = nfcTeams.FirstOrDefault(x => x.Id == nfcGame.SelectedWinner);
                                 prediction.MatchupPredictions.Add(nfcMatchupPrediction);
                             }
@@ -262,6 +255,7 @@ namespace PlayoffPool.MVC.Controllers
                         var game = BracketViewModel.SuperBowl;
 
                         var matchupPrediction = this.Mapper.Map<MatchupPrediction>(game);
+                        matchupPrediction.PlayoffRoundId = this.Context.PlayoffRounds.FirstOrDefault(x => x.Round.Number == 4).Id;
                         matchupPrediction.PredictedWinner = afcTeams.FirstOrDefault(x => x.Id == game.SelectedWinner) == null ? nfcTeams.FirstOrDefault(x => x.Id == game.SelectedWinner) : afcTeams.FirstOrDefault(x => x.Id == game.SelectedWinner);
                         prediction.MatchupPredictions.Add(matchupPrediction);
 

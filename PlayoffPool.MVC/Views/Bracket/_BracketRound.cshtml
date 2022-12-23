@@ -1,11 +1,14 @@
 ﻿@using PlayoffPool.MVC.Models.Bracket;
 @model RoundViewModel
 
+<input type="hidden" asp-for="Id" />
+<input type="hidden" asp-for="Name" />
+<input type="hidden" asp-for="PointValue" />
 <input type="hidden" asp-for="Conference" />
 <input type="hidden" asp-for="RoundNumber" />
 <input type="hidden" asp-for="IsLocked" />
 <div class="row">
-    <span class="pp-round-name">Round @this.Model.RoundNumber</span>
+    <span class="pp-round-name">@this.Model.Name</span>
 
     @for (int j = 0; j < this.Model.Games.Count(); j++)
     {

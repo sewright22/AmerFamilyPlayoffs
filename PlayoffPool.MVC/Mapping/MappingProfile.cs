@@ -22,14 +22,33 @@ namespace PlayoffPool.MVC.Mapping
 
             this.CreateMap<PlayoffTeam, TeamViewModel>()
                 .IncludeMembers(x => x.SeasonTeam)
-                .ForMember(x => x.Id, opt => opt.MapFrom(x=>x.Id));
+                .ForMember(x => x.Id, opt => opt.MapFrom(x => x.Id));
 
             this.CreateMap<SeasonTeam, TeamViewModel>()
                 .IncludeMembers(x => x.Team)
                 .ForMember(x => x.Id, opt => opt.Ignore());
 
             this.CreateMap<BracketPrediction, BracketViewModel>();
-            this.CreateMap<BracketPrediction, BracketSummaryModel>();
+            this.CreateMap<BracketPrediction, BracketSummaryModel>()
+                .IncludeMembers(x => x.SuperBowl);
+            //.ForMember(x => x.PredictedWinner, opt => opt.MapFrom(x=>x.SuperBowl.PredictedWinner));
+
+            this.CreateMap<MatchupPrediction, BracketSummaryModel>()
+                .IncludeMembers(x => x.PredictedWinner);
+
+            this.CreateMap<PlayoffTeam, BracketSummaryModel>()
+                .IncludeMembers(x => x.SeasonTeam);
+
+            this.CreateMap<SeasonTeam, BracketSummaryModel>()
+                .IncludeMembers(x => x.Team);
+
+            this.CreateMap<Team, BracketSummaryModel>()
+                .ForMember(x => x.PredictedWinner, opt => opt.MapFrom(t => $"{t.Location} {t.Name}"));
+
+            this.CreateMap<PlayoffRound, RoundViewModel>()
+                .IncludeMembers(x => x.Round);
+
+            this.CreateMap<Round, RoundViewModel>();
 
             this.CreateMap<BracketViewModel, BracketPrediction>();
             this.CreateMap<MatchupViewModel, MatchupPrediction>();
