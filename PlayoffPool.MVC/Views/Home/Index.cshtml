@@ -15,13 +15,31 @@
 else
 {
     <div class="container">
+        <div class="row pp-my-brackets">
+            <h4 class="col">My Brackets</h4>
+            <span class="col-auto">
+                <a href="/Bracket/Create">Create Another Bracket</a>
+            </span>
+        </div>
         @foreach (var bracket in this.Model.Brackets)
         {
-            <div class="row">
-            <span>@bracket.Name</span>
-            <span>@bracket.PredictedWinner.Name</span>
-                <span><a href="#">Update</a></span>
+            <div class="row pp-bracket-summary">
+                <span class="col">
+                    <label class="pp-label">Bracket Name</label>
+                    <span class="pp-label-value">@bracket.Name</span>
+                </span>
+                <span class="col">
+                    <label class="pp-label">Predicted Winner</label>
+                    <span class="pp-label-value">@bracket.PredictedWinner.Name</span>
+                </span>
+                <span class="col-auto">
+                    <span><a href="#">Update Bracket</a></span>
+                </span>
             </div>
         }
+
+        <div class="row pp-leaderboard">
+            <h4 class="col">Leaderboard</h4>
+        </div>
     </div>
 }

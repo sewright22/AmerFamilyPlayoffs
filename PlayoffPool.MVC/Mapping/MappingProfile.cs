@@ -31,7 +31,6 @@ namespace PlayoffPool.MVC.Mapping
             this.CreateMap<BracketPrediction, BracketViewModel>();
             this.CreateMap<BracketPrediction, BracketSummaryModel>()
                 .IncludeMembers(x => x.SuperBowl);
-            //.ForMember(x => x.PredictedWinner, opt => opt.MapFrom(x=>x.SuperBowl.PredictedWinner));
 
             this.CreateMap<MatchupPrediction, BracketSummaryModel>()
                 .IncludeMembers(x => x.PredictedWinner);
