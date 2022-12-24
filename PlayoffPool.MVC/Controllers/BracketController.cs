@@ -8,6 +8,7 @@ using PlayoffPool.MVC.Extensions;
 using PlayoffPool.MVC.Models.Bracket;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 
 namespace PlayoffPool.MVC.Controllers
 {
@@ -32,25 +33,10 @@ namespace PlayoffPool.MVC.Controllers
             var afcTeams = this.Context.PlayoffTeams.AsNoTracking().Include("SeasonTeam.Team").FilterConference("AFC");
             var nfcTeams = this.Context.PlayoffTeams.AsNoTracking().Include("SeasonTeam.Team").FilterConference("NFC");
 
-            BracketViewModel.Name = "";
+            BracketViewModel.Name = string.Empty;
             BracketViewModel.CanEdit = true;
 
-            var afcWildcardRound = this.Context.PlayoffRounds.Where(x => x.Round.Number == 1).ProjectTo<RoundViewModel>(this.Mapper.ConfigurationProvider).FirstOrDefault();
-            afcWildcardRound.Conference = "AFC";
-
-            var nfcWildcardRound = this.Context.PlayoffRounds.Where(x => x.Round.Number == 1).ProjectTo<RoundViewModel>(this.Mapper.ConfigurationProvider).FirstOrDefault();
-            nfcWildcardRound.Conference = "NFC";
-
-            afcWildcardRound.Games.Add(this.BuildMatchup("AFC Wildcard Game 1", afcTeams, 1, 4, 5));
-            afcWildcardRound.Games.Add(this.BuildMatchup("AFC Wildcard Game 2", afcTeams, 2, 3, 6));
-            afcWildcardRound.Games.Add(this.BuildMatchup("AFC Wildcard Game 3", afcTeams, 3, 2, 7));
-
-            nfcWildcardRound.Games.Add(this.BuildMatchup("NFC Wildcard Game 1", nfcTeams, 1, 4, 5));
-            nfcWildcardRound.Games.Add(this.BuildMatchup("NFC Wildcard Game 2", nfcTeams, 2, 3, 6));
-            nfcWildcardRound.Games.Add(this.BuildMatchup("NFC Wildcard Game 3", nfcTeams, 3, 2, 7));
-
-            BracketViewModel.AfcRounds.Add(afcWildcardRound);
-            BracketViewModel.NfcRounds.Add(nfcWildcardRound);
+            
 
             return View(BracketViewModel);
         }
@@ -66,6 +52,28 @@ namespace PlayoffPool.MVC.Controllers
                 var nfcTeams = this.Context.PlayoffTeams.Include("SeasonTeam.Team").FilterConference("NFC");
                 var afcRounds = new List<RoundViewModel>(BracketViewModel.AfcRounds);
                 var nfcRounds = new List<RoundViewModel>(BracketViewModel.NfcRounds);
+
+                if (afcRounds.IsNullOrEmpty() && nfcRounds.IsNullOrEmpty())
+                {
+                    var afcWildcardRound = this.Context.PlayoffRounds.Where(x => x.Round.Number == 1).ProjectTo<RoundViewModel>(this.Mapper.ConfigurationProvider).FirstOrDefault();
+                    afcWildcardRound.Conference = "AFC";
+
+                    var nfcWildcardRound = this.Context.PlayoffRounds.Where(x => x.Round.Number == 1).ProjectTo<RoundViewModel>(this.Mapper.ConfigurationProvider).FirstOrDefault();
+                    nfcWildcardRound.Conference = "NFC";
+
+                    afcWildcardRound.Games.Add(this.BuildMatchup("AFC Wildcard Game 1", afcTeams, 1, 4, 5));
+                    afcWildcardRound.Games.Add(this.BuildMatchup("AFC Wildcard Game 2", afcTeams, 2, 3, 6));
+                    afcWildcardRound.Games.Add(this.BuildMatchup("AFC Wildcard Game 3", afcTeams, 3, 2, 7));
+
+                    nfcWildcardRound.Games.Add(this.BuildMatchup("NFC Wildcard Game 1", nfcTeams, 1, 4, 5));
+                    nfcWildcardRound.Games.Add(this.BuildMatchup("NFC Wildcard Game 2", nfcTeams, 2, 3, 6));
+                    nfcWildcardRound.Games.Add(this.BuildMatchup("NFC Wildcard Game 3", nfcTeams, 3, 2, 7));
+
+                    BracketViewModel.AfcRounds.Add(afcWildcardRound);
+                    BracketViewModel.NfcRounds.Add(nfcWildcardRound);
+
+                    return this.View(BracketViewModel);
+                }
 
                 if (afcRounds.Max(x => x.RoundNumber) == 1)
                 {

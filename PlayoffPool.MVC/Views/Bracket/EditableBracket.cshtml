@@ -12,7 +12,9 @@
         <label asp-for="Name"></label>
         <input asp-for="Name" />
 
-        <div class="container">
+        @if (string.IsNullOrWhiteSpace(this.Model.Name) == false)
+        {
+            <div class="container">
             <div class="row">
                 <div class="col afc">
                     <span class="pp-conference-name">AFC</span>
@@ -62,6 +64,7 @@
                 </div>
             }
         </div>
+        }
 
         <div class="row">
             <div asp-validation-summary="All" class="text-danger"></div>
