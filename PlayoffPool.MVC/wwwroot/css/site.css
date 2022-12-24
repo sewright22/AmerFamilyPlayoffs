@@ -143,6 +143,14 @@ body {
     margin-top: 4rem;
 }
 
+.pp-my-incomplete-brackets {
+    margin-top: 2rem;
+}
+
+.pp-my-complete-brackets {
+    margin-top: 4rem;
+}
+
 p {
     padding: 2rem;
     text-align: center;

@@ -7,7 +7,7 @@
 
 @model HomeViewModel
 
-@if (this.Model.Brackets.Any() == false)
+@if (this.Model.CompletedBrackets.Any() == false && this.Model.IncompleteBrackets.Any() == false)
 {
     <p>It looks like you haven't made any picks.</p>
     <a href="/Bracket/Create">Create your first bracket</a>
@@ -15,13 +15,29 @@
 else
 {
     <div class="container">
-        <div class="row pp-my-brackets">
-            <h4 class="col">My Brackets</h4>
+        <div class="row pp-my-brackets pp-my-incomplete-brackets">
+            <h4 class="col">Incomplete Brackets</h4>
+        </div>
+        @foreach (var bracket in this.Model.IncompleteBrackets)
+        {
+            <div class="row pp-bracket-summary">
+                <span class="col">
+                    <label class="pp-label">Bracket Name</label>
+                    <span class="pp-label-value">@bracket.Name</span>
+                </span>
+                <span class="col-auto">
+                    <span><a href="#">Continue Bracket</a></span>
+                </span>
+            </div>
+        }
+
+        <div class="row pp-my-brackets pp-my-complete-brackets">
+            <h4 class="col">Completed Brackets</h4>
             <span class="col-auto">
                 <a href="/Bracket/Create">Create Another Bracket</a>
             </span>
         </div>
-        @foreach (var bracket in this.Model.Brackets)
+        @foreach (var bracket in this.Model.CompletedBrackets)
         {
             <div class="row pp-bracket-summary">
                 <span class="col">

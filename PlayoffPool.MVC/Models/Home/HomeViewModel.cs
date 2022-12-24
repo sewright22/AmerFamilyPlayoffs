@@ -2,6 +2,7 @@
 {
     public class HomeViewModel
     {
-        public List<BracketSummaryModel> Brackets { get; set; }
+        public List<BracketSummaryModel> CompletedBrackets { get; set; } = new List<BracketSummaryModel>();
+        public List<BracketSummaryModel> IncompleteBrackets { get; set; } = new List<BracketSummaryModel>();
     }
 }

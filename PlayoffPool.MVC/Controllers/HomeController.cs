@@ -52,10 +52,12 @@ namespace PlayoffPool.MVC.Controllers
             }
 
             var model = new HomeViewModel();
-            model.Brackets = this.dataContext.BracketPredictions.AsNoTracking()
+            model.CompletedBrackets = this.dataContext.BracketPredictions.AsNoTracking()
                 .Include("MatchupPredictions.PlayoffRound.Round")
                 .Include("MatchupPredictions.PredictedWinner.SeasonTeam.Team")
-                .Where(x => x.UserId == this.UserManager.GetUserId(this.User)).ProjectTo<BracketSummaryModel>(this.Mapper.ConfigurationProvider).ToList();
+                .Where(x => x.UserId == this.UserManager.GetUserId(this.User)).Where(x => x.MatchupPredictions.Count(x => x.PredictedWinner != null) == 13).ProjectTo<BracketSummaryModel>(this.Mapper.ConfigurationProvider).ToList();
+
+            model.IncompleteBrackets = this.dataContext.BracketPredictions.AsNoTracking().Where(x => x.UserId == this.UserManager.GetUserId(this.User)).Where(x => x.MatchupPredictions == null || x.MatchupPredictions.Count(x => x.PredictedWinner != null) < 13).ProjectTo<BracketSummaryModel>(this.Mapper.ConfigurationProvider).ToList();
             return View(model);
         }
 

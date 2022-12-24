@@ -36,7 +36,7 @@ namespace PlayoffPool.MVC.Controllers
             BracketViewModel.Name = string.Empty;
             BracketViewModel.CanEdit = true;
 
-            
+
 
             return View(BracketViewModel);
         }
@@ -71,6 +71,9 @@ namespace PlayoffPool.MVC.Controllers
 
                     BracketViewModel.AfcRounds.Add(afcWildcardRound);
                     BracketViewModel.NfcRounds.Add(nfcWildcardRound);
+
+                    // Save to database.
+                    this.SaveBracket(BracketViewModel, afcTeams, nfcTeams);
 
                     return this.View(BracketViewModel);
                 }
@@ -229,51 +232,76 @@ namespace PlayoffPool.MVC.Controllers
                             game.IsLocked = true;
                         }
                     }
-
-                    // Save to database.
-                    if (BracketViewModel.Id == 0)
-                    {
-                        BracketPrediction prediction = this.Mapper.Map<BracketPrediction>(BracketViewModel);
-                        prediction.UserId = this.UserManager.GetUserId(this.User);
-                        prediction.Playoff = this.Context.Playoffs.FirstOrDefault(x => x.Season.Year == 2021);
-                        prediction.MatchupPredictions = new List<MatchupPrediction>();
-
-                        foreach (var round in BracketViewModel.AfcRounds)
-                        {
-                            foreach (var afcGame in round.Games)
-                            {
-                                var afcMatchupPrediction = this.Mapper.Map<MatchupPrediction>(afcGame);
-                                afcMatchupPrediction.PlayoffRoundId = round.Id;
-                                afcMatchupPrediction.PredictedWinner = afcTeams.FirstOrDefault(x => x.Id == afcGame.SelectedWinner);
-                                prediction.MatchupPredictions.Add(afcMatchupPrediction);
-                            }
-                        }
-
-                        foreach (var round in BracketViewModel.NfcRounds)
-                        {
-                            foreach (var nfcGame in round.Games)
-                            {
-                                var nfcMatchupPrediction = this.Mapper.Map<MatchupPrediction>(nfcGame);
-                                nfcMatchupPrediction.PlayoffRoundId = round.Id;
-                                nfcMatchupPrediction.PredictedWinner = nfcTeams.FirstOrDefault(x => x.Id == nfcGame.SelectedWinner);
-                                prediction.MatchupPredictions.Add(nfcMatchupPrediction);
-                            }
-                        }
-
-                        var game = BracketViewModel.SuperBowl;
-
-                        var matchupPrediction = this.Mapper.Map<MatchupPrediction>(game);
-                        matchupPrediction.PlayoffRoundId = this.Context.PlayoffRounds.FirstOrDefault(x => x.Round.Number == 4).Id;
-                        matchupPrediction.PredictedWinner = afcTeams.FirstOrDefault(x => x.Id == game.SelectedWinner) == null ? nfcTeams.FirstOrDefault(x => x.Id == game.SelectedWinner) : afcTeams.FirstOrDefault(x => x.Id == game.SelectedWinner);
-                        prediction.MatchupPredictions.Add(matchupPrediction);
-
-                        this.Context.Add(prediction);
-                        this.Context.SaveChanges();
-                    }
                 }
             }
 
             return this.View(BracketViewModel);
+        }
+
+        private void SaveBracket(BracketViewModel BracketViewModel, IQueryable<PlayoffTeam> afcTeams, IQueryable<PlayoffTeam> nfcTeams)
+        {
+            BracketPrediction? prediction = null;
+
+            if (BracketViewModel.Id != 0)
+            {
+                prediction = this.Context.BracketPredictions.FirstOrDefault(x => x.Id == BracketViewModel.Id);
+            }
+
+            if (prediction is null)
+            {
+                prediction = this.Mapper.Map<BracketPrediction>(BracketViewModel);
+                prediction.UserId = this.UserManager.GetUserId(this.User);
+                prediction.Playoff = this.Context.Playoffs.FirstOrDefault(x => x.Season.Year == 2021);
+                prediction.MatchupPredictions = new List<MatchupPrediction>();
+            }
+            else
+            {
+                if (prediction.UserId != this.UserManager.GetUserId(this.User))
+                {
+                    throw new UnauthorizedAccessException();
+                }
+
+                prediction.MatchupPredictions.Clear();
+            }
+
+            foreach (var round in BracketViewModel.AfcRounds)
+            {
+                foreach (var afcGame in round.Games)
+                {
+                    var afcMatchupPrediction = this.Mapper.Map<MatchupPrediction>(afcGame);
+                    afcMatchupPrediction.PlayoffRoundId = round.Id;
+                    afcMatchupPrediction.PredictedWinner = afcTeams.FirstOrDefault(x => x.Id == afcGame.SelectedWinner);
+                    prediction.MatchupPredictions.Add(afcMatchupPrediction);
+                }
+            }
+
+            foreach (var round in BracketViewModel.NfcRounds)
+            {
+                foreach (var nfcGame in round.Games)
+                {
+                    var nfcMatchupPrediction = this.Mapper.Map<MatchupPrediction>(nfcGame);
+                    nfcMatchupPrediction.PlayoffRoundId = round.Id;
+                    nfcMatchupPrediction.PredictedWinner = nfcTeams.FirstOrDefault(x => x.Id == nfcGame.SelectedWinner);
+                    prediction.MatchupPredictions.Add(nfcMatchupPrediction);
+                }
+            }
+
+            if (BracketViewModel.SuperBowl is not null)
+            {
+                var game = BracketViewModel.SuperBowl;
+
+                var matchupPrediction = this.Mapper.Map<MatchupPrediction>(game);
+                matchupPrediction.PlayoffRoundId = this.Context.PlayoffRounds.FirstOrDefault(x => x.Round.Number == 4).Id;
+                matchupPrediction.PredictedWinner = afcTeams.FirstOrDefault(x => x.Id == game.SelectedWinner) == null ? nfcTeams.FirstOrDefault(x => x.Id == game.SelectedWinner) : afcTeams.FirstOrDefault(x => x.Id == game.SelectedWinner);
+                prediction.MatchupPredictions.Add(matchupPrediction);
+            }
+
+            if (prediction.Id == 0)
+            {
+                this.Context.Add(prediction);
+            }
+
+            this.Context.SaveChanges();
         }
 
         [HttpGet]
