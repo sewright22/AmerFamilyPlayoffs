@@ -26,7 +26,7 @@ else
                     <span class="pp-label-value">@bracket.Name</span>
                 </span>
                 <span class="col-auto">
-                    <span><a href="#">Continue Bracket</a></span>
+                    <span><a href=@string.Format("/Bracket/Update/{0}", bracket.Id)>Continue Bracket</a></span>
                 </span>
             </div>
         }
@@ -49,7 +49,7 @@ else
                     <span class="pp-label-value">@bracket.PredictedWinner.Name</span>
                 </span>
                 <span class="col-auto">
-                    <span><a href="#">Update Bracket</a></span>
+                    <span><a href=@string.Format("/Bracket/Update/{0}", bracket.Id)>Update Bracket</a></span>
                 </span>
             </div>
         }

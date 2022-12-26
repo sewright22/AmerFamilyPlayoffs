@@ -29,6 +29,7 @@ namespace PlayoffPool.MVC.Mapping
                 .ForMember(x => x.Id, opt => opt.Ignore());
 
             this.CreateMap<BracketPrediction, BracketViewModel>();
+
             this.CreateMap<BracketPrediction, BracketSummaryModel>()
                 .IncludeMembers(x => x.SuperBowl);
 
@@ -51,6 +52,7 @@ namespace PlayoffPool.MVC.Mapping
 
             this.CreateMap<BracketViewModel, BracketPrediction>();
             this.CreateMap<MatchupViewModel, MatchupPrediction>();
+            this.CreateMap<MatchupPrediction, MatchupViewModel>();
             this.CreateMap<BracketSummaryModel, BracketPrediction>();
         }
     }

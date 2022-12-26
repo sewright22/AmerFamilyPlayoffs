@@ -15,55 +15,55 @@
         @if (string.IsNullOrWhiteSpace(this.Model.Name) == false)
         {
             <div class="container">
-            <div class="row">
-                <div class="col afc">
-                    <span class="pp-conference-name">AFC</span>
-                    @for (int i = 0; i < this.Model.AfcRounds.Count(); i++)
-                    {
-                        var prefix = $"{nameof(BracketViewModel.AfcRounds)}[{i}]";
-                        <pp-partial name="_BracketRound.cshtml" pp-prefix="@prefix" model="@this.Model.AfcRounds[i]"/>
-                    }
-                </div>
-
-                <div class="col nfc">
-                    <span class="pp-conference-name">NFC</span>
-                    @for (int i = 0; i < this.Model.NfcRounds.Count(); i++)
-                    {
-
-                        var prefix = $"{nameof(BracketViewModel.NfcRounds)}[{i}]";
-                        <pp-partial name="_BracketRound.cshtml" pp-prefix="@prefix" model="@this.Model.NfcRounds[i]" />
-                    }
-                </div>
-            </div>
-
-            @if (this.Model.SuperBowl != null)
-            {
                 <div class="row">
-                    <div class="col super-bowl">
-                        <div class="pp-matchup pp-matchup-super-bowl">
-                            <pp-partial name="_BracketGameHiddenFields" model="@this.Model.SuperBowl" pp-prefix="@nameof(BracketViewModel.SuperBowl)" />
+                    <div class="col afc">
+                        <span class="pp-conference-name">AFC</span>
+                        @for (int i = 0; i < this.Model.AfcRounds.Count(); i++)
+                        {
+                            var prefix = $"{nameof(BracketViewModel.AfcRounds)}[{i}]";
+                            <pp-partial name="_BracketRound.cshtml" pp-prefix="@prefix" model="@this.Model.AfcRounds[i]" />
+                        }
+                    </div>
 
-                            <span class="pp-game-name pp-game-name-super-bowl">@this.Model.SuperBowl.Name</span>
-                            <div class="row">
-                                <span class="col">
-                                    <label>
-                                        <input class="form-check-input" type="radio" asp-for="SuperBowl.SelectedWinner" id="@this.Model.SuperBowl.HomeTeam.ViewId" value="@this.Model.SuperBowl.HomeTeam.Id" />
-                                    </label>
-                                    <label class="pp-team-name" for="@this.Model.SuperBowl.HomeTeam.ViewId">@this.Model.SuperBowl.HomeTeam.Name</label>
-                                </span>
-                                <span class="col-auto">
-                                    <label class="pp-team-name" for="@this.Model.SuperBowl.AwayTeam.ViewId">@this.Model.SuperBowl.AwayTeam.Name</label>
-                                    <label>
-                                        <input class="form-check-input" type="radio" asp-for="SuperBowl.SelectedWinner" id="@this.Model.SuperBowl.AwayTeam.ViewId" value="@this.Model.SuperBowl.AwayTeam.Id" />
-                                    </label>
-                                </span>
-                                <span asp-validation-for="SuperBowl.SelectedWinner" class="text-danger"></span>
+                    <div class="col nfc">
+                        <span class="pp-conference-name">NFC</span>
+                        @for (int i = 0; i < this.Model.NfcRounds.Count(); i++)
+                        {
+
+                            var prefix = $"{nameof(BracketViewModel.NfcRounds)}[{i}]";
+                            <pp-partial name="_BracketRound.cshtml" pp-prefix="@prefix" model="@this.Model.NfcRounds[i]" />
+                        }
+                    </div>
+                </div>
+
+                @if (this.Model.SuperBowl != null && this.Model.SuperBowl.HomeTeam != null && this.Model.SuperBowl.AwayTeam != null)
+                {
+                    <div class="row">
+                        <div class="col super-bowl">
+                            <div class="pp-matchup pp-matchup-super-bowl">
+                                <pp-partial name="_BracketGameHiddenFields" model="@this.Model.SuperBowl" pp-prefix="@nameof(BracketViewModel.SuperBowl)" />
+
+                                <span class="pp-game-name pp-game-name-super-bowl">@this.Model.SuperBowl.Name</span>
+                                <div class="row">
+                                    <span class="col">
+                                        <label>
+                                            <input class="form-check-input" type="radio" asp-for="SuperBowl.SelectedWinner" id="@this.Model.SuperBowl.HomeTeam.ViewId" value="@this.Model.SuperBowl.HomeTeam.Id" />
+                                        </label>
+                                        <label class="pp-team-name" for="@this.Model.SuperBowl.HomeTeam.ViewId">@this.Model.SuperBowl.HomeTeam.Name</label>
+                                    </span>
+                                    <span class="col-auto">
+                                        <label class="pp-team-name" for="@this.Model.SuperBowl.AwayTeam.ViewId">@this.Model.SuperBowl.AwayTeam.Name</label>
+                                        <label>
+                                            <input class="form-check-input" type="radio" asp-for="SuperBowl.SelectedWinner" id="@this.Model.SuperBowl.AwayTeam.ViewId" value="@this.Model.SuperBowl.AwayTeam.Id" />
+                                        </label>
+                                    </span>
+                                    <span asp-validation-for="SuperBowl.SelectedWinner" class="text-danger"></span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            }
-        </div>
+                }
+            </div>
         }
 
         <div class="row">
@@ -72,7 +72,11 @@
 
         <div class="pp-button-bar">
             <button type="submit">Save</button>
-            <button type="reset">Cancel</button>
+
+            @if (this.Model.Id > 0)
+            {
+                <a href=@string.Format("/Bracket/Reset/{0}", this.Model.Id)>Reset Bracket</a>
+            }
         </div>
     </form>
 </div>
