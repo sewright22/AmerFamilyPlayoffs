@@ -71,16 +71,19 @@ namespace PlayoffPool.MVC.Controllers
                     BracketViewModel.NfcRounds.Add(nfcWildcardRound);
 
                     // Save to database.
-                    this.SaveBracket(BracketViewModel, afcTeams, nfcTeams);
+                    var newId = this.SaveBracket(BracketViewModel, afcTeams, nfcTeams);
 
-                    return this.View(BracketViewModel);
+                    if (newId.HasValue)
+                    {
+                        return this.RedirectToAction(nameof(this.Update), new { id = newId });
+                    }
                 }
             }
 
             return this.View(BracketViewModel);
         }
 
-        private void SaveBracket(BracketViewModel BracketViewModel, IQueryable<PlayoffTeam> afcTeams, IQueryable<PlayoffTeam> nfcTeams)
+        private int? SaveBracket(BracketViewModel BracketViewModel, IQueryable<PlayoffTeam> afcTeams, IQueryable<PlayoffTeam> nfcTeams)
         {
             BracketPrediction? prediction = null;
 
@@ -144,6 +147,8 @@ namespace PlayoffPool.MVC.Controllers
             }
 
             this.Context.SaveChanges();
+
+            return prediction == null ? null : prediction.Id;
         }
 
         [HttpGet]

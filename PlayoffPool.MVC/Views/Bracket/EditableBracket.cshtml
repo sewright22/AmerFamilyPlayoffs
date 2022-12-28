@@ -71,11 +71,11 @@
         </div>
 
         <div class="pp-button-bar">
-            <button type="submit">Save</button>
+            <button class="btn btn-primary pp-button" type="submit">Save</button>
 
             @if (this.Model.Id > 0)
             {
-                <a href=@string.Format("/Bracket/Reset/{0}", this.Model.Id)>Reset Bracket</a>
+                <a class="btn btn-outline-secondary pp-button-secondary" href=@string.Format("/Bracket/Reset/{0}", this.Model.Id)>Reset Bracket</a>
             }
         </div>
     </form>

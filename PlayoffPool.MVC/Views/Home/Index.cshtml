@@ -10,25 +10,32 @@
 @if (this.Model.CompletedBrackets.Any() == false && this.Model.IncompleteBrackets.Any() == false)
 {
     <p>It looks like you haven't made any picks.</p>
-    <a href="/Bracket/Create">Create your first bracket</a>
+    <div class="container">
+        <div class="pp-child-center">
+            <a class="btn btn-primary pp-button pp-button-create-first-bracket" href="/Bracket/Create">Create your first bracket</a>
+        </div>
+    </div>
 }
 else
 {
     <div class="container">
-        <div class="row pp-my-brackets pp-my-incomplete-brackets">
-            <h4 class="col">Incomplete Brackets</h4>
-        </div>
-        @foreach (var bracket in this.Model.IncompleteBrackets)
+        @if (this.Model.IncompleteBrackets.Any())
         {
-            <div class="row pp-bracket-summary">
-                <span class="col">
-                    <label class="pp-label">Bracket Name</label>
-                    <span class="pp-label-value">@bracket.Name</span>
-                </span>
-                <span class="col-auto">
-                    <span><a href=@string.Format("/Bracket/Update/{0}", bracket.Id)>Continue Bracket</a></span>
-                </span>
+            <div class="row pp-my-brackets pp-my-incomplete-brackets">
+                <h4 class="col">Incomplete Brackets</h4>
             </div>
+            @foreach (var bracket in this.Model.IncompleteBrackets)
+            {
+                <div class="row pp-bracket-summary">
+                    <span class="col">
+                        <label class="pp-label">Bracket Name</label>
+                        <span class="pp-label-value">@bracket.Name</span>
+                    </span>
+                    <span class="col-auto">
+                        <span><a href=@string.Format("/Bracket/Update/{0}", bracket.Id)>Continue Bracket</a></span>
+                    </span>
+                </div>
+            }
         }
 
         <div class="row pp-my-brackets pp-my-complete-brackets">

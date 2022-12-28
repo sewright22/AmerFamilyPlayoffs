@@ -2,9 +2,9 @@
 @using Microsoft.AspNetCore.Identity;
 @inject UserManager<User> UserManager
 
-<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 container-fluid">
+<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3 container-fluid pp-navbar">
     <div class="container">
-        <a class="navbar-brand col-2" asp-area="" asp-controller="Home" asp-action="Index">PlayoffPool.MVC</a>
+        <a class="navbar-brand col-2 pp-navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">FJA Memorial Pool</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                 aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -12,20 +12,20 @@
         <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between col-10">
             <ul class="navbar-nav flex-grow-1">
                 <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    <a class="nav-link pp-nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                 </li>
 
                 @if (this.User.IsInRole(Constants.Roles.Admin))
                 {
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Admin</a>
+                        <a class="nav-link pp-nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Admin</a>
                     </li>
                 }
             </ul>
-            <ul class="navbar-nav col-2">
-                <li class="nav-item">
+            <ul class="navbar-nav col-2 pp-navbar-section-user">
+                <li class="nav-item pp-li-logout">
                     <form asp-action="@Constants.Actions.LOGOUT" asp-controller="@Constants.Controllers.HOME">
-                        <button type="submit">Logout</button>
+                        <button class="btn btn-outline-secondary pp-button pp-button-secondary" type="submit">Logout</button>
                     </form>
                 </li>
             </ul>

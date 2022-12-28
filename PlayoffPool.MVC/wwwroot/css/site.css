@@ -1,5 +1,6 @@
 html {
-  font-size: 16px;
+    font-size: 16px;
+    background-color: white;
 }
 
 @media (min-width: 768px) {
@@ -22,7 +23,27 @@ body {
     background: white;
     color: black;
     text-align: left;
-    padding: 1rem;
+    padding: 0rem;
+}
+
+/*.pp-main-container {
+    background: white;
+    height: 100%;
+}*/
+
+.container .pp-child-center{
+    text-align: center;
+}
+
+.navbar {
+    background: #1F1F47;
+    color: #EDEBE8;
+    height: 4rem;
+}
+
+.pp-navbar-brand {
+    color: #EDEBE8 !important;
+    font-weight: bold;
 }
 
 .pp-card {
@@ -50,10 +71,47 @@ body {
     font-size: 2rem;
 }
 
+.pp-nav-link {
+    color: #F1F1F9 !important;
+    border-bottom: 0.25rem solid transparent;
+    margin: 1rem;
+}
+
+    .pp-nav-link:hover {
+        border-bottom: 0.25rem solid #808F85 ;
+        border-radius: 1rem;
+        /*color: black !important;*/
+        /*font-size: 2rem;*/
+    }
+
 .pp-button {
-    padding-top: 1rem;
-    padding-left: .5rem;
-    padding-bottom: .5rem;
+    background: #1F1F47;
+    color: #F1F1F9;
+    border: 0px;
+    border: 1px solid transparent;
+    box-shadow: 0.25rem 0.25rem 0.25rem #1F1F47;
+}
+
+    .pp-button:hover {
+        background: #F1F1F9;
+        color: #1F1F47;
+        border: 1px solid #1F1F47;
+    }
+
+.pp-button-secondary {
+    background: #F1F1F9;
+    color: #1F1F47;
+    border: 1px solid #1F1F47;
+    box-shadow: 0.25rem 0.25rem 0.25rem #1F1F47;
+}
+
+.pp-button-create-first-bracket {
+    margin: auto;
+    font-size: 1.5rem;
+}
+
+.pp-button-bar .pp-button {
+    margin-right: 1rem;
 }
 
 .pp-conference-name {
@@ -124,6 +182,7 @@ body {
     border: 1px solid black;
     padding: 1rem;
     border-radius: 0.5rem;
+    margin: 1rem 0rem 1rem 0rem;
 }
 
 .pp-label {
@@ -149,6 +208,14 @@ body {
 
 .pp-my-complete-brackets {
     margin-top: 4rem;
+}
+
+.pp-navbar-section-user {
+    display: block;
+}
+
+.pp-li-logout {
+    float: right;
 }
 
 p {
