@@ -8,6 +8,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.IdentityModel.Tokens;
     using NuGet.Packaging;
     using PlayoffPool.MVC.Helpers;
     using PlayoffPool.MVC.Models;
@@ -74,38 +75,72 @@
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> ManageTeams(YearViewModel YearViewModel)
+        public async Task<IActionResult> ManageTeams(ManageTeamsViewModel ManageTeamsViewModel)
         {
-            var model = new ManageTeamsViewModel();
+            var model = ManageTeamsViewModel;
             model.YearViewModel = new YearViewModel()
             {
-                SelectedYear = YearViewModel.SelectedYear,
+                SelectedYear = model.YearViewModel?.SelectedYear,
             };
             model.YearViewModel.Years.AddRange(this.DataManager.DataContext.Seasons.Select(x => new SelectListItem(x.Year.ToString(), x.Year.ToString())));
 
-            if (YearViewModel is not null && YearViewModel.SelectedYear is not null)
+            if (model.YearViewModel is not null && model.YearViewModel.SelectedYear is not null)
             {
-                var teams = this.DataManager.DataContext.PlayoffTeams.Include("SeasonTeam.Team").Select(x => new SelectListItem(x.SeasonTeam.Team.Abbreviation, x.Id.ToString())).ToList();
+                var teams = this.DataManager.DataContext.PlayoffTeams.Include("SeasonTeam.Team").Select(x => new { x.SeasonTeam.Team.Abbreviation, x.Id }).ToList();
                 var rounds = this.DataManager.DataContext.PlayoffRounds.Include("Round").Include(x => x.RoundWinners).ThenInclude(x => x.PlayoffTeam)
-                                     .Where(x => x.Playoff.Season.Year.ToString() == YearViewModel.SelectedYear).OrderBy(x => x.Round.Number);
+                                     .Where(x => x.Playoff.Season.Year.ToString() == model.YearViewModel.SelectedYear).OrderBy(x => x.Round.Number);
 
                 foreach (var round in rounds)
                 {
                     var vm = new AdminRoundViewModel();
+                    vm.Teams = new List<SelectListItem>(teams.Select(x=> new SelectListItem(x.Abbreviation, x.Id.ToString())));
                     if (round.RoundWinners.Any())
                     {
-                        vm.SelectedTeams.AddRange(round.RoundWinners.Select(x => x.PlayoffTeam.Id.ToString()));
+                        vm.Teams.ForEach(team =>
+                        {
+                            if (round.RoundWinners.Any(x => x.PlayoffTeamId.ToString() == team.Value))
+                            {
+                                team.Selected = true;
+                            }
+                        });
                     }
 
                     vm.Id = round.Id;
                     vm.Name = round.Round.Name;
+                    vm.Number = round.Round.Number;
                     vm.PointValue = round.PointValue;
-                    vm.Teams = teams;
                     model.RoundViewModel.Add(vm);
                 }
             }
 
             return this.View(model);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> SaveTeams(ManageTeamsViewModel ManageTeamsViewModel)
+        {
+            var model = ManageTeamsViewModel;
+
+            if (ModelState.IsValid)
+            {
+                foreach (var roundViewModel in model.RoundViewModel)
+                {
+                    var dbRound = this.DataManager.DataContext.PlayoffRounds.Include(x => x.RoundWinners).FirstOrDefault(x => x.Id == roundViewModel.Id);
+                    var selectedWinners = roundViewModel.Teams.Where(x => x.Selected).Select(x => x.Value).ToList();
+
+                    dbRound.RoundWinners.Clear();
+                    dbRound.RoundWinners.AddRange(selectedWinners.Select(x => new RoundWinner
+                    {
+                        PlayoffTeamId = Int32.Parse(x),
+                    }));
+                }
+
+                this.DataManager.DataContext.SaveChanges();
+            }
+
+            model.RoundViewModel.Clear();
+            return this.RedirectToAction(nameof(this.ManageTeams), model);
         }
 
         private Task Seed()

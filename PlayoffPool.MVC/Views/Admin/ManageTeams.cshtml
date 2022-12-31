@@ -1,26 +1,40 @@
 ﻿@model ManageTeamsViewModel
 
-<form asp-action="ManageTeams" method="get">
-    <select asp-for="YearViewModel.SelectedYear" asp-items="@new SelectList(this.Model.YearViewModel.Years, nameof(SelectListItem.Value), nameof(SelectListItem.Text))">
-        <option>Select One</option>
-    </select>
-    @if (this.Model.RoundViewModel != null)
+<div class="row">
+    <form asp-action="ManageTeams" method="get">
+        <select asp-for="YearViewModel.SelectedYear" asp-items="@new SelectList(this.Model.YearViewModel.Years, nameof(SelectListItem.Value), nameof(SelectListItem.Text))">
+            <option>Select One</option>
+        </select>
+
+        <button class="pp-button">Submit</button>
+    </form>
+</div>
+<div class="row">
+    @if (this.Model.RoundViewModel != null && this.Model.RoundViewModel.Any())
     {
-        for (int i = 0; i < this.Model.RoundViewModel.Count; i++)
-        {
-            <div class="row">
-                <div class="container">
-                    <span>@this.Model.RoundViewModel[i].Name</span>
-                    @for (int j = 0; j < this.Model.RoundViewModel[i].Teams.Count; j++)
-                    {
-                        <span>
-                            <input class="form-check-input" type="checkbox" />
-                            <label>@this.Model.RoundViewModel[i].Teams[j].Text</label>
-                        </span>
-                    }
+        <form asp-action="SaveTeams" method="post">
+            @for (int i = 0; i < this.Model.RoundViewModel.Count; i++)
+            {
+                <div class="row">
+                    <fieldset>
+                        <legend>@this.Model.RoundViewModel[i].Name</legend>
+                        <input class="form-check-input" type="hidden" asp-for="@this.Model.RoundViewModel[i].Id" />
+                        <input class="form-check-input" type="hidden" asp-for="@this.Model.RoundViewModel[i].Name" />
+                        <input class="form-check-input" type="hidden" asp-for="@this.Model.RoundViewModel[i].Number" />
+                        <input class="form-check-input" type="hidden" asp-for="@this.Model.RoundViewModel[i].PointValue" />
+                        @for (int j = 0; j < this.Model.RoundViewModel[i].Teams.Count; j++)
+                        {
+                            <span>
+                                <input class="form-check-input" type="checkbox" asp-for="@this.Model.RoundViewModel[i].Teams[j].Selected" />
+                                <input class="form-check-input" type="hidden" asp-for="@this.Model.RoundViewModel[i].Teams[j].Text" />
+                                <input class="form-check-input" type="hidden" asp-for="@this.Model.RoundViewModel[i].Teams[j].Value" />
+                                <label for="@this.Model.RoundViewModel[i].Teams[j].Value">@this.Model.RoundViewModel[i].Teams[j].Text</label>
+                            </span>
+                        }
+                    </fieldset>
                 </div>
-            </div>
-        }
+            }
+            <button class="pp-button">Submit</button>
+        </form>
     }
-    <button class="pp-button">Submit</button>
-</form>
+</div>

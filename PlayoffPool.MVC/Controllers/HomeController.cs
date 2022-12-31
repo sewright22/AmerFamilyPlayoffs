@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlayoffPool.MVC.Extensions;
 using PlayoffPool.MVC.Models;
+using PlayoffPool.MVC.Models.Bracket;
 using PlayoffPool.MVC.Models.Home;
 
 namespace PlayoffPool.MVC.Controllers
@@ -52,10 +53,20 @@ namespace PlayoffPool.MVC.Controllers
             }
 
             var model = new HomeViewModel();
-            model.CompletedBrackets = this.dataContext.BracketPredictions.AsNoTracking()
-                .Include("MatchupPredictions.PlayoffRound.Round")
-                .Include("MatchupPredictions.PredictedWinner.SeasonTeam.Team")
-                .Where(x => x.UserId == this.UserManager.GetUserId(this.User)).Where(x => x.MatchupPredictions.Count(x => x.PredictedWinner != null) == 13).ProjectTo<BracketSummaryModel>(this.Mapper.ConfigurationProvider).ToList();
+
+            foreach (var completedBracket in this.dataContext.BracketPredictions.Include("MatchupPredictions.PlayoffRound.Round").Include("MatchupPredictions.PredictedWinner.SeasonTeam.Team").AsNoTracking().Where(x => x.UserId == this.UserManager.GetUserId(this.User)).Where(x => x.MatchupPredictions.Count(x => x.PredictedWinner != null) == 13))
+            {
+                var teamName = $"{completedBracket.SuperBowl.PredictedWinner.SeasonTeam.Team.Location} {completedBracket.SuperBowl.PredictedWinner.SeasonTeam.Team.Name}";
+                model.CompletedBrackets.Add(new BracketSummaryModel
+                {
+                    Id = completedBracket.Id,
+                    Name= completedBracket.Name,
+                    PredictedWinner = new TeamViewModel()
+                    {
+                        Name= completedBracket.SuperBowl.PredictedWinner.SeasonTeam.Team.Name,
+                    }
+                });
+            }
 
             model.IncompleteBrackets = this.dataContext.BracketPredictions.AsNoTracking().Where(x => x.UserId == this.UserManager.GetUserId(this.User)).Where(x => x.MatchupPredictions == null || x.MatchupPredictions.Count(x => x.PredictedWinner != null) < 13).ProjectTo<BracketSummaryModel>(this.Mapper.ConfigurationProvider).ToList();
             return View(model);
