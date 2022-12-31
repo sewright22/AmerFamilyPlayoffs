@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace PlayoffPool.MVC.Helpers
 {
@@ -131,18 +132,28 @@ namespace PlayoffPool.MVC.Helpers
 
         private void SeedPlayoffRounds()
         {
-            foreach (var playoff in this.DataContext.Playoffs.ToList())
+            foreach (var playoff in this.DataContext.Playoffs.AsNoTracking().Where(x=>x.PlayoffRounds.Any() == false))
             {
-                foreach (var round in this.DataContext.Rounds)
+                foreach (var round in this.DataContext.Rounds.AsNoTracking())
                 {
-                    this.DataContext.Add(new PlayoffRound
-                    {
-                        PlayoffId = playoff.Id,
-                        RoundId = round.Id,
-                        PointValue = round.Number,
-                    });
+                    this.SeedPlayoffRound(playoff.Id, round.Id, round.Number);
                 }
             }
+        }
+
+        private void SeedPlayoffRound(int playoffId, int roundId, int pointValue)
+        {
+            if (this.DataContext.PlayoffRounds.AsNoTracking().Any(x => x.PlayoffId == playoffId && x.RoundId == roundId))
+            {
+                return;
+            }
+
+            this.DataContext.Add(new PlayoffRound
+            {
+                PlayoffId = playoffId,
+                RoundId = roundId,
+                PointValue = pointValue,
+            });
 
             this.DataContext.SaveChanges();
         }
