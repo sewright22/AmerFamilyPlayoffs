@@ -36,6 +36,6 @@
         public DbSet<Conference> Conferences { get; set; }
         public DbSet<Bracket> Brackets { get; set; }
         public DbSet<BracketPrediction> BracketPredictions { get; set; }
-        public DbSet<User> Users { get; set; }
+        public DbSet<RoundWinner> RoundWinners { get; set; }
     }
 }
