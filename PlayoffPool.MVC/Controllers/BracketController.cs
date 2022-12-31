@@ -155,7 +155,7 @@ namespace PlayoffPool.MVC.Controllers
         [Authorize]
         public IActionResult Update(int id)
         {
-            BracketPrediction? bracketPrediction = this.GetBracketPrediction(id, false);
+            BracketPrediction? bracketPrediction = this.GetBracketPrediction(id, false, this.UserManager.GetUserId(this.User));
 
             if (bracketPrediction == null)
             {
@@ -187,9 +187,9 @@ namespace PlayoffPool.MVC.Controllers
             return bracketViewModel;
         }
 
-        private BracketPrediction? GetBracketPrediction(int id, bool enableTracking)
+        private BracketPrediction? GetBracketPrediction(int id, bool enableTracking, string userId)
         {
-            var predictions = this.Context.BracketPredictions.AsQueryable();
+            var predictions = this.Context.BracketPredictions.Where(x => x.UserId == userId).AsQueryable();
 
             if (enableTracking)
             {
@@ -379,7 +379,7 @@ namespace PlayoffPool.MVC.Controllers
 
         public IActionResult Reset(int id)
         {
-            BracketPrediction? bracketPrediction = this.GetBracketPrediction(id, false);
+            BracketPrediction? bracketPrediction = this.GetBracketPrediction(id, false, this.UserManager.GetUserId(this.User));
 
             if (bracketPrediction == null)
             {
