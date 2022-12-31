@@ -32,7 +32,7 @@ else
                         <span class="pp-label-value">@bracket.Name</span>
                     </span>
                     <span class="col-auto">
-                        <span><a href=@string.Format("/Bracket/Update/{0}", bracket.Id)>Continue Bracket</a></span>
+                        <span><a class="btn pp-button pp-button-secondary" href=@string.Format("/Bracket/Update/{0}", bracket.Id)>Continue Bracket</a></span>
                     </span>
                 </div>
             }
@@ -41,7 +41,7 @@ else
         <div class="row pp-my-brackets pp-my-complete-brackets">
             <h4 class="col">Completed Brackets</h4>
             <span class="col-auto">
-                <a href="/Bracket/Create">Create Another Bracket</a>
+                <a class="btn pp-button" href="/Bracket/Create">Create Another Bracket</a>
             </span>
         </div>
         @foreach (var bracket in this.Model.CompletedBrackets)
@@ -56,7 +56,7 @@ else
                     <span class="pp-label-value">@bracket.PredictedWinner.Name</span>
                 </span>
                 <span class="col-auto">
-                    <span><a href=@string.Format("/Bracket/Update/{0}", bracket.Id)>Update Bracket</a></span>
+                    <span><a class="btn pp-button pp-button-secondary" href=@string.Format("/Bracket/Update/{0}", bracket.Id)>Update Bracket</a></span>
                 </span>
             </div>
         }

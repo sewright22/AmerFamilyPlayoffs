@@ -276,7 +276,11 @@ namespace PlayoffPool.MVC.Controllers
                 var teams = matchupPredictions.Where(x => x.PlayoffRound.Round.Number == afcRound.RoundNumber).Where(x => x.PredictedWinner != null && x.PredictedWinner.SeasonTeam.Conference.Name == "AFC");
                 if (teams.Any())
                 {
-                    var selectedWinner = teams.FirstOrDefault(x => x.PredictedWinner.Id == game.HomeTeam.Id || x.PredictedWinner.Id == game.AwayTeam.Id).PredictedWinner;
+                    var selectedWinner = teams.FirstOrDefault(x => x.PredictedWinner != null && (x.PredictedWinner.Id == game.HomeTeam.Id || x.PredictedWinner.Id == game.AwayTeam.Id))?.PredictedWinner;
+                    if (selectedWinner == null)
+                    {
+                        continue;
+                    }
                     game.SelectedWinner = selectedWinner.Id;
                 }
             }
@@ -287,7 +291,11 @@ namespace PlayoffPool.MVC.Controllers
                 var teams = matchupPredictions.Where(x => x.PlayoffRound.Round.Number == afcRound.RoundNumber).Where(x => x.PredictedWinner != null && x.PredictedWinner.SeasonTeam.Conference.Name == "NFC");
                 if (teams.Any())
                 {
-                    var selectedWinner = teams.FirstOrDefault(x => x.PredictedWinner.Id == game.HomeTeam.Id || x.PredictedWinner.Id == game.AwayTeam.Id).PredictedWinner;
+                    var selectedWinner = teams.FirstOrDefault(x => x.PredictedWinner != null && (x.PredictedWinner.Id == game.HomeTeam.Id || x.PredictedWinner.Id == game.AwayTeam.Id))?.PredictedWinner;
+                    if (selectedWinner == null)
+                    {
+                        continue;
+                    }
                     game.SelectedWinner = selectedWinner.Id;
                 }
             }
@@ -334,6 +342,11 @@ namespace PlayoffPool.MVC.Controllers
         [Authorize]
         public IActionResult Update(int id, BracketViewModel BracketViewModel)
         {
+            if (this.ModelState.IsValid == false)
+            {
+                return this.View(BracketViewModel);
+            }
+
             var bracketPrediction = this.Context.BracketPredictions.FirstOrDefault(x => x.Id == id);
 
             if (bracketPrediction == null)
@@ -374,7 +387,13 @@ namespace PlayoffPool.MVC.Controllers
 
             this.SaveBracket(BracketViewModel, afcTeams, nfcTeams);
 
+            if (BracketViewModel.SuperBowl is not null && BracketViewModel.SuperBowl.SelectedWinner.HasValue)
+            {
+                return this.RedirectToAction("Index", "Home");
+            }
+
             return this.View(BracketViewModel);
+
         }
 
         public IActionResult Reset(int id)

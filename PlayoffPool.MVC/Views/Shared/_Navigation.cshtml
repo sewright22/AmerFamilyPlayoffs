@@ -2,14 +2,14 @@
 @using Microsoft.AspNetCore.Identity;
 @inject UserManager<User> UserManager
 
-<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3 container-fluid pp-navbar">
+<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-3 container-fluid pp-navbar">
     <div class="container">
         <a class="navbar-brand col-2 pp-navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">FJA Memorial Pool</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                 aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between col-10">
+        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between col-10 pp-navbar-collapse">
             <ul class="navbar-nav flex-grow-1">
                 <li class="nav-item">
                     <a class="nav-link pp-nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>

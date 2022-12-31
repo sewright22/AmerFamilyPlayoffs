@@ -62,7 +62,7 @@ fieldset{
     color: #757575;
     font-weight: 600;
     border: none;
-    padding: .5rem;
+    padding: .5rem 0rem;
 }
 
 .pp-card-content {
@@ -81,11 +81,11 @@ fieldset{
 .pp-nav-link {
     color: #F1F1F9 !important;
     border-bottom: 0.25rem solid transparent;
-    margin: 1rem;
+    margin: 0.5rem;
 }
 
     .pp-nav-link:hover {
-        border-bottom: 0.25rem solid #808F85 ;
+        border-bottom: 0.25rem solid white ;
         border-radius: 1rem;
         /*color: black !important;*/
         /*font-size: 2rem;*/
@@ -115,6 +115,10 @@ fieldset{
 .pp-button-create-first-bracket {
     margin: auto;
     font-size: 1.5rem;
+}
+
+.pp-button-login {
+    margin-bottom: 0.5rem;
 }
 
 .pp-button-bar .pp-button {
@@ -218,7 +222,11 @@ fieldset{
 }
 
 .pp-navbar-section-user {
-    display: block;
+    /*display: block;*/
+}
+
+.pp-navbar-collapse {
+    background: #1F1F47;
 }
 
 .pp-li-logout {
