@@ -1,31 +1,38 @@
 ﻿namespace PlayoffPool.MVC.Controllers
 {
     using AmerFamilyPlayoffs.Data;
+    using AutoMapper;
+    using AutoMapper.QueryableExtensions;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.EntityFrameworkCore;
+    using NuGet.Packaging;
     using PlayoffPool.MVC.Helpers;
     using PlayoffPool.MVC.Models;
+    using PlayoffPool.MVC.Models.Admin;
+    using PlayoffPool.MVC.Models.Bracket;
     using System;
     using System.Security.Claims;
     using System.Security.Principal;
 
     public class AdminController : Controller
     {
-        public AdminController(ILogger<AdminController> logger, IDataManager dataManager)
+        public AdminController(ILogger<AdminController> logger, IDataManager dataManager, IMapper mapper)
         {
             if (logger is null)
             {
                 throw new ArgumentNullException(nameof(logger));
             }
-            Logger = logger;
+            this.Logger = logger;
             this.DataManager = dataManager;
+            this.Mapper = mapper;
         }
 
         public ILogger<AdminController> Logger { get; }
         public IDataManager DataManager { get; }
+        public IMapper Mapper { get; }
 
         [HttpGet]
         [Authorize]
@@ -60,6 +67,42 @@
                     Roles = roles,
                     RoleId = roles.Where(x => userRoles.Contains(x.Text)).Select(x => x.Value).FirstOrDefault(),
                 });
+            }
+
+            return this.View(model);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> ManageTeams(YearViewModel YearViewModel)
+        {
+            var model = new ManageTeamsViewModel();
+            model.YearViewModel = new YearViewModel()
+            {
+                SelectedYear = YearViewModel.SelectedYear,
+            };
+            model.YearViewModel.Years.AddRange(this.DataManager.DataContext.Seasons.Select(x => new SelectListItem(x.Year.ToString(), x.Year.ToString())));
+
+            if (YearViewModel is not null && YearViewModel.SelectedYear is not null)
+            {
+                var teams = this.DataManager.DataContext.PlayoffTeams.Include("SeasonTeam.Team").Select(x => new SelectListItem(x.SeasonTeam.Team.Abbreviation, x.Id.ToString())).ToList();
+                var rounds = this.DataManager.DataContext.PlayoffRounds.Include("Round").Include(x => x.RoundWinners).ThenInclude(x => x.PlayoffTeam)
+                                     .Where(x => x.Playoff.Season.Year.ToString() == YearViewModel.SelectedYear).OrderBy(x => x.Round.Number);
+
+                foreach (var round in rounds)
+                {
+                    var vm = new AdminRoundViewModel();
+                    if (round.RoundWinners.Any())
+                    {
+                        vm.SelectedTeams.AddRange(round.RoundWinners.Select(x => x.PlayoffTeam.Id.ToString()));
+                    }
+
+                    vm.Id = round.Id;
+                    vm.Name = round.Round.Name;
+                    vm.PointValue = round.PointValue;
+                    vm.Teams = teams;
+                    model.RoundViewModel.Add(vm);
+                }
             }
 
             return this.View(model);

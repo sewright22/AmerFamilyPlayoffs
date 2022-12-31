@@ -1,5 +1,26 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model ManageTeamsViewModel
+
+<form asp-action="ManageTeams" method="get">
+    <select asp-for="YearViewModel.SelectedYear" asp-items="@new SelectList(this.Model.YearViewModel.Years, nameof(SelectListItem.Value), nameof(SelectListItem.Text))">
+        <option>Select One</option>
+    </select>
+    @if (this.Model.RoundViewModel != null)
+    {
+        for (int i = 0; i < this.Model.RoundViewModel.Count; i++)
+        {
+            <div class="row">
+                <div class="container">
+                    <span>@this.Model.RoundViewModel[i].Name</span>
+                    @for (int j = 0; j < this.Model.RoundViewModel[i].Teams.Count; j++)
+                    {
+                        <span>
+                            <input class="form-check-input" type="checkbox" />
+                            <label>@this.Model.RoundViewModel[i].Teams[j].Text</label>
+                        </span>
+                    }
+                </div>
+            </div>
+        }
+    }
+    <button class="pp-button">Submit</button>
+</form>

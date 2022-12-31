@@ -1,6 +1,7 @@
 ﻿using AmerFamilyPlayoffs.Data;
 using AutoMapper;
 using PlayoffPool.MVC.Models;
+using PlayoffPool.MVC.Models.Admin;
 using PlayoffPool.MVC.Models.Bracket;
 using PlayoffPool.MVC.Models.Home;
 
