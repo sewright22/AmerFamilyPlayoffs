@@ -34,7 +34,7 @@ namespace PlayoffPool.MVC.Helpers
         public async virtual Task Seed()
         {
 #if DEBUG
-            this.DataContext.Database.EnsureDeleted();
+            // this.DataContext.Database.EnsureDeleted();
 #endif
             this.DataContext.Database.Migrate();
             await this.SeedRole(Constants.Roles.Admin).ConfigureAwait(true);

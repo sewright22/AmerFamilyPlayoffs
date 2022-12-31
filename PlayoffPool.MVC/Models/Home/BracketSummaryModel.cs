@@ -7,6 +7,8 @@ namespace PlayoffPool.MVC.Models.Home
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public int CurrentScore { get; set; }
+        public int MaxPossibleScore { get; set; }
         public TeamViewModel PredictedWinner { get; set; }
     }
 }

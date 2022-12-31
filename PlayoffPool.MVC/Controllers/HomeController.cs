@@ -60,15 +60,17 @@ namespace PlayoffPool.MVC.Controllers
                 model.CompletedBrackets.Add(new BracketSummaryModel
                 {
                     Id = completedBracket.Id,
-                    Name= completedBracket.Name,
+                    Name = completedBracket.Name,
                     PredictedWinner = new TeamViewModel()
                     {
-                        Name= completedBracket.SuperBowl.PredictedWinner.SeasonTeam.Team.Name,
+                        Name = completedBracket.SuperBowl.PredictedWinner.SeasonTeam.Team.Name,
                     }
                 });
             }
 
             model.IncompleteBrackets = this.dataContext.BracketPredictions.AsNoTracking().Where(x => x.UserId == this.UserManager.GetUserId(this.User)).Where(x => x.MatchupPredictions == null || x.MatchupPredictions.Count(x => x.PredictedWinner != null) < 13).ProjectTo<BracketSummaryModel>(this.Mapper.ConfigurationProvider).ToList();
+
+            model.Leaderboard = this.BuildLeaderboard();
             return View(model);
         }
 
@@ -87,6 +89,42 @@ namespace PlayoffPool.MVC.Controllers
         {
             await this.signInManager.SignOutAsync().ConfigureAwait(false);
             return this.RedirectToAction(Constants.Actions.LOGIN, Constants.Controllers.ACCOUNT);
+        }
+
+        private LeaderboardViewModel BuildLeaderboard()
+        {
+            var retVal = new LeaderboardViewModel();
+            retVal.Brackets = new List<BracketSummaryModel>();
+            var brackets = this.dataContext.BracketPredictions
+                .Include("MatchupPredictions.PlayoffRound.Round")
+                .Include("MatchupPredictions.PredictedWinner.SeasonTeam.Team")
+                .AsNoTracking().Where(x => x.Playoff.Season.Year == 2021)
+                .Where(x => x.MatchupPredictions.Count(x => x.PredictedWinner != null) == 13);
+
+            var actualWinners = this.dataContext.RoundWinners.Include(x => x.PlayoffRound).Where(x => x.PlayoffRound.Playoff.Season.Year == 2021);
+
+            foreach (var bracket in brackets.ToList())
+            {
+                var round1Score = bracket.MatchupPredictions
+                    .Where(x => x.PlayoffRound.Round.Number == 1)
+                    .Count(x => actualWinners
+                    .Any(w => w.PlayoffTeamId == x.PredictedWinner.Id && w.PlayoffRound.Round.Number == 1)) * 1;
+                var round2Score = bracket.MatchupPredictions.Where(x => x.PlayoffRound.Round.Number == 2).Count(x => actualWinners.Any(w => w.PlayoffTeamId == x.PredictedWinner.Id && w.PlayoffRound.Round.Number == 2)) * 2;
+                var round3Score = bracket.MatchupPredictions.Where(x => x.PlayoffRound.Round.Number == 3).Count(x => actualWinners.Any(w => w.PlayoffTeamId == x.PredictedWinner.Id && w.PlayoffRound.Round.Number == 3)) * 3;
+                var round4Score = bracket.MatchupPredictions.Where(x => x.PlayoffRound.Round.Number == 4).Count(x => actualWinners.Any(w => w.PlayoffTeamId == x.PredictedWinner.Id && w.PlayoffRound.Round.Number == 4)) * 4;
+                retVal.Brackets.Add(new BracketSummaryModel
+                {
+                    Id = bracket.Id,
+                    Name = bracket.Name,
+                    PredictedWinner = new TeamViewModel()
+                    {
+                        Name = bracket.SuperBowl.PredictedWinner.SeasonTeam.Team.Name,
+                    },
+                    CurrentScore = round1Score + round2Score + round3Score + round4Score,
+                });
+            }
+
+            return retVal;
         }
     }
 }

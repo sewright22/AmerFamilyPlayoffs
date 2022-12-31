@@ -61,8 +61,31 @@ else
             </div>
         }
 
-        <div class="row pp-leaderboard">
-            <h4 class="col">Leaderboard</h4>
-        </div>
+        @if (this.Model.Leaderboard != null)
+        {
+            <div class="row pp-leaderboard">
+                <h4 class="col">Leaderboard</h4>
+                @foreach (var bracket in this.Model.Leaderboard.Brackets.OrderByDescending(x=>x.CurrentScore))
+                {
+                    <div class="row pp-bracket-summary">
+                        <span class="col">
+                            <label class="pp-label">Bracket Name</label>
+                            <span class="pp-label-value">@bracket.Name</span>
+                        </span>
+                        <span class="col">
+                            <label class="pp-label">Predicted Winner</label>
+                            <span class="pp-label-value">@bracket.PredictedWinner.Name</span>
+                        </span>
+                        <span class="col">
+                            <label class="pp-label">Score</label>
+                            <span class="pp-label-value">@bracket.CurrentScore</span>
+                        </span>
+                        <span class="col-auto">
+                            <span><a href=@string.Format("/Bracket/Update/{0}", bracket.Id)>Update Bracket</a></span>
+                        </span>
+                    </div>
+                }
+            </div>
+        }
     </div>
 }
