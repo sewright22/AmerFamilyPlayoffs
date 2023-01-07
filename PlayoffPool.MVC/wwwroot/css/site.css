@@ -4,18 +4,18 @@ html {
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
@@ -26,7 +26,7 @@ body {
     padding: 0rem;
 }
 
-fieldset{
+fieldset {
     border: 1px solid black;
     border-radius: 0.5rem;
     margin: 1rem;
@@ -38,7 +38,7 @@ fieldset{
     height: 100%;
 }*/
 
-.container .pp-child-center{
+.container .pp-child-center {
     text-align: center;
 }
 
@@ -85,11 +85,31 @@ fieldset{
 }
 
     .pp-nav-link:hover {
-        border-bottom: 0.25rem solid white ;
+        border-bottom: 0.25rem solid white;
         border-radius: 1rem;
         /*color: black !important;*/
         /*font-size: 2rem;*/
     }
+
+.pp-nav-item {
+    border-bottom: 4px solid lightgray;
+    padding: 0.5rem;
+    color: #1f1f47 !important;
+    display: block;
+    padding: .5rem 1rem;
+    text-decoration: none;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out;
+}
+
+.pp-nav-item a {
+    color: #1f1f47 !important;
+}
+
+    .pp-nav-item:hover {
+        border-bottom: 4px solid #1f1f47;
+        background-color: hsl(240, 39%, 98%);
+    }
+
 
 .pp-button {
     background: #1F1F47;
@@ -121,9 +141,13 @@ fieldset{
     margin-bottom: 0.5rem;
 }
 
-.pp-button-bar .pp-button {
-    margin-right: 1rem;
+.pp-button-bar {
+    margin-top: 1rem;
 }
+
+    .pp-button-bar .pp-button {
+        margin-right: 1rem;
+    }
 
 .pp-conference-name {
     font-weight: bold;
@@ -238,9 +262,3 @@ p {
     text-align: center;
     font-weight: bold;
 }
-
-
-
-
-
-
