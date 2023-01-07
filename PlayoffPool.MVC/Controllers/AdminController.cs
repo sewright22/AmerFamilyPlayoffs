@@ -143,12 +143,6 @@
             return this.RedirectToAction(nameof(this.ManageTeams), model);
         }
 
-        private Task Seed()
-        {
-            return Task.CompletedTask;
-            //throw new NotImplementedException();
-        }
-
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> UpdateUsers(ManageUsersViewModel model)
@@ -233,6 +227,12 @@
         public async Task<IActionResult> UpdateRoles(RoleModel model)
         {
             return this.View(model);
+        }
+
+        private Task Seed()
+        {
+            return Task.CompletedTask;
+            //throw new NotImplementedException();
         }
     }
 }

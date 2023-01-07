@@ -26,6 +26,7 @@ namespace PlayoffPool.MVC.Controllers
         public UserManager<User> UserManager { get; }
 
         [HttpGet]
+        [Authorize]
         public IActionResult Create()
         {
             var BracketViewModel = new BracketViewModel();
@@ -83,74 +84,6 @@ namespace PlayoffPool.MVC.Controllers
             return this.View(BracketViewModel);
         }
 
-        private int? SaveBracket(BracketViewModel BracketViewModel, IQueryable<PlayoffTeam> afcTeams, IQueryable<PlayoffTeam> nfcTeams)
-        {
-            BracketPrediction? prediction = null;
-
-            if (BracketViewModel.Id != 0)
-            {
-                prediction = this.Context.BracketPredictions.Include(x => x.MatchupPredictions).FirstOrDefault(x => x.Id == BracketViewModel.Id);
-            }
-
-            if (prediction is null)
-            {
-                prediction = this.Mapper.Map<BracketPrediction>(BracketViewModel);
-                prediction.UserId = this.UserManager.GetUserId(this.User);
-                prediction.Playoff = this.Context.Playoffs.FirstOrDefault(x => x.Season.Year == 2021);
-                prediction.MatchupPredictions = new List<MatchupPrediction>();
-            }
-            else
-            {
-                if (prediction.UserId != this.UserManager.GetUserId(this.User))
-                {
-                    throw new UnauthorizedAccessException();
-                }
-
-                prediction.MatchupPredictions.Clear();
-            }
-
-            foreach (var round in BracketViewModel.AfcRounds)
-            {
-                foreach (var afcGame in round.Games)
-                {
-                    var afcMatchupPrediction = this.Mapper.Map<MatchupPrediction>(afcGame);
-                    afcMatchupPrediction.PlayoffRoundId = round.Id;
-                    afcMatchupPrediction.PredictedWinner = afcTeams.FirstOrDefault(x => x.Id == afcGame.SelectedWinner);
-                    prediction.MatchupPredictions.Add(afcMatchupPrediction);
-                }
-            }
-
-            foreach (var round in BracketViewModel.NfcRounds)
-            {
-                foreach (var nfcGame in round.Games)
-                {
-                    var nfcMatchupPrediction = this.Mapper.Map<MatchupPrediction>(nfcGame);
-                    nfcMatchupPrediction.PlayoffRoundId = round.Id;
-                    nfcMatchupPrediction.PredictedWinner = nfcTeams.FirstOrDefault(x => x.Id == nfcGame.SelectedWinner);
-                    prediction.MatchupPredictions.Add(nfcMatchupPrediction);
-                }
-            }
-
-            if (BracketViewModel.SuperBowl is not null)
-            {
-                var game = BracketViewModel.SuperBowl;
-
-                var matchupPrediction = this.Mapper.Map<MatchupPrediction>(game);
-                matchupPrediction.PlayoffRoundId = this.Context.PlayoffRounds.FirstOrDefault(x => x.Round.Number == 4).Id;
-                matchupPrediction.PredictedWinner = afcTeams.FirstOrDefault(x => x.Id == game.SelectedWinner) == null ? nfcTeams.FirstOrDefault(x => x.Id == game.SelectedWinner) : afcTeams.FirstOrDefault(x => x.Id == game.SelectedWinner);
-                prediction.MatchupPredictions.Add(matchupPrediction);
-            }
-
-            if (prediction.Id == 0)
-            {
-                this.Context.Add(prediction);
-            }
-
-            this.Context.SaveChanges();
-
-            return prediction == null ? null : prediction.Id;
-        }
-
         [HttpGet]
         [Authorize]
         public IActionResult Update(int id)
@@ -165,6 +98,106 @@ namespace PlayoffPool.MVC.Controllers
             BracketViewModel bracketViewModel = this.BuildBracketViewModel(bracketPrediction);
 
             return this.View(bracketViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public IActionResult Update(int id, BracketViewModel BracketViewModel)
+        {
+            if (this.ModelState.IsValid == false)
+            {
+                return this.View(BracketViewModel);
+            }
+
+            var bracketPrediction = this.Context.BracketPredictions.FirstOrDefault(x => x.Id == id);
+
+            if (bracketPrediction == null)
+            {
+                return this.RedirectToAction(nameof(this.Create));
+            }
+
+            var afcTeams = this.Context.PlayoffTeams.Include("SeasonTeam.Team").FilterConference("AFC");
+            var nfcTeams = this.Context.PlayoffTeams.Include("SeasonTeam.Team").FilterConference("NFC");
+
+            this.BuildDivisionalRound(BracketViewModel, afcTeams, nfcTeams);
+            this.BuildChampionshipRound(BracketViewModel, afcTeams, nfcTeams);
+            this.BuildSuperBowl(BracketViewModel, afcTeams, nfcTeams);
+
+            if (BracketViewModel.SuperBowl is not null && BracketViewModel.SuperBowl.SelectedWinner.HasValue)
+            {
+                // Lock previous rounds
+                foreach (var round in BracketViewModel.AfcRounds)
+                {
+                    round.IsLocked = true;
+
+                    foreach (var game in round.Games)
+                    {
+                        game.IsLocked = true;
+                    }
+                }
+
+                foreach (var round in BracketViewModel.NfcRounds)
+                {
+                    round.IsLocked = true;
+
+                    foreach (var game in round.Games)
+                    {
+                        game.IsLocked = true;
+                    }
+                }
+            }
+
+            this.SaveBracket(BracketViewModel, afcTeams, nfcTeams);
+
+            if (BracketViewModel.SuperBowl is not null && BracketViewModel.SuperBowl.SelectedWinner.HasValue)
+            {
+                return this.RedirectToAction("Index", "Home");
+            }
+
+            return this.View(BracketViewModel);
+
+        }
+
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public IActionResult Reset(int id)
+        {
+            BracketPrediction? bracketPrediction = this.GetBracketPrediction(id, false, this.UserManager.GetUserId(this.User));
+
+            if (bracketPrediction == null)
+            {
+                return this.RedirectToAction(nameof(this.Create));
+            }
+
+            var predictionsToDelete = bracketPrediction.MatchupPredictions.ToList();
+
+            predictionsToDelete.ForEach(
+                x =>
+                {
+                    this.Context.Remove(x);
+                    this.Context.SaveChanges();
+                });
+
+            return this.RedirectToAction(nameof(this.Update), new { id = id });
+        }
+
+        private MatchupViewModel BuildMatchup(string name, IQueryable<PlayoffTeam> teams, int gameNumber, int seed1, int seed2)
+        {
+            return new MatchupViewModel
+            {
+                GameNumber = gameNumber,
+                Name = name,
+                HomeTeam = this.Mapper.Map<TeamViewModel>(teams.GetTeamFromSeed(Math.Min(seed1, seed2))),
+                AwayTeam = this.Mapper.Map<TeamViewModel>(teams.GetTeamFromSeed(Math.Max(seed1, seed2))),
+            };
+        }
+
+        private List<TeamViewModel> GetWinners(List<MatchupViewModel> games)
+        {
+            var winningIds = games.Select(x => x.SelectedWinner.Value).ToList();
+
+            return games.Select(x => winningIds.Contains(x.HomeTeam.Id) ? x.HomeTeam : x.AwayTeam).ToList();
         }
 
         private BracketViewModel BuildBracketViewModel(BracketPrediction? bracketPrediction)
@@ -337,84 +370,72 @@ namespace PlayoffPool.MVC.Controllers
             bracketViewModel.NfcRounds.Add(nfcWildcardRound);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize]
-        public IActionResult Update(int id, BracketViewModel BracketViewModel)
+        private int? SaveBracket(BracketViewModel BracketViewModel, IQueryable<PlayoffTeam> afcTeams, IQueryable<PlayoffTeam> nfcTeams)
         {
-            if (this.ModelState.IsValid == false)
+            BracketPrediction? prediction = null;
+
+            if (BracketViewModel.Id != 0)
             {
-                return this.View(BracketViewModel);
+                prediction = this.Context.BracketPredictions.Include(x => x.MatchupPredictions).FirstOrDefault(x => x.Id == BracketViewModel.Id);
             }
 
-            var bracketPrediction = this.Context.BracketPredictions.FirstOrDefault(x => x.Id == id);
-
-            if (bracketPrediction == null)
+            if (prediction is null)
             {
-                return this.RedirectToAction(nameof(this.Create));
+                prediction = this.Mapper.Map<BracketPrediction>(BracketViewModel);
+                prediction.UserId = this.UserManager.GetUserId(this.User);
+                prediction.Playoff = this.Context.Playoffs.FirstOrDefault(x => x.Season.Year == 2021);
+                prediction.MatchupPredictions = new List<MatchupPrediction>();
             }
-
-            var afcTeams = this.Context.PlayoffTeams.Include("SeasonTeam.Team").FilterConference("AFC");
-            var nfcTeams = this.Context.PlayoffTeams.Include("SeasonTeam.Team").FilterConference("NFC");
-
-            this.BuildDivisionalRound(BracketViewModel, afcTeams, nfcTeams);
-            this.BuildChampionshipRound(BracketViewModel, afcTeams, nfcTeams);
-            this.BuildSuperBowl(BracketViewModel, afcTeams, nfcTeams);
-
-            if (BracketViewModel.SuperBowl is not null && BracketViewModel.SuperBowl.SelectedWinner.HasValue)
+            else
             {
-                // Lock previous rounds
-                foreach (var round in BracketViewModel.AfcRounds)
+                if (prediction.UserId != this.UserManager.GetUserId(this.User))
                 {
-                    round.IsLocked = true;
-
-                    foreach (var game in round.Games)
-                    {
-                        game.IsLocked = true;
-                    }
+                    throw new UnauthorizedAccessException();
                 }
 
-                foreach (var round in BracketViewModel.NfcRounds)
-                {
-                    round.IsLocked = true;
+                prediction.MatchupPredictions.Clear();
+            }
 
-                    foreach (var game in round.Games)
-                    {
-                        game.IsLocked = true;
-                    }
+            foreach (var round in BracketViewModel.AfcRounds)
+            {
+                foreach (var afcGame in round.Games)
+                {
+                    var afcMatchupPrediction = this.Mapper.Map<MatchupPrediction>(afcGame);
+                    afcMatchupPrediction.PlayoffRoundId = round.Id;
+                    afcMatchupPrediction.PredictedWinner = afcTeams.FirstOrDefault(x => x.Id == afcGame.SelectedWinner);
+                    prediction.MatchupPredictions.Add(afcMatchupPrediction);
                 }
             }
 
-            this.SaveBracket(BracketViewModel, afcTeams, nfcTeams);
-
-            if (BracketViewModel.SuperBowl is not null && BracketViewModel.SuperBowl.SelectedWinner.HasValue)
+            foreach (var round in BracketViewModel.NfcRounds)
             {
-                return this.RedirectToAction("Index", "Home");
-            }
-
-            return this.View(BracketViewModel);
-
-        }
-
-        public IActionResult Reset(int id)
-        {
-            BracketPrediction? bracketPrediction = this.GetBracketPrediction(id, false, this.UserManager.GetUserId(this.User));
-
-            if (bracketPrediction == null)
-            {
-                return this.RedirectToAction(nameof(this.Create));
-            }
-
-            var predictionsToDelete = bracketPrediction.MatchupPredictions.ToList();
-
-            predictionsToDelete.ForEach(
-                x =>
+                foreach (var nfcGame in round.Games)
                 {
-                    this.Context.Remove(x);
-                    this.Context.SaveChanges();
-                });
+                    var nfcMatchupPrediction = this.Mapper.Map<MatchupPrediction>(nfcGame);
+                    nfcMatchupPrediction.PlayoffRoundId = round.Id;
+                    nfcMatchupPrediction.PredictedWinner = nfcTeams.FirstOrDefault(x => x.Id == nfcGame.SelectedWinner);
+                    prediction.MatchupPredictions.Add(nfcMatchupPrediction);
+                }
+            }
 
-            return this.RedirectToAction(nameof(this.Update), new { id = id });
+            if (BracketViewModel.SuperBowl is not null)
+            {
+                var game = BracketViewModel.SuperBowl;
+
+                var matchupPrediction = this.Mapper.Map<MatchupPrediction>(game);
+                matchupPrediction.PlayoffRoundId = this.Context.PlayoffRounds.FirstOrDefault(x => x.Round.Number == 4).Id;
+                matchupPrediction.PredictedWinner = afcTeams.FirstOrDefault(x => x.Id == game.SelectedWinner) == null ? nfcTeams.FirstOrDefault(x => x.Id == game.SelectedWinner) : afcTeams.FirstOrDefault(x => x.Id == game.SelectedWinner);
+                prediction.MatchupPredictions.Add(matchupPrediction);
+            }
+
+            if (prediction.Id == 0)
+            {
+                this.Context.Add(prediction);
+            }
+
+            this.Context.SaveChanges();
+
+            return prediction == null ? null : prediction.Id;
         }
 
         private void BuildSuperBowl(BracketViewModel BracketViewModel, IQueryable<PlayoffTeam> afcTeams, IQueryable<PlayoffTeam> nfcTeams)
@@ -526,24 +547,6 @@ namespace PlayoffPool.MVC.Controllers
                 nfcChampionship.Games.Add(this.BuildMatchup("NFC Championship Game", nfcTeams, 1, pickedNfcWinners[1].Seed, pickedNfcWinners[0].Seed));
                 BracketViewModel.NfcRounds.Add(nfcChampionship);
             }
-        }
-
-        private MatchupViewModel BuildMatchup(string name, IQueryable<PlayoffTeam> teams, int gameNumber, int seed1, int seed2)
-        {
-            return new MatchupViewModel
-            {
-                GameNumber = gameNumber,
-                Name = name,
-                HomeTeam = this.Mapper.Map<TeamViewModel>(teams.GetTeamFromSeed(Math.Min(seed1, seed2))),
-                AwayTeam = this.Mapper.Map<TeamViewModel>(teams.GetTeamFromSeed(Math.Max(seed1, seed2))),
-            };
-        }
-
-        private List<TeamViewModel> GetWinners(List<MatchupViewModel> games)
-        {
-            var winningIds = games.Select(x => x.SelectedWinner.Value).ToList();
-
-            return games.Select(x => winningIds.Contains(x.HomeTeam.Id) ? x.HomeTeam : x.AwayTeam).ToList();
         }
     }
 }
