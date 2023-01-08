@@ -13,6 +13,8 @@
                 <select asp-for="@this.Model.Users[i].RoleId" asp-items="@(new SelectList(this.Model.Users[i].Roles, nameof(SelectListItem.Value), nameof(SelectListItem.Text)))">
                     <option>Select One</option>
                 </select>
+                <input type="checkbox" asp-for="@this.Model.Users[i].ShouldResetPassword" />
+                <label asp-for="@this.Model.Users[i].ShouldResetPassword"></label>
             </div>
         }
 

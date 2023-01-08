@@ -78,6 +78,10 @@ fieldset {
     font-size: 2rem;
 }
 
+.pp-nav {
+    margin-bottom: 1rem;
+}
+
 .pp-nav-link {
     color: #F1F1F9 !important;
     border-bottom: 0.25rem solid transparent;

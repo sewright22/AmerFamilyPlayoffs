@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Build.Framework;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using AutoMapper.Configuration.Annotations;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace PlayoffPool.MVC.Models
 {
@@ -11,6 +13,9 @@ namespace PlayoffPool.MVC.Models
 		public string? FirstName { get; set; }
 		public string? LastName { get; set; }
 		public string? Email { get; set; }
+
+		[Display(Name = "Reset Password")]
+		public bool ShouldResetPassword { get; set; }
         public List<SelectListItem> Roles { get; set; } = new List<SelectListItem>();
 	}
 }

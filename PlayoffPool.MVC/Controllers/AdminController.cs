@@ -212,6 +212,25 @@
                     }
 
                     await this.DataManager.DataContext.SaveChangesAsync().ConfigureAwait(false);
+
+                    if (modelUser.ShouldResetPassword)
+                    {
+                        var removeResult = await this.DataManager.UserManager.RemovePasswordAsync(dbUser);
+
+                        if (removeResult.Errors.Any())
+                        {
+                            this.ModelState.AddModelError(modelUser.Id, removeResult.Errors.FirstOrDefault().Description);
+                            return this.View(model);
+                        }
+
+                        var result = await this.DataManager.UserManager.AddPasswordAsync(dbUser, "Password#123").ConfigureAwait(false);
+
+                        if (result.Errors.Any())
+                        {
+                            this.ModelState.AddModelError(modelUser.Id, result.Errors.FirstOrDefault().Description);
+                            return this.View(model);
+                        }
+                    }
                 }
             }
             catch (Exception ex)
