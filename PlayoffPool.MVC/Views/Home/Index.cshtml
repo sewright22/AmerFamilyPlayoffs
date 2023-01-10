@@ -80,6 +80,9 @@ else
                             <label class="pp-label">Score</label>
                             <span class="pp-label-value">@bracket.CurrentScore</span>
                         </span>
+                        <span class="col-auto">
+                            <span><a class="btn pp-button pp-button-secondary" href=@string.Format("/Bracket/Update/{0}", bracket.Id)>View</a></span>
+                        </span>
                     </div>
                 }
             </div>

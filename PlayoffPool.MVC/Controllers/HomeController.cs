@@ -108,10 +108,10 @@ namespace PlayoffPool.MVC.Controllers
                 var round1Score = bracket.MatchupPredictions
                     .Where(x => x.PlayoffRound.Round.Number == 1)
                     .Count(x => actualWinners
-                    .Any(w => w.PlayoffTeamId == x.PredictedWinner.Id && w.PlayoffRound.Round.Number == 1)) * 1;
-                var round2Score = bracket.MatchupPredictions.Where(x => x.PlayoffRound.Round.Number == 2).Count(x => actualWinners.Any(w => w.PlayoffTeamId == x.PredictedWinner.Id && w.PlayoffRound.Round.Number == 2)) * 2;
-                var round3Score = bracket.MatchupPredictions.Where(x => x.PlayoffRound.Round.Number == 3).Count(x => actualWinners.Any(w => w.PlayoffTeamId == x.PredictedWinner.Id && w.PlayoffRound.Round.Number == 3)) * 3;
-                var round4Score = bracket.MatchupPredictions.Where(x => x.PlayoffRound.Round.Number == 4).Count(x => actualWinners.Any(w => w.PlayoffTeamId == x.PredictedWinner.Id && w.PlayoffRound.Round.Number == 4)) * 4;
+                    .Any(w => w.PlayoffTeamId == x.PredictedWinner.Id && w.PlayoffRound.Round.Number == 1)) * 2;
+                var round2Score = bracket.MatchupPredictions.Where(x => x.PlayoffRound.Round.Number == 2).Count(x => actualWinners.Any(w => w.PlayoffTeamId == x.PredictedWinner.Id && w.PlayoffRound.Round.Number == 2)) * 3;
+                var round3Score = bracket.MatchupPredictions.Where(x => x.PlayoffRound.Round.Number == 3).Count(x => actualWinners.Any(w => w.PlayoffTeamId == x.PredictedWinner.Id && w.PlayoffRound.Round.Number == 3)) * 5;
+                var round4Score = bracket.MatchupPredictions.Where(x => x.PlayoffRound.Round.Number == 4).Count(x => actualWinners.Any(w => w.PlayoffTeamId == x.PredictedWinner.Id && w.PlayoffRound.Round.Number == 4)) * 8;
                 retVal.Brackets.Add(new BracketSummaryModel
                 {
                     Id = bracket.Id,

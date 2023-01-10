@@ -88,7 +88,7 @@ namespace PlayoffPool.MVC.Controllers
         [Authorize]
         public IActionResult Update(int id)
         {
-            BracketPrediction? bracketPrediction = this.GetBracketPrediction(id, false, this.UserManager.GetUserId(this.User));
+            BracketPrediction? bracketPrediction = this.GetBracketPrediction(id, false);
 
             if (bracketPrediction == null)
             {
@@ -96,6 +96,15 @@ namespace PlayoffPool.MVC.Controllers
             }
 
             BracketViewModel bracketViewModel = this.BuildBracketViewModel(bracketPrediction);
+
+            if (bracketPrediction.UserId != this.UserManager.GetUserId(this.User))
+            {
+                bracketViewModel.CanEdit = false;
+            }
+            else
+            {
+                bracketViewModel.CanEdit = true;
+            }
 
             return this.View(bracketViewModel);
         }
@@ -105,6 +114,8 @@ namespace PlayoffPool.MVC.Controllers
         [Authorize]
         public IActionResult Update(int id, BracketViewModel BracketViewModel)
         {
+            bool isEditable = true;
+            BracketViewModel.CanEdit = true;
             if (this.ModelState.IsValid == false)
             {
                 return this.View(BracketViewModel);
@@ -115,6 +126,11 @@ namespace PlayoffPool.MVC.Controllers
             if (bracketPrediction == null)
             {
                 return this.RedirectToAction(nameof(this.Create));
+            }
+
+            if (bracketPrediction.UserId != this.UserManager.GetUserId(this.User))
+            {
+                isEditable = false;
             }
 
             var afcTeams = this.Context.PlayoffTeams.Include("SeasonTeam.Team").FilterConference("AFC");
@@ -148,7 +164,14 @@ namespace PlayoffPool.MVC.Controllers
                 }
             }
 
-            this.SaveBracket(BracketViewModel, afcTeams, nfcTeams);
+            if (isEditable)
+            {
+                this.SaveBracket(BracketViewModel, afcTeams, nfcTeams);
+            }
+            else
+            {
+                BracketViewModel.CanEdit = false;
+            }
 
             if (BracketViewModel.SuperBowl is not null && BracketViewModel.SuperBowl.SelectedWinner.HasValue)
             {
@@ -159,13 +182,13 @@ namespace PlayoffPool.MVC.Controllers
 
         }
 
-        [ValidateAntiForgeryToken]
+        [HttpGet]
         [Authorize]
         public IActionResult Reset(int id)
         {
-            BracketPrediction? bracketPrediction = this.GetBracketPrediction(id, false, this.UserManager.GetUserId(this.User));
+            BracketPrediction? bracketPrediction = this.GetBracketPrediction(id, false);
 
-            if (bracketPrediction == null)
+            if (bracketPrediction == null || bracketPrediction.UserId == this.UserManager.GetUserId(this.User))
             {
                 return this.RedirectToAction(nameof(this.Create));
             }
@@ -217,12 +240,13 @@ namespace PlayoffPool.MVC.Controllers
             this.UpdateRoundPicks(bracketViewModel, 3, bracketPrediction.MatchupPredictions);
             this.BuildSuperBowl(bracketViewModel, afcTeams, nfcTeams);
             this.UpdateSuperBowlPicks(bracketViewModel, bracketPrediction.MatchupPredictions);
+
             return bracketViewModel;
         }
 
-        private BracketPrediction? GetBracketPrediction(int id, bool enableTracking, string userId)
+        private BracketPrediction? GetBracketPrediction(int id, bool enableTracking)
         {
-            var predictions = this.Context.BracketPredictions.Where(x => x.UserId == userId).AsQueryable();
+            var predictions = this.Context.BracketPredictions.AsQueryable();
 
             if (enableTracking)
             {

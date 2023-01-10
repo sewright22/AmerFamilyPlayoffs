@@ -1,5 +1,68 @@
 ﻿@using PlayoffPool.MVC.Models.Bracket;
+@using PlayoffPool.MVC.Helpers.TagHelpers;
 @model BracketViewModel
+
+@{
+    string error = "There was a problem loading this game. Please contact Steven.";
+}
+
 <div class="container">
+    <label asp-for="Name"></label>:
     <span>@this.Model.Name</span>
+
+    @if (string.IsNullOrWhiteSpace(this.Model.Name) == false)
+    {
+        <div class="container">
+            <div class="row">
+                <div class="col afc">
+                    <span class="pp-conference-name">AFC</span>
+                    @for (int i = 0; i < this.Model.AfcRounds.Count(); i++)
+                    {
+                        var prefix = $"{nameof(BracketViewModel.AfcRounds)}[{i}]";
+                        <pp-partial name="_BracketRound.cshtml" pp-prefix="@prefix" model="@this.Model.AfcRounds[i]" />
+                    }
+                </div>
+
+                <div class="col nfc">
+                    <span class="pp-conference-name">NFC</span>
+                    @for (int i = 0; i < this.Model.NfcRounds.Count(); i++)
+                    {
+
+                        var prefix = $"{nameof(BracketViewModel.NfcRounds)}[{i}]";
+                        <pp-partial name="_BracketRound.cshtml" pp-prefix="@prefix" model="@this.Model.NfcRounds[i]" />
+                    }
+                </div>
+            </div>
+
+            @if (this.Model.SuperBowl != null && this.Model.SuperBowl.HomeTeam != null && this.Model.SuperBowl.AwayTeam != null)
+            {
+                <div class="row">
+                    <div class="col super-bowl">
+                        <div class="pp-matchup pp-matchup-super-bowl">
+
+                            <span class="pp-game-name pp-game-name-super-bowl">@this.Model.SuperBowl.Name</span>
+                            <div class="row">
+                                <span class="col">
+                                    <label>
+                                        <input class="form-check-input" type="radio" asp-for="SuperBowl.SelectedWinner" id="@this.Model.SuperBowl.HomeTeam.ViewId" value="@this.Model.SuperBowl.HomeTeam.Id" disabled />
+                                    </label>
+                                    <label class="pp-team-name" for="@this.Model.SuperBowl.HomeTeam.ViewId">@this.Model.SuperBowl.HomeTeam.Name</label>
+                                </span>
+                                <span class="col-auto">
+                                    <label class="pp-team-name" for="@this.Model.SuperBowl.AwayTeam.ViewId">@this.Model.SuperBowl.AwayTeam.Name</label>
+                                    <label>
+                                        <input class="form-check-input" type="radio" asp-for="SuperBowl.SelectedWinner" id="@this.Model.SuperBowl.AwayTeam.ViewId" value="@this.Model.SuperBowl.AwayTeam.Id" disabled />
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <div class="row">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    </div>
 </div>
