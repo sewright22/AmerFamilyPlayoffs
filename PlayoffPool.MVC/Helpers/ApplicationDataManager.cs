@@ -44,9 +44,9 @@ namespace PlayoffPool.MVC.Helpers
             this.SeedSeasons();
             this.SeedTeams();
             this.SeedConferences();
-            await this.SeedSeasonTeams().ConfigureAwait(false);
+            this.SeedSeasonTeams();
             this.SeedRounds();
-            await this.SeedPlayoffs().ConfigureAwait(false);
+            this.SeedPlayoffs();
             this.SeedPlayoffRounds();
             this.SeedPlayoffTeams();
 #if DEBUG
@@ -115,7 +115,7 @@ namespace PlayoffPool.MVC.Helpers
             }
         }
 
-        private async Task SeedPlayoff(int year)
+        private void SeedPlayoff(int year)
         {
             if (this.DataContext.Playoffs.Any(x => x.Season.Year == year))
             {
@@ -124,10 +124,10 @@ namespace PlayoffPool.MVC.Helpers
 
             this.DataContext.Playoffs.Add(new Playoff()
             {
-                Season = await this.DataContext.Seasons.SingleAsync(x => x.Year == year).ConfigureAwait(false),
+                Season = this.DataContext.Seasons.Single(x => x.Year == year),
             });
 
-            await this.DataContext.SaveChangesAsync().ConfigureAwait(false);
+            this.DataContext.SaveChanges();
         }
 
         private void SeedPlayoffRounds()
@@ -158,9 +158,9 @@ namespace PlayoffPool.MVC.Helpers
             this.DataContext.SaveChanges();
         }
 
-        private async Task SeedPlayoffs()
+        private void SeedPlayoffs()
         {
-            await this.SeedPlayoff(2021).ConfigureAwait(false);
+            this.SeedPlayoff(2021);
         }
 
         private void SeedPlayoffTeam(int year, string abbreviation, int seed)
@@ -258,10 +258,10 @@ namespace PlayoffPool.MVC.Helpers
             this.SeedSeason(2021);
         }
 
-        private async Task SeedSeasonTeam(string teamAbbreviation, string conferenceName, int seasonId)
+        private void SeedSeasonTeam(string teamAbbreviation, string conferenceName, int seasonId)
         {
-            var conference = await this.DataContext.Conferences.AsNoTracking().FirstOrDefaultAsync(x => x.Name == conferenceName).ConfigureAwait(false);
-            var team = await this.DataContext.Teams.AsNoTracking().FirstOrDefaultAsync(x => x.Abbreviation == teamAbbreviation).ConfigureAwait(false);
+            var conference = this.DataContext.Conferences.AsNoTracking().FirstOrDefault(x => x.Name == conferenceName);
+            var team = this.DataContext.Teams.AsNoTracking().FirstOrDefault(x => x.Abbreviation == teamAbbreviation);
 
             if (team == null)
             {
@@ -278,43 +278,43 @@ namespace PlayoffPool.MVC.Helpers
             this.DataContext.SaveChanges();
         }
 
-        private async Task SeedSeasonTeams()
+        private void SeedSeasonTeams()
         {
             foreach (var season in this.DataContext.Seasons.AsNoTracking().ToList())
             {
-                await this.SeedSeasonTeam("BAL", "AFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("BUF", "AFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("CIN", "AFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("CLE", "AFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("DEN", "AFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("HOU", "AFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("IND", "AFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("JAX", "AFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("KC", "AFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("LAC", "AFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("LV", "AFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("MIA", "AFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("NE", "AFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("NYJ", "AFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("PIT", "AFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("TEN", "AFC", season.Id).ConfigureAwait(false);
+                this.SeedSeasonTeam("BAL", "AFC", season.Id);
+                this.SeedSeasonTeam("BUF", "AFC", season.Id);
+                this.SeedSeasonTeam("CIN", "AFC", season.Id);
+                this.SeedSeasonTeam("CLE", "AFC", season.Id);
+                this.SeedSeasonTeam("DEN", "AFC", season.Id);
+                this.SeedSeasonTeam("HOU", "AFC", season.Id);
+                this.SeedSeasonTeam("IND", "AFC", season.Id);
+                this.SeedSeasonTeam("JAX", "AFC", season.Id);
+                this.SeedSeasonTeam("KC", "AFC", season.Id);
+                this.SeedSeasonTeam("LAC", "AFC", season.Id);
+                this.SeedSeasonTeam("LV", "AFC", season.Id);
+                this.SeedSeasonTeam("MIA", "AFC", season.Id);
+                this.SeedSeasonTeam("NE", "AFC", season.Id);
+                this.SeedSeasonTeam("NYJ", "AFC", season.Id);
+                this.SeedSeasonTeam("PIT", "AFC", season.Id);
+                this.SeedSeasonTeam("TEN", "AFC", season.Id);
 
-                await this.SeedSeasonTeam("ARI", "NFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("ATL", "NFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("CAR", "NFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("CHI", "NFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("DAL", "NFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("DET", "NFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("GB", "NFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("LAR", "NFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("MIN", "NFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("NO", "NFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("NYG", "NFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("PHI", "NFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("SEA", "NFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("SF", "NFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("TB", "NFC", season.Id).ConfigureAwait(false);
-                await this.SeedSeasonTeam("WAS", "NFC", season.Id).ConfigureAwait(false);
+                this.SeedSeasonTeam("ARI", "NFC", season.Id);
+                this.SeedSeasonTeam("ATL", "NFC", season.Id);
+                this.SeedSeasonTeam("CAR", "NFC", season.Id);
+                this.SeedSeasonTeam("CHI", "NFC", season.Id);
+                this.SeedSeasonTeam("DAL", "NFC", season.Id);
+                this.SeedSeasonTeam("DET", "NFC", season.Id);
+                this.SeedSeasonTeam("GB", "NFC", season.Id);
+                this.SeedSeasonTeam("LAR", "NFC", season.Id);
+                this.SeedSeasonTeam("MIN", "NFC", season.Id);
+                this.SeedSeasonTeam("NO", "NFC", season.Id);
+                this.SeedSeasonTeam("NYG", "NFC", season.Id);
+                this.SeedSeasonTeam("PHI", "NFC", season.Id);
+                this.SeedSeasonTeam("SEA", "NFC", season.Id);
+                this.SeedSeasonTeam("SF", "NFC", season.Id);
+                this.SeedSeasonTeam("TB", "NFC", season.Id);
+                this.SeedSeasonTeam("WAS", "NFC", season.Id);
             }
         }
 
