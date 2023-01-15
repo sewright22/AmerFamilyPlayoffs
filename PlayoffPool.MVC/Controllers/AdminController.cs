@@ -78,27 +78,27 @@
         public async Task<IActionResult> ManageTeams(ManageTeamsViewModel ManageTeamsViewModel)
         {
             var model = ManageTeamsViewModel;
-            model.YearViewModel = new YearViewModel()
-            {
-                SelectedYear = model.YearViewModel?.SelectedYear,
-            };
-            model.YearViewModel.Years.AddRange(this.DataManager.DataContext.Seasons.Select(x => new SelectListItem(x.Year.ToString(), x.Year.ToString())));
 
-            if (model.YearViewModel is not null && model.YearViewModel.SelectedYear is not null)
+            if (string.IsNullOrEmpty(model.Year) == false)
             {
-                var teams = this.DataManager.DataContext.PlayoffTeams.Include("SeasonTeam.Team").Select(x => new { x.SeasonTeam.Team.Abbreviation, x.Id }).ToList();
-                var rounds = this.DataManager.DataContext.PlayoffRounds.Include("Round").Include(x => x.RoundWinners).ThenInclude(x => x.PlayoffTeam)
-                                     .Where(x => x.Playoff.Season.Year.ToString() == model.YearViewModel.SelectedYear).OrderBy(x => x.Round.Number);
+                var teams = this.DataManager.DataContext.PlayoffTeams.Include("SeasonTeam.Team")
+                    .Where(x => x.SeasonTeam.Season.Year.ToString() == model.Year).ProjectTo<PlayoffTeamViewModel>(this.Mapper.ConfigurationProvider).ToList();
+
+                var rounds = this.DataManager.DataContext.PlayoffRounds.Include("Round")
+                    .Include(x => x.RoundWinners)
+                    .ThenInclude(x => x.PlayoffTeam)
+                    .Where(x => x.Playoff.Season.Year.ToString() == model.Year)
+                    .OrderBy(x => x.Round.Number);
 
                 foreach (var round in rounds)
                 {
                     var vm = new AdminRoundViewModel();
-                    vm.Teams = new List<SelectListItem>(teams.Select(x=> new SelectListItem(x.Abbreviation, x.Id.ToString())));
+                    vm.Teams = new List<PlayoffTeamViewModel>(teams.Select(x => this.Mapper.Map<PlayoffTeamViewModel>(x)));
                     if (round.RoundWinners.Any())
                     {
                         vm.Teams.ForEach(team =>
                         {
-                            if (round.RoundWinners.Any(x => x.PlayoffTeamId.ToString() == team.Value))
+                            if (round.RoundWinners.Any(x => x.PlayoffTeamId == team.Id))
                             {
                                 team.Selected = true;
                             }
@@ -109,7 +109,7 @@
                     vm.Name = round.Round.Name;
                     vm.Number = round.Round.Number;
                     vm.PointValue = round.PointValue;
-                    model.RoundViewModel.Add(vm);
+                    model.Rounds.Add(vm);
                 }
             }
 
@@ -124,22 +124,22 @@
 
             if (ModelState.IsValid)
             {
-                foreach (var roundViewModel in model.RoundViewModel)
+                foreach (var roundViewModel in model.Rounds)
                 {
                     var dbRound = this.DataManager.DataContext.PlayoffRounds.Include(x => x.RoundWinners).FirstOrDefault(x => x.Id == roundViewModel.Id);
-                    var selectedWinners = roundViewModel.Teams.Where(x => x.Selected).Select(x => x.Value).ToList();
-
+                    var selectedWinners = roundViewModel.Teams.Where(x => x.Selected).Select(x => x.Id).ToList();
+                    dbRound.PointValue = roundViewModel.PointValue;
                     dbRound.RoundWinners.Clear();
                     dbRound.RoundWinners.AddRange(selectedWinners.Select(x => new RoundWinner
                     {
-                        PlayoffTeamId = Int32.Parse(x),
+                        PlayoffTeamId = x,
                     }));
                 }
 
                 this.DataManager.DataContext.SaveChanges();
             }
 
-            model.RoundViewModel.Clear();
+            model.Rounds.Clear();
             return this.RedirectToAction(nameof(this.ManageTeams), model);
         }
 

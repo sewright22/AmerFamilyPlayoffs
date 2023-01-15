@@ -124,7 +124,7 @@ namespace PlayoffPool.MVC.Helpers
 
             this.DataContext.Playoffs.Add(new Playoff()
             {
-                Season = this.DataContext.Seasons.Single(x => x.Year == year),
+                SeasonId = this.DataContext.Seasons.Single(x => x.Year == year).Id,
             });
 
             this.DataContext.SaveChanges();
@@ -132,12 +132,29 @@ namespace PlayoffPool.MVC.Helpers
 
         private void SeedPlayoffRounds()
         {
-            foreach (var playoff in this.DataContext.Playoffs.AsNoTracking().Where(x=>x.PlayoffRounds.Any() == false))
+            foreach (var playoff in this.DataContext.Playoffs.AsNoTracking().Where(x=>x.PlayoffRounds.Any() == false).ToList())
             {
-                foreach (var round in this.DataContext.Rounds.AsNoTracking())
+                foreach (var round in this.DataContext.Rounds.AsNoTracking().ToList())
                 {
-                    this.SeedPlayoffRound(playoff.Id, round.Id, round.Number);
+                    this.SeedPlayoffRound(playoff.Id, round.Id, this.GetRoundPointValue(round.Number));
                 }
+            }
+        }
+
+        private int GetRoundPointValue(int number)
+        {
+            switch (number)
+            {
+                case 1:
+                    return 2;
+                case 2:
+                    return 3;
+                case 3:
+                    return 5;
+                case 4:
+                    return 8;
+                default:
+                    return 0;
             }
         }
 
@@ -161,6 +178,7 @@ namespace PlayoffPool.MVC.Helpers
         private void SeedPlayoffs()
         {
             this.SeedPlayoff(2021);
+            this.SeedPlayoff(2022);
         }
 
         private void SeedPlayoffTeam(int year, string abbreviation, int seed)
@@ -202,6 +220,24 @@ namespace PlayoffPool.MVC.Helpers
             this.SeedPlayoffTeam(year, "ARI", 5);
             this.SeedPlayoffTeam(year, "SF", 6);
             this.SeedPlayoffTeam(year, "PHI", 7);
+
+            year = 2022;
+
+            this.SeedPlayoffTeam(year, "KC", 1);
+            this.SeedPlayoffTeam(year, "BUF", 2);
+            this.SeedPlayoffTeam(year, "CIN", 3);
+            this.SeedPlayoffTeam(year, "JAX", 4);
+            this.SeedPlayoffTeam(year, "LAC", 5);
+            this.SeedPlayoffTeam(year, "BAL", 6);
+            this.SeedPlayoffTeam(year, "MIA", 7);
+
+            this.SeedPlayoffTeam(year, "PHI", 1);
+            this.SeedPlayoffTeam(year, "SF", 2);
+            this.SeedPlayoffTeam(year, "MIN", 3);
+            this.SeedPlayoffTeam(year, "TB", 4);
+            this.SeedPlayoffTeam(year, "DAL", 5);
+            this.SeedPlayoffTeam(year, "NYG", 6);
+            this.SeedPlayoffTeam(year, "SEA", 7);
         }
 
         private async Task SeedRole(string role)
@@ -214,7 +250,7 @@ namespace PlayoffPool.MVC.Helpers
 
         private void SeedRound(int roundNumber, string roundName)
         {
-            if (this.DataContext.Rounds.Any(x => x.Name == roundName))
+            if (this.DataContext.Rounds.FirstOrDefault(x => x.Name == roundName) is not null)
             {
                 return;
             }
@@ -256,6 +292,7 @@ namespace PlayoffPool.MVC.Helpers
             this.SeedSeason(2019);
             this.SeedSeason(2020);
             this.SeedSeason(2021);
+            this.SeedSeason(2022);
         }
 
         private void SeedSeasonTeam(string teamAbbreviation, string conferenceName, int seasonId)
@@ -264,6 +301,13 @@ namespace PlayoffPool.MVC.Helpers
             var team = this.DataContext.Teams.AsNoTracking().FirstOrDefault(x => x.Abbreviation == teamAbbreviation);
 
             if (team == null)
+            {
+                return;
+            }
+
+            var existingRecord = this.DataContext.SeasonTeams.FirstOrDefault(x=>x.SeasonId==seasonId && x.TeamId == team.Id && x.ConferenceId == conference.Id);
+
+            if (existingRecord != null)
             {
                 return;
             }

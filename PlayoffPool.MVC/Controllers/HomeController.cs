@@ -61,7 +61,7 @@ namespace PlayoffPool.MVC.Controllers
                 {
                     Id = completedBracket.Id,
                     Name = completedBracket.Name,
-                    PredictedWinner = new TeamViewModel()
+                    PredictedWinner = new PlayoffTeamViewModel()
                     {
                         Name = completedBracket.SuperBowl.PredictedWinner.SeasonTeam.Team.Name,
                     }
@@ -98,10 +98,10 @@ namespace PlayoffPool.MVC.Controllers
             var brackets = this.dataContext.BracketPredictions
                 .Include("MatchupPredictions.PlayoffRound.Round")
                 .Include("MatchupPredictions.PredictedWinner.SeasonTeam.Team")
-                .AsNoTracking().Where(x => x.Playoff.Season.Year == 2021)
+                .AsNoTracking().Where(x => x.Playoff.Season.Year == 2022)
                 .Where(x => x.MatchupPredictions.Count(x => x.PredictedWinner != null) == 13);
 
-            var actualWinners = this.dataContext.RoundWinners.Include(x => x.PlayoffRound).Where(x => x.PlayoffRound.Playoff.Season.Year == 2021);
+            var actualWinners = this.dataContext.RoundWinners.Include(x => x.PlayoffRound).Where(x => x.PlayoffRound.Playoff.Season.Year == 2022);
 
             foreach (var bracket in brackets.ToList())
             {
@@ -116,7 +116,7 @@ namespace PlayoffPool.MVC.Controllers
                 {
                     Id = bracket.Id,
                     Name = bracket.Name,
-                    PredictedWinner = new TeamViewModel()
+                    PredictedWinner = new PlayoffTeamViewModel()
                     {
                         Name = bracket.SuperBowl.PredictedWinner.SeasonTeam.Team.Name,
                     },

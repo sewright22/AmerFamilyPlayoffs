@@ -1,10 +1,12 @@
-﻿using PlayoffPool.MVC.Models.Admin;
+﻿using System.ComponentModel.DataAnnotations;
+using PlayoffPool.MVC.Models.Admin;
 
 namespace PlayoffPool.MVC.Models
 {
     public class ManageTeamsViewModel
     {
-        public YearViewModel? YearViewModel { get; set; }
-        public List<AdminRoundViewModel> RoundViewModel { get; } = new List<AdminRoundViewModel>();
+        [Display(Name = "Year")]
+        public string Year { get; set; } = string.Empty;
+        public List<AdminRoundViewModel> Rounds { get; } = new List<AdminRoundViewModel>();
     }
 }

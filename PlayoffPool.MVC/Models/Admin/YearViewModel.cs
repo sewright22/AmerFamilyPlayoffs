@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace PlayoffPool.MVC.Models.Admin
 {
     public class YearViewModel
     {
-        public string? SelectedYear { get; set; }
-        public List<SelectListItem> Years { get; } = new List<SelectListItem>();
+        [Display(Name = "Year")]
+        public string Year { get; set; }
     }
 }
