@@ -42,6 +42,11 @@ fieldset {
     text-align: center;
 }
 
+.pp-section {
+    padding: 1rem;
+    border: 1px solid black;
+}
+
 .navbar {
     background: #1F1F47;
     color: #EDEBE8;

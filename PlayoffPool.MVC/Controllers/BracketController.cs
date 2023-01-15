@@ -9,6 +9,7 @@ using PlayoffPool.MVC.Models.Bracket;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using PlayoffPool.MVC.Models;
 
 namespace PlayoffPool.MVC.Controllers
 {
@@ -211,12 +212,12 @@ namespace PlayoffPool.MVC.Controllers
             {
                 GameNumber = gameNumber,
                 Name = name,
-                HomeTeam = this.Mapper.Map<TeamViewModel>(teams.GetTeamFromSeed(Math.Min(seed1, seed2))),
-                AwayTeam = this.Mapper.Map<TeamViewModel>(teams.GetTeamFromSeed(Math.Max(seed1, seed2))),
+                HomeTeam = this.Mapper.Map<PlayoffTeamViewModel>(teams.GetTeamFromSeed(Math.Min(seed1, seed2))),
+                AwayTeam = this.Mapper.Map<PlayoffTeamViewModel>(teams.GetTeamFromSeed(Math.Max(seed1, seed2))),
             };
         }
 
-        private List<TeamViewModel> GetWinners(List<MatchupViewModel> games)
+        private List<PlayoffTeamViewModel> GetWinners(List<MatchupViewModel> games)
         {
             var winningIds = games.Select(x => x.SelectedWinner.Value).ToList();
 
@@ -501,8 +502,8 @@ namespace PlayoffPool.MVC.Controllers
                 List<MatchupViewModel> nfcChampionshipGame = previousNfcRound.Games.ToList();
                 var pickedAfcWinner = this.GetWinners(afcChampionshipGame).Single().Seed;
                 var pickedNfcWinner = this.GetWinners(nfcChampionshipGame).Single().Seed;
-                var homeTeam = this.Mapper.Map<TeamViewModel>(afcTeams.GetTeamFromSeed(pickedAfcWinner));
-                var awayTeam = this.Mapper.Map<TeamViewModel>(nfcTeams.GetTeamFromSeed(pickedNfcWinner));
+                var homeTeam = this.Mapper.Map<PlayoffTeamViewModel>(afcTeams.GetTeamFromSeed(pickedAfcWinner));
+                var awayTeam = this.Mapper.Map<PlayoffTeamViewModel>(nfcTeams.GetTeamFromSeed(pickedNfcWinner));
                 BracketViewModel.SuperBowl = new MatchupViewModel
                 {
                     Name = "Super Bowl",

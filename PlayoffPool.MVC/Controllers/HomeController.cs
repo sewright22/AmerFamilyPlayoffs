@@ -61,7 +61,7 @@ namespace PlayoffPool.MVC.Controllers
                 {
                     Id = completedBracket.Id,
                     Name = completedBracket.Name,
-                    PredictedWinner = new TeamViewModel()
+                    PredictedWinner = new PlayoffTeamViewModel()
                     {
                         Name = completedBracket.SuperBowl.PredictedWinner.SeasonTeam.Team.Name,
                     }
@@ -116,7 +116,7 @@ namespace PlayoffPool.MVC.Controllers
                 {
                     Id = bracket.Id,
                     Name = bracket.Name,
-                    PredictedWinner = new TeamViewModel()
+                    PredictedWinner = new PlayoffTeamViewModel()
                     {
                         Name = bracket.SuperBowl.PredictedWinner.SeasonTeam.Team.Name,
                     },

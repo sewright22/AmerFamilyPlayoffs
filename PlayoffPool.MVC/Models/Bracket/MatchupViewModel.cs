@@ -7,8 +7,8 @@ namespace PlayoffPool.MVC.Models.Bracket
     {
         public int GameNumber { get; set; }
         public string Name { get; set; }
-        public TeamViewModel HomeTeam { get; set; }
-        public TeamViewModel AwayTeam { get; set; }
+        public PlayoffTeamViewModel HomeTeam { get; set; }
+        public PlayoffTeamViewModel AwayTeam { get; set; }
 
         [Required(ErrorMessage = "Pick a winner for this game")]
         public int? SelectedWinner { get; set; }

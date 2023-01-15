@@ -9,6 +9,6 @@ namespace PlayoffPool.MVC.Models.Admin
         public string Name { get; set; }
         public int PointValue { get;set; }
         public List<string>? SelectedTeams { get; set; }
-        public List<SelectListItem> Teams { get; set; } = new List<SelectListItem>();
+        public List<PlayoffTeamViewModel> Teams { get; set; } = new List<PlayoffTeamViewModel>();
     }
 }

@@ -1,0 +1,13 @@
+﻿@using PlayoffPool.MVC.Models.Admin;
+@model ManageTeamsViewModel
+
+<form asp-action="ManageTeams" method="get">
+    <div class="row">
+        <label asp-for="Year"></label>
+        <input asp-for="Year">
+    </div>
+
+    <div class="pp-button-bar">
+        <button class="pp-button">Submit</button>
+    </div>
+</form>
