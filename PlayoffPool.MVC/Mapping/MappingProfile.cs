@@ -11,12 +11,6 @@ namespace PlayoffPool.MVC.Mapping
     {
         public MappingProfile()
         {
-
-            this.CreateMap<BracketPrediction, BracketViewModel>();
-
-            this.CreateMap<BracketPrediction, BracketSummaryModel>()
-                .IncludeMembers(x => x.SuperBowl);
-
             this.CreateMap<MatchupPrediction, BracketSummaryModel>()
                 .IncludeMembers(x => x.PredictedWinner);
 
@@ -25,10 +19,8 @@ namespace PlayoffPool.MVC.Mapping
 
             this.CreateMap<Round, RoundViewModel>();
 
-            this.CreateMap<BracketViewModel, BracketPrediction>();
             this.CreateMap<MatchupViewModel, MatchupPrediction>();
             this.CreateMap<MatchupPrediction, MatchupViewModel>();
-            this.CreateMap<BracketSummaryModel, BracketPrediction>();
         }
     }
 }

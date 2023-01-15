@@ -81,7 +81,7 @@
 
             if (string.IsNullOrEmpty(model.Year) == false)
             {
-                var teams = this.DataManager.DataContext.PlayoffTeams.Include("SeasonTeam.Team")
+                var teams = this.DataManager.DataContext.PlayoffTeams
                     .Where(x => x.SeasonTeam.Season.Year.ToString() == model.Year).ProjectTo<PlayoffTeamViewModel>(this.Mapper.ConfigurationProvider).ToList();
 
                 var rounds = this.DataManager.DataContext.PlayoffRounds.Include("Round")
