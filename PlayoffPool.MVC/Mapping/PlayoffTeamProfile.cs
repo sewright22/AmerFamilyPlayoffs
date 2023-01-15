@@ -16,7 +16,8 @@ namespace PlayoffPool.MVC.Mapping
             this.CreateMap<PlayoffTeam, BracketSummaryModel>()
                 .IncludeMembers(x => x.SeasonTeam);
 
-            this.CreateMap<PlayoffTeamViewModel, PlayoffTeamViewModel>();
+            this.CreateMap<PlayoffTeamViewModel, PlayoffTeamViewModel>()
+                .ForMember(x => x.ViewId, obj => obj.Ignore());
         }
     }
 }
