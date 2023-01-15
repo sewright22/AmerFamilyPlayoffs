@@ -1,4 +1,5 @@
 ﻿@using AmerFamilyPlayoffs.Data;
+@using PlayoffPool.MVC.Extensions;
 @using PlayoffPool.MVC.Models.Home;
 @{
     ViewData["Title"] = "Home Page";
@@ -65,9 +66,13 @@ else
         {
             <div class="row pp-leaderboard">
                 <h4 class="col">Leaderboard</h4>
-                @foreach (var bracket in this.Model.Leaderboard.Brackets.OrderByDescending(x=>x.CurrentScore))
+                @foreach (var bracket in this.Model.Leaderboard.Brackets)
                 {
                     <div class="row pp-bracket-summary">
+                        <span class="col">
+                            <label class="pp-label">Current Place</label>
+                            <span class="pp-label-value">@bracket.Place</span>
+                        </span>
                         <span class="col">
                             <label class="pp-label">Bracket Name</label>
                             <span class="pp-label-value">@bracket.Name</span>

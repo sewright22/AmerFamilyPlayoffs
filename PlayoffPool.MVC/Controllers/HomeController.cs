@@ -54,21 +54,19 @@ namespace PlayoffPool.MVC.Controllers
 
             var model = new HomeViewModel();
 
-            foreach (var completedBracket in this.dataContext.BracketPredictions.Include("MatchupPredictions.PlayoffRound.Round").Include("MatchupPredictions.PredictedWinner.SeasonTeam.Team").AsNoTracking().Where(x => x.UserId == this.UserManager.GetUserId(this.User)).Where(x => x.MatchupPredictions.Count(x => x.PredictedWinner != null) == 13))
-            {
-                var teamName = $"{completedBracket.SuperBowl.PredictedWinner.SeasonTeam.Team.Location} {completedBracket.SuperBowl.PredictedWinner.SeasonTeam.Team.Name}";
-                model.CompletedBrackets.Add(new BracketSummaryModel
-                {
-                    Id = completedBracket.Id,
-                    Name = completedBracket.Name,
-                    PredictedWinner = new PlayoffTeamViewModel()
-                    {
-                        Name = completedBracket.SuperBowl.PredictedWinner.SeasonTeam.Team.Name,
-                    }
-                });
-            }
+            model.CompletedBrackets = this.dataContext.BracketPredictions
+                .AsNoTracking()
+                .Where(x => x.UserId == this.UserManager.GetUserId(this.User))
+                .Where(x => x.MatchupPredictions.Count(x => x.PredictedWinner != null) == 13)
+                .ProjectTo<BracketSummaryModel>(this.Mapper.ConfigurationProvider).ToList();
 
-            model.IncompleteBrackets = this.dataContext.BracketPredictions.AsNoTracking().Where(x => x.UserId == this.UserManager.GetUserId(this.User)).Where(x => x.MatchupPredictions == null || x.MatchupPredictions.Count(x => x.PredictedWinner != null) < 13).ProjectTo<BracketSummaryModel>(this.Mapper.ConfigurationProvider).ToList();
+            model.IncompleteBrackets = this.dataContext.BracketPredictions
+                .AsNoTracking()
+                .Where(x => x.UserId == this.UserManager.GetUserId(this.User))
+                .Where(x => x.MatchupPredictions == null
+                    || x.MatchupPredictions.Count(x => x.PredictedWinner != null) < 13)
+                .ProjectTo<BracketSummaryModel>(this.Mapper.ConfigurationProvider)
+                .ToList();
 
             model.Leaderboard = this.BuildLeaderboard();
             return View(model);
@@ -108,10 +106,21 @@ namespace PlayoffPool.MVC.Controllers
                 var round1Score = bracket.MatchupPredictions
                     .Where(x => x.PlayoffRound.Round.Number == 1)
                     .Count(x => actualWinners
-                    .Any(w => w.PlayoffTeamId == x.PredictedWinner.Id && w.PlayoffRound.Round.Number == 1)) * 2;
-                var round2Score = bracket.MatchupPredictions.Where(x => x.PlayoffRound.Round.Number == 2).Count(x => actualWinners.Any(w => w.PlayoffTeamId == x.PredictedWinner.Id && w.PlayoffRound.Round.Number == 2)) * 3;
-                var round3Score = bracket.MatchupPredictions.Where(x => x.PlayoffRound.Round.Number == 3).Count(x => actualWinners.Any(w => w.PlayoffTeamId == x.PredictedWinner.Id && w.PlayoffRound.Round.Number == 3)) * 5;
-                var round4Score = bracket.MatchupPredictions.Where(x => x.PlayoffRound.Round.Number == 4).Count(x => actualWinners.Any(w => w.PlayoffTeamId == x.PredictedWinner.Id && w.PlayoffRound.Round.Number == 4)) * 8;
+                    .Any(w => w.PlayoffTeamId == x.PredictedWinner.Id
+                        && w.PlayoffRound.Round.Number == 1)) * 2;
+                var round2Score = bracket.MatchupPredictions
+                    .Where(x => x.PlayoffRound.Round.Number == 2)
+                    .Count(x => actualWinners.Any(w => w.PlayoffTeamId == x.PredictedWinner.Id
+                        && w.PlayoffRound.Round.Number == 2)) * 3;
+                var round3Score = bracket.MatchupPredictions
+                    .Where(x => x.PlayoffRound.Round.Number == 3)
+                    .Count(x => actualWinners.Any(w => w.PlayoffTeamId == x.PredictedWinner.Id
+                        && w.PlayoffRound.Round.Number == 3)) * 5;
+                var round4Score = bracket.MatchupPredictions
+                    .Where(x => x.PlayoffRound.Round.Number == 4)
+                    .Count(x => actualWinners.Any(w => w.PlayoffTeamId == x.PredictedWinner.Id
+                        && w.PlayoffRound.Round.Number == 4)) * 8;
+
                 retVal.Brackets.Add(new BracketSummaryModel
                 {
                     Id = bracket.Id,
@@ -122,6 +131,40 @@ namespace PlayoffPool.MVC.Controllers
                     },
                     CurrentScore = round1Score + round2Score + round3Score + round4Score,
                 });
+            }
+
+            int currentPlace = 0;
+            int previousScore = 0;
+
+            if (retVal.Brackets.Any(x => x.CurrentScore > 0))
+            {
+                for (int i = 0; i < retVal.Brackets.Count; i++)
+                {
+                    currentPlace++;
+                    var currentBracket = retVal.Brackets[i];
+
+                    if (previousScore == currentBracket.CurrentScore)
+                    {
+                        string previousPlace = retVal.Brackets[i - 1].Place;
+
+                        if (previousPlace.StartsWith("T"))
+                        {
+                            currentBracket.Place = previousPlace;
+                        }
+                        else
+                        {
+                            previousPlace = $"T - {previousPlace}";
+                            retVal.Brackets[i - 1].Place = previousPlace;
+                            currentBracket.Place = previousPlace;
+                        }
+                    }
+                    else
+                    {
+                        currentBracket.Place = (i + 1).ToOrdinal();
+                    }
+
+                    previousScore = currentBracket.CurrentScore;
+                }
             }
 
             return retVal;
