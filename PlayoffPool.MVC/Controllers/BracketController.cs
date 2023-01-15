@@ -134,8 +134,8 @@ namespace PlayoffPool.MVC.Controllers
                 isEditable = false;
             }
 
-            var afcTeams = this.Context.PlayoffTeams.Include("SeasonTeam.Team").FilterConference("AFC");
-            var nfcTeams = this.Context.PlayoffTeams.Include("SeasonTeam.Team").FilterConference("NFC");
+            var afcTeams = this.Context.PlayoffTeams.Where(x => x.Playoff.Season.Year == 2022).Include("SeasonTeam.Team").FilterConference("AFC");
+            var nfcTeams = this.Context.PlayoffTeams.Where(x => x.Playoff.Season.Year == 2022).Include("SeasonTeam.Team").FilterConference("NFC");
 
             this.BuildDivisionalRound(BracketViewModel, afcTeams, nfcTeams);
             this.BuildChampionshipRound(BracketViewModel, afcTeams, nfcTeams);
@@ -228,8 +228,8 @@ namespace PlayoffPool.MVC.Controllers
         {
             var bracketViewModel = this.Mapper.Map<BracketViewModel>(bracketPrediction);
 
-            var afcTeams = this.Context.PlayoffTeams.Include("SeasonTeam.Team").FilterConference("AFC");
-            var nfcTeams = this.Context.PlayoffTeams.Include("SeasonTeam.Team").FilterConference("NFC");
+            var afcTeams = this.Context.PlayoffTeams.Where(x=>x.Playoff.Season.Year==2022).Include("SeasonTeam.Team").FilterConference("AFC");
+            var nfcTeams = this.Context.PlayoffTeams.Where(x => x.Playoff.Season.Year == 2022).Include("SeasonTeam.Team").FilterConference("NFC");
             var afcRounds = new List<RoundViewModel>(bracketViewModel.AfcRounds);
             var nfcRounds = new List<RoundViewModel>(bracketViewModel.NfcRounds);
 
@@ -408,7 +408,7 @@ namespace PlayoffPool.MVC.Controllers
             {
                 prediction = this.Mapper.Map<BracketPrediction>(BracketViewModel);
                 prediction.UserId = this.UserManager.GetUserId(this.User);
-                prediction.Playoff = this.Context.Playoffs.FirstOrDefault(x => x.Season.Year == 2021);
+                prediction.Playoff = this.Context.Playoffs.FirstOrDefault(x => x.Season.Year == 2022);
                 prediction.MatchupPredictions = new List<MatchupPrediction>();
             }
             else
