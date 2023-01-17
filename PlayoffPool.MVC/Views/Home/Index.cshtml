@@ -12,9 +12,9 @@
 {
     <p>It looks like you haven't made any picks.</p>
     <div class="container">
-        <div class="pp-child-center">
+        @*<div class="pp-child-center">
             <a class="btn btn-primary pp-button pp-button-create-first-bracket" href="/Bracket/Create">Create your first bracket</a>
-        </div>
+        </div>*@
     </div>
 }
 else
@@ -41,9 +41,9 @@ else
 
         <div class="row pp-my-brackets pp-my-complete-brackets">
             <h4 class="col">Completed Brackets</h4>
-            <span class="col-auto">
+            @*<span class="col-auto">
                 <a class="btn pp-button" href="/Bracket/Create">Create Another Bracket</a>
-            </span>
+            </span>*@
         </div>
         @foreach (var bracket in this.Model.CompletedBrackets)
         {

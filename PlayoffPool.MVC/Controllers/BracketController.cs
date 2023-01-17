@@ -98,7 +98,7 @@ namespace PlayoffPool.MVC.Controllers
 
             BracketViewModel bracketViewModel = this.BuildBracketViewModel(bracketPrediction);
 
-            if (bracketPrediction.UserId != this.UserManager.GetUserId(this.User))
+            if (bracketPrediction.UserId != this.UserManager.GetUserId(this.User) || true)
             {
                 bracketViewModel.CanEdit = false;
             }
