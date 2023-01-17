@@ -6,6 +6,17 @@
 <pp-partial name="_BracketGameHiddenFields" model="@this.Model" pp-prefix="@this.ViewData.TemplateInfo.HtmlFieldPrefix" />
 
 <div class="pp-matchup form-group">
+    @if (this.Model.IsCorrect.HasValue)
+    {
+        if (this.Model.IsCorrect.Value)
+        {
+            <i class="fa-solid fa-circle-check pp-prediction-correct"></i>
+        }
+        else
+        {
+            <i class="fa-solid fa-circle-xmark pp-prediction-incorrect"></i>
+        }
+    }
     <span class="pp-game-name">@this.Model.Name</span>
     <div class="form-check">
         <label>

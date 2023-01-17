@@ -183,6 +183,16 @@ fieldset {
     background-color: white;
 }
 
+.pp-prediction-correct {
+    color: green;
+    font-size: 1.25rem;
+}
+
+.pp-prediction-incorrect {
+    color: red;
+    font-size: 1.25rem;
+}
+
 .afc .pp-matchup {
     box-shadow: 0.25rem 0.25rem 0.25rem darkred;
 }
