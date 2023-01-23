@@ -5,7 +5,7 @@
     Layout = "_Layout";
 }
 
-<div class="row">
+<div class="pp-login">
     <div class="pp-card">
         <form asp-action="@nameof(AccountController.Login)">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -26,14 +26,17 @@
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
 
-                <button type="submit" class="btn btn-primary pp-button pp-button-login">Login</button>
+                <button type="submit" class="pp-button pp-button-wide">Login</button>
             </div>
 
         </form>
 
         <p>
-            Not Registered? <a class="nav-link pp-nav pp-button pp-button-secondary" asp-area="" asp-controller="Account" asp-action="Register">Click Here to Register</a>
+            Not Registered? 
         </p>
+        <div>
+            <a class="nav-link pp-nav pp-button pp-button-wide pp-button-secondary" asp-area="" asp-controller="Account" asp-action="Register">Click Here to Register</a>
+        </div>
     </div>
 </div>
 

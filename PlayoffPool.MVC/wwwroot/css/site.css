@@ -1,6 +1,6 @@
 html {
     font-size: 16px;
-    background-color: white;
+    background: lightgray;
 }
 
 @media (min-width: 768px) {
@@ -9,23 +9,82 @@ html {
     }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-    position: relative;
-    min-height: 100%;
-}
-
 body {
     font-family: sans-serif;
-    background: white;
     color: black;
     text-align: left;
     padding: 0rem;
 }
 
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+.pp-login {
+    display: flex;
+    justify-content: center;
+}
+
+.pp-card {
+    padding: 2rem;
+}
+
+.pp-card-content {
+    background: white;
+    padding: .5rem;
+    border: 1px solid #000;
+    border-radius: 16px
+}
+
+.pp-card-title {
+    padding: 1rem;
+    font-family: "Sofia", sans-serif;
+    font-size: 2rem;
+}
+
+.pp-form-group {
+    display: flex;
+    flex-wrap: wrap;
+    color: #757575;
+    font-weight: 600;
+    border: none;
+    padding: .5rem 0rem;
+}
+
+    .pp-form-group > * {
+        flex: 1 1 100%;
+    }
+
+.pp-button {
+    background: #1F1F47;
+    color: #F1F1F9;
+    border: 0px;
+    border: 1px solid transparent;
+    box-shadow: 0.25rem 0.25rem 0.25rem #1F1F47;
+    padding: 0.5rem;
+    font-size: 1.25rem;
+    border-radius: 0.25rem;
+    text-decoration: none;
+}
+
+    .pp-button:hover {
+        background: #F1F1F9;
+        color: #1F1F47;
+        border: 1px solid #1F1F47;
+    }
+
+.pp-button-wide {
+    width: 100%;
+}
+
+.pp-button-secondary {
+    background: #F1F1F9;
+    color: #1F1F47;
+    border: 1px solid #1F1F47;
+    box-shadow: 0.25rem 0.25rem 0.25rem #1F1F47;
+}
+/*
 fieldset {
     border: 1px solid black;
     border-radius: 0.5rem;
@@ -33,10 +92,10 @@ fieldset {
     padding: 1rem;
 }
 
-/*.pp-main-container {
+.pp-main-container {
     background: white;
     height: 100%;
-}*/
+}
 
 .container .pp-child-center {
     text-align: center;
@@ -58,30 +117,11 @@ fieldset {
     font-weight: bold;
 }
 
-.pp-card {
-    margin: auto;
-    width: 50%;
-}
 
-.pp-form-group {
-    color: #757575;
-    font-weight: 600;
-    border: none;
-    padding: .5rem 0rem;
-}
 
-.pp-card-content {
-    background: white;
-    padding: .5rem;
-    border: 1px solid #000;
-    border-radius: 16px
-}
 
-.pp-card-title {
-    padding: 1rem;
-    font-family: "Sofia", sans-serif;
-    font-size: 2rem;
-}
+
+
 
 .pp-nav {
     margin-bottom: 1rem;
@@ -96,8 +136,8 @@ fieldset {
     .pp-nav-link:hover {
         border-bottom: 0.25rem solid white;
         border-radius: 1rem;
-        /*color: black !important;*/
-        /*font-size: 2rem;*/
+        color: black !important;
+        font-size: 2rem;
     }
 
 .pp-nav-item {
@@ -120,26 +160,7 @@ fieldset {
     }
 
 
-.pp-button {
-    background: #1F1F47;
-    color: #F1F1F9;
-    border: 0px;
-    border: 1px solid transparent;
-    box-shadow: 0.25rem 0.25rem 0.25rem #1F1F47;
-}
 
-    .pp-button:hover {
-        background: #F1F1F9;
-        color: #1F1F47;
-        border: 1px solid #1F1F47;
-    }
-
-.pp-button-secondary {
-    background: #F1F1F9;
-    color: #1F1F47;
-    border: 1px solid #1F1F47;
-    box-shadow: 0.25rem 0.25rem 0.25rem #1F1F47;
-}
 
 .pp-button-create-first-bracket {
     margin: auto;
@@ -265,7 +286,7 @@ fieldset {
 }
 
 .pp-navbar-section-user {
-    /*display: block;*/
+    display: block;
 }
 
 .pp-navbar-collapse {
@@ -281,3 +302,4 @@ p {
     text-align: center;
     font-weight: bold;
 }
+*/

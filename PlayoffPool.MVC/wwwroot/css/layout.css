@@ -1,0 +1,32 @@
+﻿html, body, main {
+    position: relative;
+    height: 100%;
+    margin: 0px;
+}
+
+live-preview-root {
+    display: none;
+}
+
+
+body {
+    background: lightgray;
+}
+
+main {
+    display: flex;
+}
+
+main > * {
+}
+
+.site-content {
+    background: white;
+    flex: 1 1 100%;
+}
+
+@media (min-width: 768px) {
+    .empty-background {
+        flex: 1 1 25%;
+    }
+}

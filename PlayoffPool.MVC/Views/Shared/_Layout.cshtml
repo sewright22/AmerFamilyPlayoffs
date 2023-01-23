@@ -4,18 +4,20 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - PlayoffPool.MVC</title>
-    <partial name="_Styles"/>
+    <partial name="_Styles" />
 </head>
 <body>
     <header>
-        
+        @await RenderSectionAsync("Header", required: false)
     </header>
-    <div class="container ">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-    
+    <main role="main">
+        <div class="empty-background"></div>
+        <div class="site-content">
+        @RenderBody()
+        </div>
+        <div class="empty-background"></div>
+    </main>
+
     <partial name="_Scripts" />
     @await RenderSectionAsync("Scripts", required: false)
 </body>
