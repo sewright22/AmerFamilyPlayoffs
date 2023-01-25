@@ -136,6 +136,8 @@ namespace PlayoffPool.MVC.Controllers
             int currentPlace = 0;
             int previousScore = 0;
 
+            retVal.Brackets = retVal.Brackets.OrderByDescending(x => x.CurrentScore).ToList();
+
             if (retVal.Brackets.Any(x => x.CurrentScore > 0))
             {
                 for (int i = 0; i < retVal.Brackets.Count; i++)

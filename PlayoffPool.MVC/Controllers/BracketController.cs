@@ -98,7 +98,7 @@ namespace PlayoffPool.MVC.Controllers
 
             BracketViewModel bracketViewModel = this.BuildBracketViewModel(bracketPrediction);
 
-            if (bracketPrediction.UserId != this.UserManager.GetUserId(this.User))
+            if (bracketPrediction.UserId != this.UserManager.GetUserId(this.User) || true)
             {
                 bracketViewModel.CanEdit = false;
             }
@@ -228,17 +228,18 @@ namespace PlayoffPool.MVC.Controllers
         {
             var bracketViewModel = this.Mapper.Map<BracketViewModel>(bracketPrediction);
 
-            var afcTeams = this.Context.PlayoffTeams.Where(x=>x.Playoff.Season.Year==2022).Include("SeasonTeam.Team").FilterConference("AFC");
+            var afcTeams = this.Context.PlayoffTeams.Where(x => x.Playoff.Season.Year == 2022).Include("SeasonTeam.Team").FilterConference("AFC");
             var nfcTeams = this.Context.PlayoffTeams.Where(x => x.Playoff.Season.Year == 2022).Include("SeasonTeam.Team").FilterConference("NFC");
             var afcRounds = new List<RoundViewModel>(bracketViewModel.AfcRounds);
             var nfcRounds = new List<RoundViewModel>(bracketViewModel.NfcRounds);
+            var winners = this.Context.RoundWinners.Where(x => x.PlayoffRound.Playoff.Season.Year == 2022).Select(x => new { RoundNumber = x.PlayoffRound.Round.Number, x.PlayoffTeamId }).ToList();
 
             this.BuildWildCardRound(bracketViewModel, afcTeams, nfcTeams);
-            this.UpdateRoundPicks(bracketViewModel, 1, bracketPrediction.MatchupPredictions);
+            this.UpdateRoundPicks(bracketViewModel, 1, bracketPrediction.MatchupPredictions, winners.Where(x => x.RoundNumber == 1).Select(x => x.PlayoffTeamId).ToList());
             this.BuildDivisionalRound(bracketViewModel, afcTeams, nfcTeams);
-            this.UpdateRoundPicks(bracketViewModel, 2, bracketPrediction.MatchupPredictions);
+            this.UpdateRoundPicks(bracketViewModel, 2, bracketPrediction.MatchupPredictions, winners.Where(x => x.RoundNumber == 2).Select(x => x.PlayoffTeamId).ToList());
             this.BuildChampionshipRound(bracketViewModel, afcTeams, nfcTeams);
-            this.UpdateRoundPicks(bracketViewModel, 3, bracketPrediction.MatchupPredictions);
+            this.UpdateRoundPicks(bracketViewModel, 3, bracketPrediction.MatchupPredictions, winners.Where(x => x.RoundNumber == 3).Select(x => x.PlayoffTeamId).ToList());
             this.BuildSuperBowl(bracketViewModel, afcTeams, nfcTeams);
             this.UpdateSuperBowlPicks(bracketViewModel, bracketPrediction.MatchupPredictions);
 
@@ -318,7 +319,7 @@ namespace PlayoffPool.MVC.Controllers
             }
         }
 
-        private void UpdateRoundPicks(BracketViewModel bracketViewModel, int roundNumber, List<MatchupPrediction> matchupPredictions)
+        private void UpdateRoundPicks(BracketViewModel bracketViewModel, int roundNumber, List<MatchupPrediction> matchupPredictions, List<int> roundWinners)
         {
             var afcRound = bracketViewModel.AfcRounds.FirstOrDefault(x => x.Conference == "AFC" && x.RoundNumber == roundNumber);
             var nfcRound = bracketViewModel.NfcRounds.FirstOrDefault(x => x.Conference == "NFC" && x.RoundNumber == roundNumber);
@@ -340,6 +341,11 @@ namespace PlayoffPool.MVC.Controllers
                         continue;
                     }
                     game.SelectedWinner = selectedWinner.Id;
+
+                    if (roundWinners.Contains(game.HomeTeam.Id) || roundWinners.Contains(game.AwayTeam.Id))
+                    {
+                        game.IsCorrect = roundWinners.Contains(selectedWinner.Id);
+                    }
                 }
             }
 
@@ -355,6 +361,11 @@ namespace PlayoffPool.MVC.Controllers
                         continue;
                     }
                     game.SelectedWinner = selectedWinner.Id;
+
+                    if (roundWinners.Contains(game.HomeTeam.Id) || roundWinners.Contains(game.AwayTeam.Id))
+                    {
+                        game.IsCorrect = roundWinners.Contains(selectedWinner.Id);
+                    }
                 }
             }
         }
