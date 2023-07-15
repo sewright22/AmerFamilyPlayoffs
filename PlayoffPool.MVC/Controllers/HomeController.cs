@@ -45,6 +45,10 @@ namespace PlayoffPool.MVC.Controllers
             }
         }
 
+        /// <summary>
+        /// Returns the index view of the home page.
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Index()
         {
             if (this.signInManager.IsSignedIn(this.User) == false)
