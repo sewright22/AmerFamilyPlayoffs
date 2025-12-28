@@ -21,21 +21,26 @@
 
 ## Quick Start
 
+### Test Server Access
+- **URL**: http://192.168.68.105:5000
+- **Admin**: Use credentials from your .env file
+- **Deployment Guide**: See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)
+
 ### Local Development
 
 1. **Prerequisites**: .NET 8.0 SDK, Docker and Docker Compose, Git
 
 2. **Setup**:
    ```bash
-   git clone https://dev.azure.com/sewright22/StevenCodesWright/_git/NflPlayoffPool
-   cd NflPlayoffPool
+   git clone https://github.com/sewright22/AmerFamilyPlayoffs
+   cd AmerFamilyPlayoffs
    cp .env.template .env
    # Edit .env with your settings
    ```
 
 3. **Run**: `docker-compose up -d`
 
-4. **Access**: http://localhost:8080
+4. **Access**: http://localhost:5000
 
 ## Deployment Pipelines
 
