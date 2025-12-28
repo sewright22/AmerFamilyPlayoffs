@@ -33,6 +33,19 @@ namespace NflPlayoffPool.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Season>().ToCollection("seasons");
+            
+            // Configure SuperGridRawImport with owned types to avoid shadow properties
+            modelBuilder.Entity<SuperGridRawImport>(entity =>
+            {
+                entity.ToCollection("supergrid_raw_imports");
+                
+                // Configure Rows as owned type collection
+                entity.OwnsMany(i => i.Rows, row =>
+                {
+                    // Configure Cells as owned type collection within Rows
+                    row.OwnsMany(r => r.Cells);
+                });
+            });
         }
     }
 }

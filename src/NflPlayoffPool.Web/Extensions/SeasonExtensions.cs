@@ -63,7 +63,7 @@ namespace NflPlayoffPool.Web.Extensions
 
         public static Season? GetCurrentSeason(this PlayoffPoolContext playoffPoolContext, bool canEdit = false)
         {
-            IQueryable<Season> seasons = playoffPoolContext.Seasons;
+            IQueryable<Season> seasons = playoffPoolContext.Seasons.Include(s => s.Teams);
 
             if (!canEdit)
             {
@@ -224,7 +224,7 @@ namespace NflPlayoffPool.Web.Extensions
                 IsLocked = false,
                 Games = new List<MatchupModel>
                 {
-                    CreateMatchup(season, lowestSeed, nextLowestSeed, Conference.AFC, 11),
+                    CreateMatchup(season, nextLowestSeed, lowestSeed, Conference.AFC, 11),
                 }
             };
             return round;
@@ -249,7 +249,7 @@ namespace NflPlayoffPool.Web.Extensions
                 IsLocked = false,
                 Games = new List<MatchupModel>
                 {
-                    CreateMatchup(season, lowestSeed, nextLowestSeed, Conference.NFC, 12),
+                    CreateMatchup(season, nextLowestSeed, lowestSeed, Conference.NFC, 12),
                 }
             };
             return round;
@@ -269,7 +269,7 @@ namespace NflPlayoffPool.Web.Extensions
             {
                 Conference = "Super Bowl",
                 Name = "Super Bowl",
-                PointValue = 4,
+                PointValue = season.SuperBowlPoints,
                 RoundNumber = 4,
                 IsLocked = false,
                 Games = new List<MatchupModel>

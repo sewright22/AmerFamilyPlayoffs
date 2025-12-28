@@ -1,0 +1,156 @@
+@model SeasonWizardViewModel
+
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="alert alert-primary">
+            <h6 class="alert-heading">
+                <i class="fas fa-trophy me-2"></i>How Playoff Scoring Works
+            </h6>
+            <p class="mb-0">
+                Players earn points for correctly predicting game winners in each playoff round. 
+                Later rounds are typically worth more points because they're harder to predict.
+            </p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-play me-2 text-primary"></i>Wildcard Round
+                        </h6>
+                        <label asp-for="WildcardPoints" class="form-label">Points per correct pick</label>
+                        <input asp-for="WildcardPoints" class="form-control" type="number" min="1" max="20" />
+                        <span asp-validation-for="WildcardPoints" class="text-danger"></span>
+                        <small class="text-muted">6 games total (3 AFC, 3 NFC)</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-forward me-2 text-success"></i>Divisional Round
+                        </h6>
+                        <label asp-for="DivisionalPoints" class="form-label">Points per correct pick</label>
+                        <input asp-for="DivisionalPoints" class="form-control" type="number" min="1" max="20" />
+                        <span asp-validation-for="DivisionalPoints" class="text-danger"></span>
+                        <small class="text-muted">4 games total (2 AFC, 2 NFC)</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-fast-forward me-2 text-warning"></i>Conference Championships
+                        </h6>
+                        <label asp-for="ConferencePoints" class="form-label">Points per correct pick</label>
+                        <input asp-for="ConferencePoints" class="form-control" type="number" min="1" max="20" />
+                        <span asp-validation-for="ConferencePoints" class="text-danger"></span>
+                        <small class="text-muted">2 games total (AFC, NFC)</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-crown me-2 text-danger"></i>Super Bowl
+                        </h6>
+                        <label asp-for="SuperBowlPoints" class="form-label">Points per correct pick</label>
+                        <input asp-for="SuperBowlPoints" class="form-control" type="number" min="1" max="20" />
+                        <span asp-validation-for="SuperBowlPoints" class="text-danger"></span>
+                        <small class="text-muted">1 game (championship)</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scoring Preview -->
+        <div class="alert alert-light">
+            <h6 class="alert-heading">
+                <i class="fas fa-calculator me-2"></i>Scoring Preview
+            </h6>
+            <div class="row text-center">
+                <div class="col-3">
+                    <div class="fw-bold text-primary">Wildcard</div>
+                    <div>6 × <span id="wildcard-preview">@Model.WildcardPoints</span> = <span id="wildcard-total">@(6 * Model.WildcardPoints)</span> pts</div>
+                </div>
+                <div class="col-3">
+                    <div class="fw-bold text-success">Divisional</div>
+                    <div>4 × <span id="divisional-preview">@Model.DivisionalPoints</span> = <span id="divisional-total">@(4 * Model.DivisionalPoints)</span> pts</div>
+                </div>
+                <div class="col-3">
+                    <div class="fw-bold text-warning">Conference</div>
+                    <div>2 × <span id="conference-preview">@Model.ConferencePoints</span> = <span id="conference-total">@(2 * Model.ConferencePoints)</span> pts</div>
+                </div>
+                <div class="col-3">
+                    <div class="fw-bold text-danger">Super Bowl</div>
+                    <div>1 × <span id="superbowl-preview">@Model.SuperBowlPoints</span> = <span id="superbowl-total">@Model.SuperBowlPoints</span> pts</div>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <strong>Maximum Possible Score: <span id="max-score">@(6 * Model.WildcardPoints + 4 * Model.DivisionalPoints + 2 * Model.ConferencePoints + Model.SuperBowlPoints)</span> points</strong>
+            </div>
+        </div>
+
+        <!-- Common Presets -->
+        <div class="text-center">
+            <h6>Popular Scoring Presets:</h6>
+            <button type="button" class="btn btn-outline-primary btn-sm me-2" onclick="setScoring(1,2,3,5)">
+                Conservative (1-2-3-5)
+            </button>
+            <button type="button" class="btn btn-outline-primary btn-sm me-2" onclick="setScoring(2,3,5,8)">
+                Balanced (2-3-5-8)
+            </button>
+            <button type="button" class="btn btn-outline-primary btn-sm" onclick="setScoring(1,2,4,8)">
+                Exponential (1-2-4-8)
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function setScoring(wildcard, divisional, conference, superbowl) {
+        document.getElementById('@Html.IdFor(m => m.WildcardPoints)').value = wildcard;
+        document.getElementById('@Html.IdFor(m => m.DivisionalPoints)').value = divisional;
+        document.getElementById('@Html.IdFor(m => m.ConferencePoints)').value = conference;
+        document.getElementById('@Html.IdFor(m => m.SuperBowlPoints)').value = superbowl;
+        updatePreview();
+    }
+
+    function updatePreview() {
+        const wildcard = parseInt(document.getElementById('@Html.IdFor(m => m.WildcardPoints)').value) || 0;
+        const divisional = parseInt(document.getElementById('@Html.IdFor(m => m.DivisionalPoints)').value) || 0;
+        const conference = parseInt(document.getElementById('@Html.IdFor(m => m.ConferencePoints)').value) || 0;
+        const superbowl = parseInt(document.getElementById('@Html.IdFor(m => m.SuperBowlPoints)').value) || 0;
+
+        document.getElementById('wildcard-preview').textContent = wildcard;
+        document.getElementById('divisional-preview').textContent = divisional;
+        document.getElementById('conference-preview').textContent = conference;
+        document.getElementById('superbowl-preview').textContent = superbowl;
+
+        document.getElementById('wildcard-total').textContent = 6 * wildcard;
+        document.getElementById('divisional-total').textContent = 4 * divisional;
+        document.getElementById('conference-total').textContent = 2 * conference;
+        document.getElementById('superbowl-total').textContent = superbowl;
+
+        const maxScore = 6 * wildcard + 4 * divisional + 2 * conference + superbowl;
+        document.getElementById('max-score').textContent = maxScore;
+    }
+
+    // Update preview when values change
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = ['@Html.IdFor(m => m.WildcardPoints)', '@Html.IdFor(m => m.DivisionalPoints)', 
+                       '@Html.IdFor(m => m.ConferencePoints)', '@Html.IdFor(m => m.SuperBowlPoints)'];
+        
+        inputs.forEach(id => {
+            document.getElementById(id).addEventListener('input', updatePreview);
+        });
+    });
+</script>

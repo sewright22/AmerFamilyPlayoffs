@@ -1,0 +1,47 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# CI/CD
+.azuredevops/
+
+# Documentation
+*.md
+aidlc-docs/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Build artifacts
+**/bin/
+**/obj/
+**/out/
+
+# Test results
+**/TestResults/
+**/*.trx
+
+# Environment files
+.env
+.env.*
+!.env.template
+
+# Data directories
+data/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose*.yml
+Dockerfile

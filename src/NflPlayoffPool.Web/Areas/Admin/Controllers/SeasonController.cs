@@ -8,6 +8,7 @@ namespace NflPlayoffPool.Web.Areas.Admin.Controllers
     using System.Data;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
     using NflPlayoffPool.Data;
     using NflPlayoffPool.Data.Models;
     using NflPlayoffPool.Web.Areas.Admin.Models;
@@ -83,6 +84,89 @@ namespace NflPlayoffPool.Web.Areas.Admin.Controllers
             };
 
             return this.PartialView(model);
+        }
+
+        /// <summary>
+        /// Displays the season creation wizard.
+        /// </summary>
+        /// <returns>The view for the season wizard.</returns>
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Wizard()
+        {
+            var model = new SeasonWizardViewModel
+            {
+                Year = DateTime.Now.Year,
+                CutoffDateTime = DateTime.Now.AddDays(7)
+            };
+            return this.View(model);
+        }
+
+        /// <summary>
+        /// Handles wizard step navigation and processing.
+        /// </summary>
+        /// <param name="model">The wizard model.</param>
+        /// <param name="action">The action to perform (next, previous, finish).</param>
+        /// <returns>The action result.</returns>
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Wizard(SeasonWizardViewModel model, string action)
+        {
+            Logger.LogInformation("Wizard POST - Step: {Step}, Action: {Action}, Year: {Year}", 
+                model.CurrentStep, action, model.Year);
+            Logger.LogInformation("Scoring values - WC: {WC}, Div: {Div}, Conf: {Conf}, SB: {SB}", 
+                model.WildcardPoints, model.DivisionalPoints, model.ConferencePoints, model.SuperBowlPoints);
+            
+            if (action == "previous")
+            {
+                model.CurrentStep = Math.Max(1, model.CurrentStep - 1);
+                Logger.LogInformation("Moving to previous step: {Step}", model.CurrentStep);
+                return this.View(model);
+            }
+
+            // Validate current step
+            if (!ValidateWizardStep(model))
+            {
+                Logger.LogWarning("Validation failed for step {Step}, returning to same step", model.CurrentStep);
+                return this.View(model);
+            }
+
+            if (action == "next")
+            {
+                // Handle step-specific processing
+                await ProcessWizardStep(model);
+                
+                model.CurrentStep = Math.Min(model.TotalSteps, model.CurrentStep + 1);
+                Logger.LogInformation("Moving to next step: {Step}", model.CurrentStep);
+                return this.View(model);
+            }
+
+            if (action == "finish")
+            {
+                try
+                {
+                    var seasonModel = model.ToSeasonModel();
+                    var seasonId = await this.DbContext.Create(seasonModel);
+                    
+                    // Create teams if specified
+                    if (model.Teams.Any())
+                    {
+                        await CreateWizardTeams(seasonId, model.Teams);
+                    }
+                    
+                    this.Logger.LogInformation("Season created successfully via wizard with ID {SeasonId}", seasonId);
+                    return this.RedirectToAction(nameof(this.Details), new { area = "Admin", id = seasonId });
+                }
+                catch (Exception ex)
+                {
+                    this.Logger.LogError(ex, "Error creating season via wizard.");
+                    this.ModelState.AddModelError(string.Empty, "An error occurred while creating the season.");
+                    return this.View(model);
+                }
+            }
+
+            return this.View(model);
         }
 
         /// <summary>
@@ -564,6 +648,153 @@ namespace NflPlayoffPool.Web.Areas.Admin.Controllers
         {
             System.Security.Claims.Claim? claim = this.User.FindFirst("TimeZoneOffset");
             return claim != null ? int.Parse(claim.Value) : 0;
+        }
+
+        private bool ValidateWizardStep(SeasonWizardViewModel model)
+        {
+            Logger.LogInformation("Validating wizard step {Step} for year {Year}", model.CurrentStep, model.Year);
+            Logger.LogInformation("Model values - WildcardPoints: {WildcardPoints}, DivisionalPoints: {DivisionalPoints}, ConferencePoints: {ConferencePoints}, SuperBowlPoints: {SuperBowlPoints}", 
+                model.WildcardPoints, model.DivisionalPoints, model.ConferencePoints, model.SuperBowlPoints);
+            
+            switch (model.CurrentStep)
+            {
+                case 1: // Basic Info
+                    if (model.Year < 2020 || model.Year > 2050)
+                    {
+                        ModelState.AddModelError(nameof(model.Year), "Year must be between 2020 and 2050");
+                        Logger.LogWarning("Year validation failed: {Year}", model.Year);
+                        return false;
+                    }
+                    if (model.CutoffDateTime <= DateTime.Now)
+                    {
+                        ModelState.AddModelError(nameof(model.CutoffDateTime), "Cutoff date must be in the future");
+                        Logger.LogWarning("Cutoff date validation failed: {CutoffDateTime}", model.CutoffDateTime);
+                        return false;
+                    }
+                    // Check if year already exists
+                    if (DbContext.Seasons.Any(s => s.Year == model.Year))
+                    {
+                        ModelState.AddModelError(nameof(model.Year), $"A season for {model.Year} already exists");
+                        Logger.LogWarning("Year already exists: {Year}", model.Year);
+                        return false;
+                    }
+                    break;
+                    
+                case 2: // Scoring Rules
+                    if (model.WildcardPoints < 1 || model.WildcardPoints > 20)
+                    {
+                        ModelState.AddModelError(nameof(model.WildcardPoints), "Wildcard points must be between 1 and 20");
+                        Logger.LogWarning("Wildcard points validation failed: {WildcardPoints}", model.WildcardPoints);
+                        return false;
+                    }
+                    if (model.DivisionalPoints < 1 || model.DivisionalPoints > 20)
+                    {
+                        ModelState.AddModelError(nameof(model.DivisionalPoints), "Divisional points must be between 1 and 20");
+                        Logger.LogWarning("Divisional points validation failed: {DivisionalPoints}", model.DivisionalPoints);
+                        return false;
+                    }
+                    if (model.ConferencePoints < 1 || model.ConferencePoints > 20)
+                    {
+                        ModelState.AddModelError(nameof(model.ConferencePoints), "Conference points must be between 1 and 20");
+                        Logger.LogWarning("Conference points validation failed: {ConferencePoints}", model.ConferencePoints);
+                        return false;
+                    }
+                    if (model.SuperBowlPoints < 1 || model.SuperBowlPoints > 20)
+                    {
+                        ModelState.AddModelError(nameof(model.SuperBowlPoints), "Super Bowl points must be between 1 and 20");
+                        Logger.LogWarning("Super Bowl points validation failed: {SuperBowlPoints}", model.SuperBowlPoints);
+                        return false;
+                    }
+                    break;
+                    
+                case 3: // Teams Setup
+                    if (model.TeamSetupMethod == TeamSetupMethod.ManualEntry && model.Teams.Count != 14)
+                    {
+                        ModelState.AddModelError(string.Empty, "You must add exactly 14 teams (7 AFC, 7 NFC)");
+                        Logger.LogWarning("Teams count validation failed: {TeamCount}", model.Teams.Count);
+                        return false;
+                    }
+                    break;
+            }
+            
+            bool isValid = ModelState.IsValid;
+            Logger.LogInformation("Step {Step} validation result: {IsValid}", model.CurrentStep, isValid);
+            
+            if (!isValid)
+            {
+                foreach (var error in ModelState)
+                {
+                    Logger.LogWarning("ModelState error - Key: {Key}, Errors: {Errors}", 
+                        error.Key, string.Join(", ", error.Value.Errors.Select(e => e.ErrorMessage)));
+                }
+            }
+            
+            return isValid;
+        }
+
+        private async Task ProcessWizardStep(SeasonWizardViewModel model)
+        {
+            switch (model.CurrentStep)
+            {
+                case 2: // Moving from Basic Info to Scoring Rules
+                    // Could add logic to suggest point values based on historical data
+                    break;
+                    
+                case 3: // Moving from Scoring Rules to Teams Setup
+                    if (model.TeamSetupMethod == TeamSetupMethod.UseTemplate)
+                    {
+                        model.Teams = GetNflTeamsTemplate();
+                    }
+                    break;
+            }
+        }
+
+        private async Task CreateWizardTeams(string seasonId, List<TeamWizardModel> teams)
+        {
+            var season = await DbContext.Seasons.FirstOrDefaultAsync(s => s.Id == seasonId);
+            if (season == null) return;
+
+            foreach (var teamModel in teams)
+            {
+                var team = new PlayoffTeam
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Name = teamModel.Name,
+                    Code = teamModel.Abbreviation, // PlayoffTeam uses Code, not Abbreviation
+                    Conference = teamModel.Conference,
+                    Seed = teamModel.Seed,
+                    City = teamModel.City ?? string.Empty
+                    // Note: PrimaryColor is not available in PlayoffTeam model
+                };
+                
+                season.Teams.Add(team);
+            }
+            
+            await DbContext.SaveChangesAsync();
+        }
+
+        private List<TeamWizardModel> GetNflTeamsTemplate()
+        {
+            return new List<TeamWizardModel>
+            {
+                // AFC Playoff Teams (7 teams, seeds 1-7)
+                new() { Name = "Buffalo Bills", Abbreviation = "BUF", Conference = Conference.AFC, Seed = 1, City = "Buffalo" },
+                new() { Name = "Kansas City Chiefs", Abbreviation = "KC", Conference = Conference.AFC, Seed = 2, City = "Kansas City" },
+                new() { Name = "Baltimore Ravens", Abbreviation = "BAL", Conference = Conference.AFC, Seed = 3, City = "Baltimore" },
+                new() { Name = "Houston Texans", Abbreviation = "HOU", Conference = Conference.AFC, Seed = 4, City = "Houston" },
+                new() { Name = "Pittsburgh Steelers", Abbreviation = "PIT", Conference = Conference.AFC, Seed = 5, City = "Pittsburgh" },
+                new() { Name = "Los Angeles Chargers", Abbreviation = "LAC", Conference = Conference.AFC, Seed = 6, City = "Los Angeles" },
+                new() { Name = "Denver Broncos", Abbreviation = "DEN", Conference = Conference.AFC, Seed = 7, City = "Denver" },
+                
+                // NFC Playoff Teams (7 teams, seeds 1-7)
+                new() { Name = "Detroit Lions", Abbreviation = "DET", Conference = Conference.NFC, Seed = 1, City = "Detroit" },
+                new() { Name = "Philadelphia Eagles", Abbreviation = "PHI", Conference = Conference.NFC, Seed = 2, City = "Philadelphia" },
+                new() { Name = "Los Angeles Rams", Abbreviation = "LAR", Conference = Conference.NFC, Seed = 3, City = "Los Angeles" },
+                new() { Name = "Atlanta Falcons", Abbreviation = "ATL", Conference = Conference.NFC, Seed = 4, City = "Atlanta" },
+                new() { Name = "Minnesota Vikings", Abbreviation = "MIN", Conference = Conference.NFC, Seed = 5, City = "Minneapolis" },
+                new() { Name = "Washington Commanders", Abbreviation = "WAS", Conference = Conference.NFC, Seed = 6, City = "Washington" },
+                new() { Name = "Green Bay Packers", Abbreviation = "GB", Conference = Conference.NFC, Seed = 7, City = "Green Bay" }
+            };
         }
     }
 }

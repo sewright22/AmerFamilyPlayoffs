@@ -1,0 +1,203 @@
+@model SeasonWizardViewModel
+@{
+    ViewData["Title"] = "Create Season - " + Model.GetStepTitle();
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-plus-circle me-2"></i>
+                        Create New Season
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Progress Bar -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted">Step @Model.CurrentStep of @Model.TotalSteps</span>
+                            <span class="text-muted">@(Math.Round((double)Model.CurrentStep / Model.TotalSteps * 100))% Complete</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-primary" role="progressbar" 
+                                 style="width: @(Math.Round((double)Model.CurrentStep / Model.TotalSteps * 100))%"
+                                 aria-valuenow="@Model.CurrentStep" aria-valuemin="0" aria-valuemax="@Model.TotalSteps">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step Header -->
+                    <div class="text-center mb-4">
+                        <h5 class="mb-1">@Model.GetStepTitle()</h5>
+                        <p class="text-muted mb-0">@Model.GetStepDescription()</p>
+                    </div>
+
+                    <!-- Wizard Form -->
+                    <form asp-action="Wizard" method="post" id="wizardForm">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="CurrentStep" value="@Model.CurrentStep" />
+                        <input type="hidden" asp-for="SeasonId" />
+                        
+                        <!-- Validation Summary -->
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert alert-danger">
+                                <h6 class="alert-heading">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>Please fix the following errors:
+                                </h6>
+                                <div asp-validation-summary="All" class="mb-0"></div>
+                            </div>
+                        }
+                        
+                        <!-- Hidden fields to preserve values across steps -->
+                        @if (Model.CurrentStep != 1)
+                        {
+                            <input type="hidden" asp-for="Year" />
+                            <input type="hidden" asp-for="Description" />
+                            <input type="hidden" asp-for="CutoffDateTime" />
+                        }
+                        
+                        @if (Model.CurrentStep != 2)
+                        {
+                            <input type="hidden" asp-for="WildcardPoints" />
+                            <input type="hidden" asp-for="DivisionalPoints" />
+                            <input type="hidden" asp-for="ConferencePoints" />
+                            <input type="hidden" asp-for="SuperBowlPoints" />
+                        }
+                        
+                        @if (Model.CurrentStep != 3)
+                        {
+                            <input type="hidden" asp-for="TeamSetupMethod" />
+                            @for (int i = 0; i < Model.Teams.Count; i++)
+                            {
+                                <input type="hidden" asp-for="Teams[i].Id" />
+                                <input type="hidden" asp-for="Teams[i].Name" />
+                                <input type="hidden" asp-for="Teams[i].Abbreviation" />
+                                <input type="hidden" asp-for="Teams[i].Conference" />
+                                <input type="hidden" asp-for="Teams[i].Seed" />
+                                <input type="hidden" asp-for="Teams[i].City" />
+                            }
+                        }
+
+                        <!-- Step Content -->
+                        <div class="wizard-content">
+                            @if (Model.CurrentStep == 1)
+                            {
+                                <partial name="_WizardStep1" model="Model" />
+                            }
+                            else if (Model.CurrentStep == 2)
+                            {
+                                <partial name="_WizardStep2" model="Model" />
+                            }
+                            else if (Model.CurrentStep == 3)
+                            {
+                                <partial name="_WizardStep3" model="Model" />
+                            }
+                            else if (Model.CurrentStep == 4)
+                            {
+                                <partial name="_WizardStep4" model="Model" />
+                            }
+                        </div>
+
+                        <!-- Navigation Buttons -->
+                        <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                            <div>
+                                @if (Model.CanGoPrevious)
+                                {
+                                    <button type="submit" name="action" value="previous" class="btn btn-outline-secondary">
+                                        <i class="fas fa-arrow-left me-1"></i> Previous
+                                    </button>
+                                }
+                                else
+                                {
+                                    <a asp-action="Index" class="btn btn-outline-secondary">
+                                        <i class="fas fa-times me-1"></i> Cancel
+                                    </a>
+                                }
+                            </div>
+                            <div>
+                                @if (Model.IsLastStep)
+                                {
+                                    <button type="submit" name="action" value="finish" class="btn btn-success">
+                                        <i class="fas fa-check me-1"></i> Create Season
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="submit" name="action" value="next" class="btn btn-primary">
+                                        Next <i class="fas fa-arrow-right ms-1"></i>
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Auto-focus first input on each step
+        $(document).ready(function() {
+            $('.wizard-content input:visible:first').focus();
+        });
+
+        // Form validation feedback
+        $('#wizardForm').on('submit', function(e) {
+            var isValid = true;
+            
+            // Clear previous validation states
+            $('.is-invalid').removeClass('is-invalid');
+            $('.invalid-feedback').remove();
+            
+            // Basic client-side validation
+            $('input[required]:visible').each(function() {
+                if (!$(this).val()) {
+                    $(this).addClass('is-invalid');
+                    $(this).after('<div class="invalid-feedback">This field is required.</div>');
+                    isValid = false;
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                $('.is-invalid:first').focus();
+            }
+        });
+    </script>
+}
+
+<style>
+    .wizard-content {
+        min-height: 300px;
+    }
+    
+    .progress {
+        border-radius: 10px;
+    }
+    
+    .progress-bar {
+        border-radius: 10px;
+        transition: width 0.3s ease;
+    }
+    
+    .card {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        border: 1px solid rgba(0, 0, 0, 0.125);
+    }
+    
+    .wizard-content .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .help-text {
+        font-size: 0.875rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+</style>

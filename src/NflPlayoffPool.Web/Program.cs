@@ -2,11 +2,8 @@
 // Copyright (c) stevencodeswright. All rights reserved.
 // </copyright>
 
-using System.Diagnostics;
-using System.Net;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.HttpOverrides;
-using MongoDB.Driver;
 using NflPlayoffPool.Data;
 using NflPlayoffPool.Web.Extensions;
 using NflPlayoffPool.Web.Services;
@@ -15,16 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddEnvironmentVariables();
 
-var connectionString = Environment.GetEnvironmentVariable("MONGODB_CONNECTION_STRING") ??
-                      builder.Configuration.GetConnectionString("MongoDb");
-                      
-if (connectionString == null)
-{
-    Debug.WriteLine("You must set your 'MONGODB_URI' environment variable. To learn how to set it, see https://www.mongodb.com/docs/drivers/csharp/current/quick-start/#set-your-connection-string");
-    Environment.Exit(0);
-}
-
-builder.Services.AddPlayoffPoolContext(connectionString, "playoff_pool");
+// Configure MongoDB with health checks
+builder.Services.AddContainerizedMongoDB(builder.Configuration);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -48,7 +37,18 @@ builder.Services.AddScoped<IBreadcrumbService, BreadcrumbService>();
 
 var app = builder.Build();
 
+// Seed database with admin user if needed
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<PlayoffPoolContext>();
+    context.SeedAdminUser(app.Configuration);
+}
+
 app.UseForwardedHeaders();
+
+// Health check endpoint
+app.MapHealthChecks("/health");
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

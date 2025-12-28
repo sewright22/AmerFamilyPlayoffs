@@ -1,0 +1,49 @@
+@model SeasonWizardViewModel
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="mb-4">
+            <label asp-for="Year" class="form-label fw-bold">Season Year *</label>
+            <input asp-for="Year" class="form-control form-control-lg" placeholder="e.g., 2024" required />
+            <span asp-validation-for="Year" class="text-danger"></span>
+            <div class="help-text">
+                <i class="fas fa-info-circle me-1"></i>
+                The NFL season year (typically the year the Super Bowl is played)
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label asp-for="Description" class="form-label fw-bold">Description</label>
+            <textarea asp-for="Description" class="form-control" rows="3" 
+                      placeholder="Optional description for this season (e.g., 'Annual Office Pool', 'Family Championship')"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+            <div class="help-text">
+                <i class="fas fa-info-circle me-1"></i>
+                Add a description to help identify this season (optional)
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label asp-for="CutoffDateTime" class="form-label fw-bold">Bracket Submission Deadline *</label>
+            <input asp-for="CutoffDateTime" type="datetime-local" class="form-control" required />
+            <span asp-validation-for="CutoffDateTime" class="text-danger"></span>
+            <div class="help-text">
+                <i class="fas fa-info-circle me-1"></i>
+                Players must submit their brackets before this date and time. 
+                Typically set to just before the first playoff game starts.
+            </div>
+        </div>
+
+        <!-- Quick Tips -->
+        <div class="alert alert-info">
+            <h6 class="alert-heading">
+                <i class="fas fa-lightbulb me-2"></i>Quick Tips
+            </h6>
+            <ul class="mb-0">
+                <li>Choose a year that doesn't already exist in your system</li>
+                <li>Set the deadline before the first playoff game (usually mid-January)</li>
+                <li>You can always change these settings later if needed</li>
+            </ul>
+        </div>
+    </div>
+</div>

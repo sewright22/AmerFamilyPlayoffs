@@ -98,7 +98,7 @@ namespace NflPlayoffPool.Web.Controllers
 
             BracketSummaryModel? previousBracket = null;
             int count = 0;
-            int thresholdScore = brackets.Skip(2).First().CurrentScore;
+            int thresholdScore = brackets.Count > 2 ? brackets.Skip(2).First().CurrentScore : 0;
             foreach (var bracket in brackets)
             {
                 bool isTied = false;
@@ -136,17 +136,20 @@ namespace NflPlayoffPool.Web.Controllers
 
             // Determine the selected winners of the top 3 brackets.
             var currentlyPlacingBrackets = brackets.Where(b => b.Place <= 3).ToList();
-            int lowestPlace = currentlyPlacingBrackets.Min(b => b.Place);
-
-            // Get list of PredictedWinners from the lowest place bracket
-            var lowestSelectedWinners = currentlyPlacingBrackets.Where(b => b.Place == lowestPlace).Select(b => b.PredictedWinner).ToList();
-
-            foreach (var bracket in brackets.Where(b => b.Place > 3))
+            if (currentlyPlacingBrackets.Any())
             {
-                if (lowestSelectedWinners.Contains(bracket.PredictedWinner))
+                int lowestPlace = currentlyPlacingBrackets.Min(b => b.Place);
+
+                // Get list of PredictedWinners from the lowest place bracket
+                var lowestSelectedWinners = currentlyPlacingBrackets.Where(b => b.Place == lowestPlace).Select(b => b.PredictedWinner).ToList();
+
+                foreach (var bracket in brackets.Where(b => b.Place > 3))
                 {
-                    // This bracket cannot win because it has the same predicted winner as the lowest placing bracket
-                    bracket.PlaceAsString = this.BuildPlaceAsString(bracket.Place, false, true);
+                    if (lowestSelectedWinners.Contains(bracket.PredictedWinner))
+                    {
+                        // This bracket cannot win because it has the same predicted winner as the lowest placing bracket
+                        bracket.PlaceAsString = this.BuildPlaceAsString(bracket.Place, false, true);
+                    }
                 }
             }
 
@@ -155,9 +158,10 @@ namespace NflPlayoffPool.Web.Controllers
 
         private string? BuildPlaceAsString(int place, bool isTied, bool isEliminated)
         {
-            // Get the last digit of the place number, except for 11, 12, and 13
+            // Get the last digit of the place number, except for numbers ending in 11, 12, and 13
             int lastDigit = place % 10;
-            if (place == 11 || place == 12 || place == 13)
+            int lastTwoDigits = place % 100;
+            if (lastTwoDigits == 11 || lastTwoDigits == 12 || lastTwoDigits == 13)
             {
                 lastDigit = 0;
             }

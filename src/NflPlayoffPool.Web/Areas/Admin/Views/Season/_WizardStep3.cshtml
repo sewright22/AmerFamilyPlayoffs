@@ -1,0 +1,248 @@
+@model SeasonWizardViewModel
+
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="mb-4">
+            <h6>How would you like to set up the 14 playoff teams?</h6>
+            
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100 @(Model.TeamSetupMethod == TeamSetupMethod.UseTemplate ? "border-primary" : "")">
+                        <div class="card-body text-center">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" asp-for="TeamSetupMethod" 
+                                       value="@TeamSetupMethod.UseTemplate" id="template-option" />
+                                <label class="form-check-label w-100" for="template-option">
+                                    <i class="fas fa-list-ul fa-2x text-primary mb-2 d-block"></i>
+                                    <h6>Use NFL Template</h6>
+                                    <small class="text-muted">
+                                        Pre-filled with the 14 playoff teams (7 AFC, 7 NFC). You can adjust seedings as needed.
+                                    </small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100 @(Model.TeamSetupMethod == TeamSetupMethod.ImportFile ? "border-primary" : "")">
+                        <div class="card-body text-center">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" asp-for="TeamSetupMethod" 
+                                       value="@TeamSetupMethod.ImportFile" id="import-option" />
+                                <label class="form-check-label w-100" for="import-option">
+                                    <i class="fas fa-file-upload fa-2x text-success mb-2 d-block"></i>
+                                    <h6>Import from File</h6>
+                                    <small class="text-muted">
+                                        Upload a CSV or Excel file with team data and seedings.
+                                    </small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100 @(Model.TeamSetupMethod == TeamSetupMethod.ManualEntry ? "border-primary" : "")">
+                        <div class="card-body text-center">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" asp-for="TeamSetupMethod" 
+                                       value="@TeamSetupMethod.ManualEntry" id="manual-option" />
+                                <label class="form-check-label w-100" for="manual-option">
+                                    <i class="fas fa-keyboard fa-2x text-warning mb-2 d-block"></i>
+                                    <h6>Manual Entry</h6>
+                                    <small class="text-muted">
+                                        Add teams one by one. Good for custom leagues or modifications.
+                                    </small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Template Preview (shown when UseTemplate is selected) -->
+        @if (Model.TeamSetupMethod == TeamSetupMethod.UseTemplate)
+        {
+            <div id="template-preview" class="mt-4">
+                <div class="alert alert-success">
+                    <h6 class="alert-heading">
+                        <i class="fas fa-check-circle me-2"></i>NFL Template Selected
+                    </h6>
+                    <p class="mb-0">
+                        The 14 playoff teams (7 AFC, 7 NFC) will be added automatically with their playoff seedings. 
+                        You can update the seedings based on the actual playoff bracket.
+                    </p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-primary">AFC Conference (7 teams)</h6>
+                        <small>Seeds 1-4: Division Winners<br>Seeds 5-7: Wild Card Teams</small>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h6 class="text-success">NFC Conference (7 teams)</h6>
+                        <small>Seeds 1-4: Division Winners<br>Seeds 5-7: Wild Card Teams</small>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Import File Section -->
+        @if (Model.TeamSetupMethod == TeamSetupMethod.ImportFile)
+        {
+            <div id="import-section" class="mt-4">
+                <div class="alert alert-info">
+                    <h6 class="alert-heading">
+                        <i class="fas fa-info-circle me-2"></i>File Import Requirements
+                    </h6>
+                    <p>Your file should contain the following columns:</p>
+                    <ul class="mb-0">
+                        <li><strong>Name</strong> - Team name (e.g., "Kansas City Chiefs")</li>
+                        <li><strong>Abbreviation</strong> - Short code (e.g., "KC")</li>
+                        <li><strong>Conference</strong> - "AFC" or "NFC"</li>
+                        <li><strong>Seed</strong> - Playoff seed (1-7)</li>
+                        <li><strong>City</strong> - Team city (optional)</li>
+                    </ul>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Upload Team File</label>
+                    <input type="file" class="form-control" accept=".csv,.xlsx,.xls" />
+                    <div class="form-text">Supported formats: CSV, Excel (.xlsx, .xls)</div>
+                </div>
+
+                <div class="text-center">
+                    <a href="#" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-download me-1"></i>Download Template File
+                    </a>
+                </div>
+            </div>
+        }
+
+        <!-- Manual Entry Section -->
+        @if (Model.TeamSetupMethod == TeamSetupMethod.ManualEntry)
+        {
+            <div id="manual-section" class="mt-4">
+                <div class="alert alert-warning">
+                    <h6 class="alert-heading">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Manual Entry Mode
+                    </h6>
+                    <p class="mb-0">
+                        You'll need to add the 14 playoff teams manually (7 AFC, 7 NFC). This is recommended only for custom leagues 
+                        or if you need to make significant modifications to team data.
+                    </p>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6>Teams (@Model.Teams.Count / 14)</h6>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="addTeam()">
+                        <i class="fas fa-plus me-1"></i>Add Team
+                    </button>
+                </div>
+
+                <div id="teams-container">
+                    @for (int i = 0; i < Model.Teams.Count; i++)
+                    {
+                        <div class="team-entry card mb-2">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <input asp-for="Teams[i].Name" class="form-control" placeholder="Team Name" />
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input asp-for="Teams[i].Abbreviation" class="form-control" placeholder="Abbr" />
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select asp-for="Teams[i].Conference" class="form-control">
+                                            <option value="">Conference</option>
+                                            <option value="AFC">AFC</option>
+                                            <option value="NFC">NFC</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input asp-for="Teams[i].Seed" type="number" min="1" max="7" class="form-control" placeholder="Seed" />
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input asp-for="Teams[i].City" class="form-control" placeholder="City" />
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeTeam(this)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    let teamIndex = @Model.Teams.Count;
+
+    function addTeam() {
+        const container = document.getElementById('teams-container');
+        const teamHtml = `
+            <div class="team-entry card mb-2">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <input name="Teams[${teamIndex}].Name" class="form-control" placeholder="Team Name" />
+                        </div>
+                        <div class="col-md-2">
+                            <input name="Teams[${teamIndex}].Abbreviation" class="form-control" placeholder="Abbr" />
+                        </div>
+                        <div class="col-md-2">
+                            <select name="Teams[${teamIndex}].Conference" class="form-control">
+                                <option value="">Conference</option>
+                                <option value="AFC">AFC</option>
+                                <option value="NFC">NFC</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <input name="Teams[${teamIndex}].Seed" type="number" min="1" max="7" class="form-control" placeholder="Seed" />
+                        </div>
+                        <div class="col-md-2">
+                            <input name="Teams[${teamIndex}].City" class="form-control" placeholder="City" />
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeTeam(this)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', teamHtml);
+        teamIndex++;
+        updateTeamCount();
+    }
+
+    function removeTeam(button) {
+        button.closest('.team-entry').remove();
+        updateTeamCount();
+    }
+
+    function updateTeamCount() {
+        const count = document.querySelectorAll('.team-entry').length;
+        document.querySelector('h6').textContent = `Teams (${count} / 14)`;
+    }
+
+    // Show/hide sections based on selected method
+    document.addEventListener('DOMContentLoaded', function() {
+        const radios = document.querySelectorAll('input[name="TeamSetupMethod"]');
+        radios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                // This would trigger a form submission to update the model
+                // For now, we'll handle it with JavaScript
+            });
+        });
+    });
+</script>

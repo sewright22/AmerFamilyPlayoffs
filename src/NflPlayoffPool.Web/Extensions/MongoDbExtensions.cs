@@ -15,6 +15,81 @@ namespace NflPlayoffPool.Web.Extensions
 
     public static class MongoDbExtensions
     {
+        /// <summary>
+        /// Configures MongoDB connection and health checks for containerized deployment.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <param name="configuration">The configuration.</param>
+        /// <returns>The service collection for chaining.</returns>
+        public static IServiceCollection AddContainerizedMongoDB(this IServiceCollection services, IConfiguration configuration)
+        {
+            // Validate required environment variables
+            ValidateMongoDbConfiguration();
+
+            // Build connection string from environment variables
+            var connectionString = BuildMongoDbConnectionString(configuration);
+
+            // Get database name
+            var databaseName = Environment.GetEnvironmentVariable("MONGODB_DATABASE") ?? "playoff_pool";
+
+            // Add MongoDB context
+            services.AddPlayoffPoolContext(connectionString, databaseName);
+
+            // Add basic health checks
+            services.AddHealthChecks();
+
+            return services;
+        }
+
+        /// <summary>
+        /// Validates that all required MongoDB environment variables are present.
+        /// </summary>
+        private static void ValidateMongoDbConfiguration()
+        {
+            var requiredVars = new[] { "MONGODB_ROOT_PASSWORD", "ADMIN_PASSWORD" };
+
+            foreach (var varName in requiredVars)
+            {
+                var value = Environment.GetEnvironmentVariable(varName);
+                if (string.IsNullOrEmpty(value) || value == "CHANGE_ME_SECURE_PASSWORD")
+                {
+                    Console.WriteLine($"❌ Required environment variable '{varName}' is missing or using default value");
+                    Console.WriteLine("💡 Please update your .env file with proper secure values");
+                    Console.WriteLine("🔒 See security-standards.md for password requirements");
+                    Environment.Exit(1);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Builds MongoDB connection string from environment variables with fallback to configuration.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        /// <returns>The MongoDB connection string.</returns>
+        private static string BuildMongoDbConnectionString(IConfiguration configuration)
+        {
+            // Check for explicit connection string first
+            var explicitConnectionString = Environment.GetEnvironmentVariable("MONGODB_CONNECTION_STRING") ??
+                                         configuration.GetConnectionString("MongoDb");
+
+            if (!string.IsNullOrEmpty(explicitConnectionString))
+            {
+                return explicitConnectionString;
+            }
+
+            // Build connection string from individual components
+            var mongoPassword = Environment.GetEnvironmentVariable("MONGODB_ROOT_PASSWORD");
+            var mongoHost = Environment.GetEnvironmentVariable("MONGODB_HOST") ?? "mongodb";
+            var mongoPort = Environment.GetEnvironmentVariable("MONGODB_PORT") ?? "27017";
+            var mongoDatabase = Environment.GetEnvironmentVariable("MONGODB_DATABASE") ?? "playoff_pool";
+
+            var connectionString = $"mongodb://admin:{mongoPassword}@{mongoHost}:{mongoPort}/{mongoDatabase}?authSource=admin";
+
+            Console.WriteLine($"🔗 Using MongoDB connection: mongodb://admin:***@{mongoHost}:{mongoPort}/{mongoDatabase}");
+
+            return connectionString;
+        }
+
         public static IServiceCollection AddMongoDbContext(this IServiceCollection services, string connectionString, string databaseName)
         {
             if (string.IsNullOrEmpty(connectionString))
@@ -43,14 +118,18 @@ namespace NflPlayoffPool.Web.Extensions
 
         public static User? CreateUser(this PlayoffPoolContext dbContext, RegisterViewModel registerViewModel)
         {
-            // Check if the user already exists
-            if (dbContext.Users.Any(u => u.Email == registerViewModel.Email))
+            // Check if the user already exists (case-insensitive email comparison)
+            var existingUser = dbContext.Users
+                .AsEnumerable() // Switch to client-side evaluation for case-insensitive comparison
+                .FirstOrDefault(u => string.Equals(u.Email, registerViewModel.Email, StringComparison.OrdinalIgnoreCase));
+            
+            if (existingUser != null)
             {
                 return null; // User already exists, return null
             }
 
-            // Hash the password
-            var passwordHash = HashPassword(registerViewModel.Password);
+            // Hash the password using database-agnostic method
+            var passwordHash = DatabaseSeedingExtensions.HashPassword(registerViewModel.Password);
 
             // Create a new User object
             var newUser = new User
@@ -73,8 +152,10 @@ namespace NflPlayoffPool.Web.Extensions
 
         public static User? ValidateUser(this PlayoffPoolContext dbContext, LoginViewModel loginViewModel)
         {
-            // Find user by email
-            var user = dbContext.Users.FirstOrDefault(u => u.Email == loginViewModel.Email);
+            // Find user by email (case-insensitive comparison)
+            var user = dbContext.Users
+                .AsEnumerable() // Switch to client-side evaluation for case-insensitive comparison
+                .FirstOrDefault(u => string.Equals(u.Email, loginViewModel.Email, StringComparison.OrdinalIgnoreCase));
 
             // Return null if user doesn't exist
             if (user == null)
@@ -82,8 +163,8 @@ namespace NflPlayoffPool.Web.Extensions
                 return null;
             }
 
-            // Verify password
-            if (VerifyPassword(loginViewModel.Password, user.PasswordHash))
+            // Verify password using database-agnostic method
+            if (DatabaseSeedingExtensions.VerifyPassword(loginViewModel.Password, user.PasswordHash))
             {
                 return user; // Return user if password matches
             }
@@ -91,36 +172,5 @@ namespace NflPlayoffPool.Web.Extensions
             return null; // Return null if password is incorrect
         }
 
-        private static string HashPassword(string password)
-        {
-            byte[] salt = new byte[16];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(salt);
-            }
-
-            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: password,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 10000,
-                numBytesRequested: 32));
-
-            return $"{Convert.ToBase64String(salt)}:{hashed}";
-        }
-
-        private static bool VerifyPassword(string password, string storedHash)
-        {
-            var parts = storedHash.Split(':');
-            var salt = Convert.FromBase64String(parts[0]);
-            var hash = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: password,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 10000,
-                numBytesRequested: 32));
-
-            return hash == parts[1];
-        }
     }
 }
