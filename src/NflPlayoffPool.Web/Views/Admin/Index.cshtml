@@ -1,0 +1,14 @@
+﻿@using NflPlayoffPool.Web.ViewModels
+@model AdminViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h1>Admin Dashboard</h1>
+
+<nav>
+    <ul>
+        <li><a href="@Url.Action("Users", "Admin")">Manage Users</a></li>
+    </ul>
+</nav>

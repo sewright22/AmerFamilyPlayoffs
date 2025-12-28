@@ -1,0 +1,126 @@
+﻿@using NflPlayoffPool.Web.Models.Bracket
+@using NflPlayoffPool.Web.Helpers.TagHelpers;
+@model BracketModel
+
+@{
+    string error = "There was a problem loading this game. Please contact Steven.";
+}
+
+<div class="container">
+    <form method="post">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="UserId" />
+        <input type="hidden" asp-for="SeasonYear" />
+        <label asp-for="Name"></label>
+        <input asp-for="Name" />
+
+        @if (this.Model.AfcRounds.Any() && this.Model.NfcRounds.Any())
+        {
+            <div class="container">
+                <div class="row">
+                    <div class="col afc">
+                        <span class="pp-conference-name">AFC</span>
+                        @for (int i = 0; i < this.Model.AfcRounds.Count(); i++)
+                        {
+                            var prefix = $"{nameof(BracketModel.AfcRounds)}[{i}]";
+                            <pp-partial name="_BracketRound.cshtml" pp-prefix="@prefix" model="@this.Model.AfcRounds[i]" />
+                        }
+                    </div>
+
+                    <div class="col nfc">
+                        <span class="pp-conference-name">NFC</span>
+                        @for (int i = 0; i < this.Model.NfcRounds.Count(); i++)
+                        {
+
+                            var prefix = $"{nameof(BracketModel.NfcRounds)}[{i}]";
+                            <pp-partial name="_BracketRound.cshtml" pp-prefix="@prefix" model="@this.Model.NfcRounds[i]" />
+                        }
+                    </div>
+                </div>
+
+                @if (this.Model.SuperBowl != null && this.Model.SuperBowl.HomeTeam != null && this.Model.SuperBowl.AwayTeam != null)
+                {
+                    <div class="row">
+                        <div class="col super-bowl">
+                            <div class="pp-matchup pp-matchup-super-bowl">
+                                <pp-partial name="_BracketGameHiddenFields" model="@this.Model.SuperBowl" pp-prefix="@nameof(BracketModel.SuperBowl)" />
+
+                                <div class="row">
+                                    <span class="pp-game-name pp-game-name-super-bowl">
+                                        @if (this.Model.SuperBowl.IsCorrect.HasValue)
+                                        {
+                                            if (this.Model.SuperBowl.IsCorrect.Value)
+                                            {
+                                                <i class="fa-solid fa-circle-check pp-prediction-correct"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fa-solid fa-circle-xmark pp-prediction-incorrect"></i>
+                                            }
+                                        }
+                                        @this.Model.SuperBowl.Name
+                                        @if (this.Model.SuperBowl.IsCorrect.HasValue)
+                                        {
+                                            if (this.Model.SuperBowl.IsCorrect.Value)
+                                            {
+                                                <i class="fa-solid fa-circle-check pp-prediction-correct"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fa-solid fa-circle-xmark pp-prediction-incorrect"></i>
+                                            }
+                                        }
+                                    </span>
+                                </div>
+                                <div class="row">
+                                    <span class="col">
+                                        <label>
+                                            @if (this.Model.SuperBowl.IsLocked)
+                                            {
+                                                <input class="form-check-input" type="radio" asp-for="SuperBowl.SelectedWinner" id="@this.Model.SuperBowl.HomeTeam.ViewId" value="@this.Model.SuperBowl.HomeTeam.Id" disabled />
+                                            }
+                                            else
+                                            {
+                                                <input class="form-check-input" type="radio" asp-for="SuperBowl.SelectedWinner" id="@this.Model.SuperBowl.HomeTeam.ViewId" value="@this.Model.SuperBowl.HomeTeam.Id" />
+                                            }
+                                        </label>
+                                        <label class="pp-team-name" for="@this.Model.SuperBowl.HomeTeam.ViewId">@this.Model.SuperBowl.HomeTeam.Name</label>
+                                    </span>
+                                    <span class="col-auto">
+                                        <label class="pp-team-name" for="@this.Model.SuperBowl.AwayTeam.ViewId">@this.Model.SuperBowl.AwayTeam.Name</label>
+                                        <label>
+                                            @if (this.Model.SuperBowl.IsLocked)
+                                            {
+                                                <input class="form-check-input" type="radio" asp-for="SuperBowl.SelectedWinner" id="@this.Model.SuperBowl.AwayTeam.ViewId" value="@this.Model.SuperBowl.AwayTeam.Id" disabled/>
+                                            }
+                                            else
+                                            {
+                                                <input class="form-check-input" type="radio" asp-for="SuperBowl.SelectedWinner" id="@this.Model.SuperBowl.AwayTeam.ViewId" value="@this.Model.SuperBowl.AwayTeam.Id" />
+                                            }
+                                        </label>
+                                    </span>
+                                    <span asp-validation-for="SuperBowl.SelectedWinner" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        <div class="row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        </div>
+
+        @if (this.Model.CanEdit)
+        {
+            <div class="pp-button-bar">
+                <button class="btn btn-primary pp-button" type="submit">Save</button>
+
+                @if (string.IsNullOrWhiteSpace(this.Model.Name) == false)
+                {
+                    <a class="btn btn-outline-secondary pp-button-secondary" href=@string.Format("/Admin/Bracket/Reset/{0}", this.Model.Id)>Reset Bracket</a>
+                }
+            </div>
+        }
+    </form>
+</div>

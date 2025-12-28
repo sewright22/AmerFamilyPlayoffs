@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NflPlayoffPool.Data", "NflPlayoffPool.Data.csproj", "{9622F34F-A9FE-4580-8C39-69C6B793D353}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9622F34F-A9FE-4580-8C39-69C6B793D353}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9622F34F-A9FE-4580-8C39-69C6B793D353}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9622F34F-A9FE-4580-8C39-69C6B793D353}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9622F34F-A9FE-4580-8C39-69C6B793D353}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ADE03012-533F-4142-9DB5-4F45BA025B6D}
+	EndGlobalSection
+EndGlobal

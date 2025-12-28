@@ -1,0 +1,13 @@
+﻿@model SeasonSummaryModel
+
+<div class="row pp-bracket-summary">
+
+    <span class="col">
+        <span class="pp-label">Name</span>
+        <span class="pp-label-value">@this.Model.Name</span>
+    </span>
+
+    <span class="col-auto">
+        <a class="btn pp-button pp-button-secondary" href="/Admin/Season/Details/@this.Model.Id">Details</a>
+    </span>
+</div>

@@ -1,0 +1,26 @@
+﻿@using NflPlayoffPool.Web.Models
+@using NflPlayoffPool.Web.ViewModels
+@model IBreadcrumb
+
+@{
+    Layout = "_AuthenticatedLayout";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        @foreach (var breadcrumb in this.Model.BreadcrumbList)
+        {
+            if (breadcrumb.IsActive)
+{
+                <li class="breadcrumb-item active" aria-current="page">@breadcrumb.Text</li>
+                continue;
+            }
+
+            <li class="breadcrumb-item">
+                <a href="@breadcrumb.Url">@breadcrumb.Text</a>
+            </li>
+        }
+    </ol>
+</nav>
+
+@RenderBody()

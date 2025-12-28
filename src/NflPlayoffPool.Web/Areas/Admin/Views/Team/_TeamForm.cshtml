@@ -1,0 +1,18 @@
+﻿   @model CreateTeamViewModel
+
+<form asp-controller="Team" asp-action="@ViewData["Action"]" id="playoffTeamForm-@Model.Team.Id" method="post">
+    <input type="hidden" asp-for="Team.Id" />
+    <input type="hidden" asp-for="Team.SeasonId" />
+
+    <div class="mb-3">
+        <label asp-for="Team.Code" class="form-label"></label>
+        <select asp-for="Team.Code" class="form-control" asp-items="Model.Teams"></select>
+        <span asp-validation-for="Team.Code" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Team.Seed" class="form-label"></label>
+        <input asp-for="Team.Seed" class="form-control" />
+        <span asp-validation-for="Team.Seed" class="text-danger"></span>
+    </div>
+</form>

@@ -1,0 +1,114 @@
+﻿@using NflPlayoffPool.Data.Models
+@using NflPlayoffPool.Web.Models.Home
+@model HomeViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@if (this.Model.CanSubmitBrackets && this.Model.CompletedBrackets.Any() == false && this.Model.IncompleteBrackets.Any() == false)
+{
+    <p>It looks like you haven't made any picks.</p>
+
+    @if (this.Model.IsPlayoffStarted == false)
+    {
+        <div class="pp-child-center">
+            <a class="btn btn-primary pp-button pp-button-create-first-bracket" href="/Bracket/Create">Create your first bracket</a>
+        </div>
+    }
+}
+else if (this.Model.CanSubmitBrackets)
+{
+    <div class="container">
+        @if (this.Model.IncompleteBrackets.Any())
+        {
+            <div class="row pp-my-brackets pp-my-incomplete-brackets">
+                <h4 class="col">Incomplete Brackets</h4>
+            </div>
+            @foreach (var bracket in this.Model.IncompleteBrackets)
+            {
+                <div class="row pp-bracket-summary">
+                    <span class="col">
+                        <label class="pp-label">Bracket Name</label>
+                        <span class="pp-label-value">@bracket.Name</span>
+                    </span>
+                    <span class="col-auto">
+                        <span><a class="btn pp-button pp-button-secondary" href=@string.Format("/Bracket/Update/{0}", bracket.Id)>Continue Bracket</a></span>
+                    </span>
+                </div>
+            }
+        }
+
+        @if (this.Model.CompletedBrackets.Any())
+        {
+            <div class="row pp-my-brackets pp-my-complete-brackets">
+                <h4 class="col">Completed Brackets</h4>
+            </div>
+            @foreach (var bracket in this.Model.CompletedBrackets)
+            {
+                string teamClass = bracket.PredictedWinner != null ? $"team-{bracket.PredictedWinner.ToLower()}" : string.Empty;
+
+                <div class="row pp-bracket-summary">
+                    <span class="col">
+                        <label class="pp-label">Bracket Name</label>
+                        <span class="pp-label-value">@bracket.Name</span>
+                    </span>
+                    <span class="col">
+                        <label class="pp-label">Predicted Winner</label>
+                        <span class="pp-label-value">@bracket.PredictedWinner</span>
+                    </span>
+                    <span class="col-auto">
+                        <span><a class="btn pp-button pp-button-secondary" href=@string.Format("/Bracket/Update/{0}", bracket.Id)>Update Bracket</a></span>
+                    </span>
+                </div>
+            }
+        }
+
+        @if (this.Model.IsPlayoffStarted == false)
+        {
+            <div class="row">
+                <a class="btn btn-primary pp-button pp-child-center" href="/Bracket/Create">Create Another Bracket</a>
+            </div>
+        }
+
+        @if (this.Model.Leaderboard != null && this.Model.Leaderboard.ShowLeaderboard && this.Model.Leaderboard.Brackets.Any())
+        {
+            <div class="row pp-leaderboard">
+                <h4 class="col">Leaderboard</h4>
+                @foreach (var bracket in this.Model.Leaderboard.Brackets)
+                {
+                    string teamClass = bracket.PredictedWinner != null ? $"team-{bracket.PredictedWinner.ToLower()}" : string.Empty;
+
+                    <div class="row pp-bracket-summary">
+                        <span class="col">
+                            <label class="pp-label">Current Place</label>
+                            <span class="pp-label-value">@bracket.PlaceAsString</span>
+                        </span>
+                        <span class="col">
+                            <label class="pp-label">Bracket Name</label>
+                            <span class="pp-label-value">@bracket.Name</span>
+                        </span>
+                        <span class="col">
+                            <label class="pp-label">Predicted Winner</label>
+                            <span class="pp-label-value">@bracket.PredictedWinner</span>
+                        </span>
+                        <span class="col">
+                            <label class="pp-label">Score</label>
+                            <span class="pp-label-value">@bracket.CurrentScore</span>
+                        </span>
+                        <span class="col">
+                            <label class="pp-label">Max Possible Score</label>
+                            <span class="pp-label-value">@bracket.MaxPossibleScore</span>
+                        </span>
+                        <span class="col-auto">
+                            <span><a class="btn pp-button pp-button-secondary" href=@string.Format("/Bracket/Update/{0}", bracket.Id)>View</a></span>
+                        </span>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>Nothing to see here.</p>
+}

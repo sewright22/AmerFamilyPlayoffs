@@ -1,0 +1,18 @@
+﻿@model SeasonModel
+
+<div class="d-flex flex-column gap-0">
+    <div class="row">
+        <div class="col">
+            <h3>Teams</h3>
+        </div>
+
+        <div class="col-auto">
+            <button type="button" class="btn pp-button pp-button-primary modal-button" data-url="/Admin/Team/Create?seasonId=@this.Model.Id">Add Team</button>
+        </div>
+    </div>
+
+    @for (int i = 0; i < this.Model.Teams.Count(); i++)
+    {
+        <partial name="TeamSummary" model="@this.Model.Teams[i]" />
+    }
+</div>

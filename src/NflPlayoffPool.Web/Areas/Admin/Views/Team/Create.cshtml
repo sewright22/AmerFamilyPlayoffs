@@ -1,0 +1,15 @@
+﻿@using NflPlayoffPool.Data.Models
+@model CreateTeamViewModel
+
+@{
+    Layout = "ModalLayout";
+    ViewData["Action"] = "Create";
+}
+
+<partial name="_TeamForm" model="Model" />
+
+@section ModalFooter
+{
+    <cancel-button></cancel-button>
+    <button type="submit" class="btn pp-button pp-button-primary" data-dismiss="modal" data-form-id="playoffTeamForm-@this.Model.Team.Id">Save</button>
+}

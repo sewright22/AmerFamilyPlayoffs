@@ -1,0 +1,12 @@
+﻿@model SeasonsModel
+
+<h2>Seasons</h2>
+
+<button type="button" class="btn pp-button pp-button-primary modal-button" data-url="/Admin/Season/Create">Create Season</button>
+
+<row>
+    @for (int i = 0; i < this.Model.Seasons.Count(); i++)
+    {
+        <partial name="ViewSummary" model="@this.Model.Seasons[i]" />
+    }
+</row>

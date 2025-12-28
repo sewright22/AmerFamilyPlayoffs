@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NflPlayoffPool.Web", "NflPlayoffPool.Web\NflPlayoffPool.Web.csproj", "{165DDB98-9B0E-4628-8055-B5CCE3B7DE05}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1D81630A-155F-4FB0-8420-EB5F3F1D1F1A}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		..\Dockerfile = ..\Dockerfile
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NflPlayoffPool.Data", "NflPlayoffPool.Data\NflPlayoffPool.Data.csproj", "{71B53B2A-19DC-4E2B-81F8-B8AE5A40B409}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NflPlayoffPool.WebTests", "NflPlayoffPool.WebTests\NflPlayoffPool.WebTests.csproj", "{F522CC7F-C8ED-4F46-A72A-D05FDB076569}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{165DDB98-9B0E-4628-8055-B5CCE3B7DE05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{165DDB98-9B0E-4628-8055-B5CCE3B7DE05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{165DDB98-9B0E-4628-8055-B5CCE3B7DE05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{165DDB98-9B0E-4628-8055-B5CCE3B7DE05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71B53B2A-19DC-4E2B-81F8-B8AE5A40B409}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71B53B2A-19DC-4E2B-81F8-B8AE5A40B409}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71B53B2A-19DC-4E2B-81F8-B8AE5A40B409}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71B53B2A-19DC-4E2B-81F8-B8AE5A40B409}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F522CC7F-C8ED-4F46-A72A-D05FDB076569}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F522CC7F-C8ED-4F46-A72A-D05FDB076569}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F522CC7F-C8ED-4F46-A72A-D05FDB076569}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F522CC7F-C8ED-4F46-A72A-D05FDB076569}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B3D52C3B-FB4E-44EF-A32E-077C8ED4A8A8}
+	EndGlobalSection
+EndGlobal

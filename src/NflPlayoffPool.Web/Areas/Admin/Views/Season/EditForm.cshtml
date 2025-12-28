@@ -1,0 +1,52 @@
+﻿@using NflPlayoffPool.Data.Models
+@model SeasonModel
+
+<form asp-action="@ViewData["Action"]" id="@string.Format("seasonForm-{0}", this.Model.Id)" method="post">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="TimeZoneOffset" />
+
+    <div class="mb-3">
+        <label asp-for="Year" class="form-label"></label>
+        <input asp-for="Year" class="form-control" />
+    </div>
+
+    <div class="mb-3 form-check">
+        <input type="checkbox" asp-for="IsCurrent" class="form-check-input" />
+        <label asp-for="IsCurrent" class="form-check-label"></label>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" class="form-control" asp-items="Html.GetEnumSelectList<SeasonStatus>()"></select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CutoffDateTime" class="form-label"></label>
+        <input type="datetime-local" asp-for="CutoffDateTime" class="form-control" value="@(Model.CutoffDateTime.HasValue ? Model.CutoffDateTime.Value.ToString("yyyy-MM-ddTHH:mm") : DateTime.Now.ToString("yyyy-MM-ddTHH:mm"))" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="WildcardPoints" class="form-label"></label>
+        <input asp-for="WildcardPoints" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DivisionalPoints" class="form-label"></label>
+        <input asp-for="DivisionalPoints" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ConferencePoints" class="form-label"></label>
+        <input asp-for="ConferencePoints" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SuperBowlPoints" class="form-label"></label>
+        <input asp-for="SuperBowlPoints" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SuperGridFile" class="form-label"></label>
+        <input asp-for="SuperGridFile" class="form-control" />
+    </div>
+</form>

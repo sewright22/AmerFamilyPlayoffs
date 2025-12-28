@@ -1,0 +1,18 @@
+﻿@model TeamModel
+
+<div class="row pp-bracket-summary">
+
+    <span class="col">
+        <span class="pp-label">Seed</span>
+        <span class="pp-label-value">@this.Model.Seed</span>
+    </span>
+
+    <span class="col">
+        <span class="pp-label">Name</span>
+        <span class="pp-label-value">@this.Model.Code</span>
+    </span>
+
+    <span class="col-auto">
+        <button type="button" class="btn pp-button pp-button-secondary modal-button" data-url="/Admin/Team/Edit/@this.Model.Id?seasonId=@this.Model.SeasonId">Update</button>
+    </span>
+</div>

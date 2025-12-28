@@ -1,0 +1,34 @@
+﻿@model MatchUsersViewModel
+
+@{
+    ViewData["Title"] = "Match Users";
+}
+
+<h1>Match Users</h1>
+
+<form asp-action="MatchUsers" method="post">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Imported User</th>
+                <th>Existing User</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.ImportedUsers.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @Model.ImportedUsers[i].Name
+                    </td>
+                    <td>
+                        <select asp-for="ImportedUsers[i].MatchedUserId" asp-items="@(new SelectList(Model.ExistingUsers, "Id", "FullName"))" class="form-control">
+                            <option value="">Select existing user</option>
+                        </select>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">Save Matches</button>
+</form>

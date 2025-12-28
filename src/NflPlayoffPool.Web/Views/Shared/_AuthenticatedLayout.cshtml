@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - PlayoffPool.MVC</title>
+    <partial name="_Styles" />
+</head>
+<body>
+    <header>
+        <partial name="_Navigation" />
+    </header>
+    <div class="container pp-main-container">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <div id="site-modal"></div>
+    <partial name="_Scripts" />
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,18 @@
+﻿@model SeasonModel
+
+<div class="d-flex flex-column gap-0">
+    <div class="row">
+        <div class="col">
+            <h3>Rounds</h3>
+        </div>
+
+        @* <div class="col-auto">
+            <button type="button" class="btn pp-button pp-button-primary modal-button" data-url="/Admin/Round/Create/@this.Model.PlayoffId">Add Round</button>
+        </div> *@
+    </div>
+
+    @for (int i = 0; i < this.Model.Rounds.Count(); i++)
+    {
+        <partial name="RoundSummary" model="@this.Model.Rounds[i]" />
+    }
+</div>

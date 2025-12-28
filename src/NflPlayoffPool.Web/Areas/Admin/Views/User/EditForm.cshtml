@@ -1,0 +1,11 @@
+﻿@model UserModel
+
+<form asp-action="Edit" id="@string.Format("userForm-{0}", this.Model.Id)">
+    <input type="hidden" asp-for="Id" />
+    <input asp-for="FirstName" />
+    <input asp-for="LastName" />
+    <input asp-for="Email" />
+    <select asp-for="RoleIds" asp-items="@(new SelectList(this.Model.Roles, nameof(SelectListItem.Value), nameof(SelectListItem.Text)))" multiple="multiple">
+        <option>Select</option>
+    </select>
+</form>

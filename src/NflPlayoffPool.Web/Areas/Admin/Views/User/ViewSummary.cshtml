@@ -1,0 +1,17 @@
+﻿@using NflPlayoffPool.Web.Areas.Admin.Models
+
+@model UserModel
+
+<div class="row pp-bracket-summary">
+    <span class="col">
+        <span class="pp-label">Name</span>
+        <span class="pp-label-value">@this.Model.FullName</span>
+    </span>
+    <span class="col">
+        <span class="pp-label">Email</span>
+        <span class="pp-label-value">@this.Model.Email</span>
+    </span>
+    <span class="col-auto">
+        <span><button class="btn pp-button pp-button-secondary modal-button" data-url=@string.Format("/Admin/User/Edit/{0}", this.Model.Id)>Update</button></span>
+    </span>
+</div>

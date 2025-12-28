@@ -1,0 +1,20 @@
+﻿@using NflPlayoffPool.Web.Models.Bracket
+@model RoundModel
+
+<input type="hidden" asp-for="Id" />
+<input type="hidden" asp-for="Name" />
+<input type="hidden" asp-for="PointValue" />
+<input type="hidden" asp-for="Conference" />
+<input type="hidden" asp-for="RoundNumber" />
+<input type="hidden" asp-for="IsLocked" />
+<div class="row">
+    <span class="pp-round-name">@this.Model.Name</span>
+
+    @for (int j = 0; j < this.Model.Games.Count(); j++)
+    {
+        var prefix = $"{this.ViewData.TemplateInfo.HtmlFieldPrefix}.{nameof(RoundModel.Games)}[{j}]";
+        <pp-partial name="_BracketGame.cshtml"
+                model="this.Model.Games[j]"
+                pp-prefix="@prefix" />
+    }
+</div>

@@ -1,0 +1,22 @@
+﻿@model BracketsModel
+
+<h2>Brackets</h2>
+
+@foreach (var bracket in this.Model.Brackets)
+{
+    string teamClass = bracket.PredictedWinner != null ? $"team-{bracket.PredictedWinner.ToLower()}" : string.Empty;
+
+    <div class="row pp-bracket-summary">
+        <span class="col">
+            <label class="pp-label">Bracket Name</label>
+            <span class="pp-label-value">@bracket.Name</span>
+        </span>
+        <span class="col">
+            <label class="pp-label">Predicted Winner</label>
+            <span class="pp-label-value">@bracket.PredictedWinner</span>
+        </span>
+        <span class="col-auto">
+            <span><a class="btn pp-button pp-button-secondary" href=@string.Format("/Admin/Bracket/Update/{0}", bracket.Id)>Update Bracket</a></span>
+        </span>
+    </div>
+}

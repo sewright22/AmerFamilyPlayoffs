@@ -1,0 +1,40 @@
+﻿@model UpdateSeasonViewModel
+
+<div class="d-flex flex-column gap-5">
+    <div class="row">
+        <div class="col">
+            <h2>@this.Model.Season.Year</h2>
+        </div>
+
+        <div class="col-auto">
+            <a type="button" class="btn pp-button pp-button-primary modal-button" href="/Admin/Season/Details/@Model.Season.Id/Bracket">Master Bracket</a>
+            <button type="button" class="btn pp-button pp-button-primary modal-button" data-url="/Admin/Season/Edit/@Model.Season.Id">Update Season</button>
+        </div>
+    </div>
+    <div class="row align-items-center mb-2">
+        <div class="col">
+            <div class="d-flex flex-column gap-1">
+                <div><strong>Year:</strong> @Model.Season.Year</div>
+                <div><strong>Cutoff Date:</strong> @Model.Season.CutoffDateTime?.ToString("yyyy-MM-dd HH:mm")</div>
+                <div><strong>Status:</strong> @Model.Season.Status</div>
+                <div><strong>Current Round:</strong> @Model.Season.CurrentRound</div>
+                <div><strong>Wildcard Points:</strong> @Model.Season.WildcardPoints</div>
+                <div><strong>Divisional Points:</strong> @Model.Season.DivisionalPoints</div>
+                <div><strong>Conference Points:</strong> @Model.Season.ConferencePoints</div>
+                <div><strong>Super Bowl Points:</strong> @Model.Season.SuperBowlPoints</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row pp-bracket-summary">
+        <div class="col">
+            <h4><strong>@this.Model.Season.BracketCount</strong> Brackets Created</h4>
+        </div>
+        <div class="col-auto">
+            <a class="btn pp-button pp-button-secondary" href="/Admin/Bracket/Index?seasonId=@this.Model.Season.Id&seasonYear=@this.Model.Season.Year">Manage Brackets</a>
+        </div>
+    </div>
+
+    @* <partial name="Rounds" /> *@
+    <partial name="Teams" model="this.Model.Season" />
+</div>

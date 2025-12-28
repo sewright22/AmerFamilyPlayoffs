@@ -1,0 +1,26 @@
+﻿@model AdminRoundModel
+
+@{
+    Layout = "ModalLayout";
+}
+
+<form action="Round">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="PlayoffId" />
+    <div class="row mb-3">
+        <label asp-for="Name" class="col-12 col-form-label"></label>
+        <select class="col-12" asp-for="Name" asp-items="@(new SelectList(this.Model.Rounds, nameof(SelectListItem.Value), nameof(SelectListItem.Text)))">
+            <option>Select One</option>
+        </select>
+    </div>
+    <div class="row">
+        <label class="col-12" asp-for="PointValue"></label>
+        <input class="col-12" type="number" asp-for="PointValue" />
+    </div>
+</form>
+
+@section ModalFooter
+{
+    <cancel-button></cancel-button>
+    <button type="button" class="btn pp-button pp-button-primary" data-dismiss="modal">Save</button>
+}

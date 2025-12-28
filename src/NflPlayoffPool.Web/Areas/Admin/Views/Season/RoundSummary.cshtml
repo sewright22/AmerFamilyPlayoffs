@@ -1,0 +1,23 @@
+﻿@model AdminRoundModel
+
+<div class="row pp-bracket-summary">
+
+    <span class="col">
+        <span class="pp-label">Round</span>
+        <span class="pp-label-value">@this.Model.Number</span>
+    </span>
+
+    <span class="col">
+        <span class="pp-label">Name</span>
+        <span class="pp-label-value">@this.Model.Name</span>
+    </span>
+
+    <span class="col">
+        <span class="pp-label">Points</span>
+        <span class="pp-label-value">@this.Model.PointValue</span>
+    </span>
+
+    <span class="col-auto">
+        <button type="button" class="btn pp-button pp-button-secondary modal-button" data-url="/Admin/Round/Edit/@this.Model.Id">Update</button>
+    </span>
+</div>

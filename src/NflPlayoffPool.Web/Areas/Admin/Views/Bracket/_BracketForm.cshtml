@@ -1,0 +1,13 @@
+﻿@using NflPlayoffPool.Web.Models.Bracket
+@using NflPlayoffPool.Web.Helpers.TagHelpers;
+@model BracketModel
+
+@{
+    string error = "There was a problem loading this game. Please contact Steven.";
+}
+
+<div class="container">
+    <form method="post">
+        <partial name="_BracketFormBody" model="@this.Model"/>
+    </form>
+</div>

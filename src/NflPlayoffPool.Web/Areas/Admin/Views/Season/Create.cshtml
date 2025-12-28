@@ -1,0 +1,14 @@
+﻿@model CreateSeasonViewModel
+
+@{
+    Layout = "ModalLayout";
+    ViewData["Action"] = "Create";
+}
+
+<partial name="EditForm" model="Model.Season" />
+
+@section ModalFooter
+{
+    <cancel-button></cancel-button>
+    <button type="submit" class="btn pp-button pp-button-primary" data-dismiss="modal" data-form-id="seasonForm-@this.Model.Season.Id">Save</button>
+}

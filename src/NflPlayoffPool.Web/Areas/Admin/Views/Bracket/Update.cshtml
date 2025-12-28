@@ -1,0 +1,16 @@
+﻿@using NflPlayoffPool.Web.Admin.ViewModels
+@model BracketViewModel
+
+
+@if (this.Model.Bracket.CanEdit)
+{
+    <div class="container">
+        <partial name="_BracketForm" model="@this.Model.Bracket" />
+    </div>
+}
+else
+{
+    <div class="container">
+        <partial name="_BracketFormBody" model="@this.Model.Bracket" />
+    </div>
+}

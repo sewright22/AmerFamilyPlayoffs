@@ -1,0 +1,47 @@
+﻿@using NflPlayoffPool.Web.Models.Bracket;
+
+@model MatchupModel
+
+<pp-partial name="_BracketGameHiddenFields" model="@this.Model" pp-prefix="@this.ViewData.TemplateInfo.HtmlFieldPrefix" />
+
+<div class="pp-matchup form-group">
+    @if (this.Model.IsCorrect.HasValue)
+    {
+        if (this.Model.IsCorrect.Value)
+        {
+            <i class="fa-solid fa-circle-check pp-prediction-correct"></i>
+        }
+        else
+        {
+            <i class="fa-solid fa-circle-xmark pp-prediction-incorrect"></i>
+        }
+    }
+    <span class="pp-game-name">@this.Model.Name</span>
+    <div class="form-check">
+        <label>
+            @if (this.Model.IsLocked)
+            {
+                <input class="form-check-input" type="radio" asp-for="SelectedWinner" id="@this.Model.HomeTeam.ViewId" value="@this.Model.HomeTeam.Id" disabled />
+            }
+            else
+            {
+                <input class="form-check-input" type="radio" asp-for="SelectedWinner" id="@this.Model.HomeTeam.ViewId" value="@this.Model.HomeTeam.Id" />
+            }
+        </label>
+        <label class="pp-team-name" for="@this.Model.HomeTeam.ViewId">@this.Model.HomeTeam.Name (@this.Model.HomeTeam.Seed)</label>
+    </div>
+    <div class="form-check">
+        <label>
+            @if (this.Model.IsLocked)
+            {
+                <input class="form-check-input" type="radio" asp-for="SelectedWinner" id="@this.Model.AwayTeam.ViewId" value="@this.Model.AwayTeam.Id" disabled />
+            }
+            else
+            {
+                <input class="form-check-input" type="radio" asp-for="SelectedWinner" id="@this.Model.AwayTeam.ViewId" value="@this.Model.AwayTeam.Id" />
+            }
+        </label>
+        <label class="pp-team-name" for="@this.Model.AwayTeam.ViewId">@this.Model.AwayTeam.Name (@this.Model.AwayTeam.Seed)</label>
+    </div>
+    <span asp-validation-for="SelectedWinner" class="text-danger"></span>
+</div>

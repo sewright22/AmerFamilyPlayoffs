@@ -1,0 +1,19 @@
+﻿@using NflPlayoffPool.Web.Admin.ViewModels
+@model BracketViewModel
+
+@{
+    string error = "There was a problem loading this game. Please contact Steven. Email: sewright22@gmail.com";
+}
+
+@if (this.Model.Bracket.CanEdit)
+{
+    <div class="container">
+        <partial name="_BracketForm" model="@this.Model.Bracket" />
+    </div>
+}
+else
+{
+    <div class="container">
+        <p>The season has already started. You can no longer create a bracket.</p>
+    </div>
+}

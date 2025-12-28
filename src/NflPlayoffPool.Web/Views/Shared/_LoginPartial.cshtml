@@ -1,0 +1,29 @@
+@using System.Security.Claims
+@{
+    var isSignedIn = User?.Identity?.IsAuthenticated ?? false;
+    var userName = User?.FindFirst(ClaimTypes.Name)?.Value; // Assuming your custom auth sets the user name claim
+}
+
+<ul class="navbar-nav">
+@if (isSignedIn)
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" href="/Account/Manage" title="Manage">Hello @userName!</a>
+    </li>
+    <li class="nav-item">
+        <form class="form-inline" method="post" action="/Account/Logout">
+            <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+        </form>
+    </li>
+}
+else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-controller="Account"
+               asp-action="Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-page="/Account/Login">Login</a>
+        </li>
+}
+</ul>
