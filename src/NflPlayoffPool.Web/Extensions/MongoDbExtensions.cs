@@ -83,7 +83,10 @@ namespace NflPlayoffPool.Web.Extensions
             var mongoPort = Environment.GetEnvironmentVariable("MONGODB_PORT") ?? "27017";
             var mongoDatabase = Environment.GetEnvironmentVariable("MONGODB_DATABASE") ?? "playoff_pool";
 
-            var connectionString = $"mongodb://admin:{mongoPassword}@{mongoHost}:{mongoPort}/{mongoDatabase}?authSource=admin";
+            // URL encode the password to handle special characters
+            var encodedPassword = Uri.EscapeDataString(mongoPassword ?? string.Empty);
+
+            var connectionString = $"mongodb://admin:{encodedPassword}@{mongoHost}:{mongoPort}/{mongoDatabase}?authSource=admin";
 
             Console.WriteLine($"🔗 Using MongoDB connection: mongodb://admin:***@{mongoHost}:{mongoPort}/{mongoDatabase}");
 
