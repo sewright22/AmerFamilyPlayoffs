@@ -1,0 +1,201 @@
+name: Deploy to Home Server
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+        - production
+        - staging
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+      image-digest: ${{ steps.build.outputs.digest }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+
+    - name: Build and push Docker image
+      id: build
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'production' }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.HOME_SERVER_SSH_KEY }}
+
+    - name: Add server to known hosts
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -H ${{ secrets.HOME_SERVER_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Deploy to Home Server
+      env:
+        HOME_SERVER_HOST: ${{ secrets.HOME_SERVER_HOST }}
+        HOME_SERVER_USER: ${{ secrets.HOME_SERVER_USER }}
+        MONGODB_ROOT_PASSWORD: ${{ secrets.MONGODB_ROOT_PASSWORD }}
+        ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+        ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+        IMAGE_TAG: ${{ needs.build-and-push.outputs.image-tag }}
+      run: |
+        # Create deployment script
+        cat > deploy-remote.sh << 'EOF'
+        #!/bin/bash
+        set -e
+        
+        echo "🚀 Starting deployment to home server..."
+        
+        # Navigate to application directory
+        cd /opt/nflplayoffpool
+        
+        # Backup current deployment
+        echo "📦 Creating backup..."
+        ./backup.sh || echo "⚠️ Backup failed, continuing..."
+        
+        # Pull latest code
+        echo "📥 Pulling latest code..."
+        git fetch origin
+        git reset --hard origin/main
+        
+        # Update environment file with secrets
+        echo "🔧 Updating environment configuration..."
+        cat > .env << ENVEOF
+        # Application Configuration
+        ASPNETCORE_ENVIRONMENT=Production
+        WEBAPP_PORT=80
+        
+        # MongoDB Configuration
+        MONGODB_PORT=27017
+        MONGODB_DATABASE=playoff_pool
+        MONGODB_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
+        MONGODB_DATA_PATH=/opt/nflplayoffpool/data/mongodb
+        
+        # Admin Account Configuration
+        ADMIN_EMAIL=${ADMIN_EMAIL}
+        ADMIN_PASSWORD=${ADMIN_PASSWORD}
+        ADMIN_FIRST_NAME=Admin
+        ADMIN_LAST_NAME=User
+        
+        # Container Registry Configuration
+        CONTAINER_IMAGE=${IMAGE_TAG}
+        ENVEOF
+        
+        # Update docker-compose to use pre-built image
+        echo "🐳 Updating docker-compose for container registry..."
+        cat > docker-compose.override.yml << COMPOSEEOF
+        services:
+          webapp:
+            image: ${IMAGE_TAG}
+            build: null
+        COMPOSEEOF
+        
+        # Deploy application
+        echo "🔄 Deploying application..."
+        docker-compose pull webapp
+        docker-compose down
+        docker-compose up -d
+        
+        # Wait for health check
+        echo "⏳ Waiting for application to be healthy..."
+        for i in {1..30}; do
+          if curl -f http://localhost/health > /dev/null 2>&1; then
+            echo "✅ Application is healthy!"
+            break
+          fi
+          echo "Waiting... ($i/30)"
+          sleep 10
+        done
+        
+        # Verify deployment
+        if curl -f http://localhost/health > /dev/null 2>&1; then
+          echo "🎉 Deployment successful!"
+          docker-compose ps
+        else
+          echo "❌ Deployment failed - application not responding"
+          docker-compose logs webapp
+          exit 1
+        fi
+        EOF
+        
+        # Make script executable and run on remote server
+        chmod +x deploy-remote.sh
+        scp deploy-remote.sh $HOME_SERVER_USER@$HOME_SERVER_HOST:/tmp/
+        
+        ssh $HOME_SERVER_USER@$HOME_SERVER_HOST \
+          "MONGODB_ROOT_PASSWORD='$MONGODB_ROOT_PASSWORD' \
+           ADMIN_PASSWORD='$ADMIN_PASSWORD' \
+           ADMIN_EMAIL='$ADMIN_EMAIL' \
+           IMAGE_TAG='$IMAGE_TAG' \
+           bash /tmp/deploy-remote.sh"
+
+    - name: Cleanup
+      if: always()
+      run: |
+        ssh ${{ secrets.HOME_SERVER_USER }}@${{ secrets.HOME_SERVER_HOST }} "rm -f /tmp/deploy-remote.sh" || true
+
+  notify:
+    needs: [build-and-push, deploy]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Notify deployment status
+      run: |
+        if [ "${{ needs.deploy.result }}" == "success" ]; then
+          echo "✅ Deployment completed successfully!"
+          echo "🌐 Application should be available at your configured domain"
+        else
+          echo "❌ Deployment failed!"
+          echo "Check the deployment logs for details"
+        fi

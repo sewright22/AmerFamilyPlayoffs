@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "local-shell": {
+      "command": "uvx",
+      "args": ["mcp-server-shell@latest"],
+      "disabled": false,
+      "autoApprove": [
+        "execute_command"
+      ]
+    }
+  }
+}
