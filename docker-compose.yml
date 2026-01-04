@@ -34,6 +34,20 @@ services:
     networks:
       - nflpool-network
 
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: nflpool-cloudflared
+    command: tunnel --config /etc/cloudflared/config.yaml run
+    volumes:
+      - ./cloudflare-tunnel.yaml:/etc/cloudflared/config.yaml:ro
+      - ./cloudflared-credentials:/root/.cloudflared:ro
+    depends_on:
+      webapp:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - nflpool-network
+
   mongodb:
     image: mongo:7.0
     container_name: nflpool-mongodb

@@ -1,0 +1,9 @@
+tunnel: 80f1a370-1301-4fd9-aae1-6b603d135298
+credentials-file: /root/.cloudflared/80f1a370-1301-4fd9-aae1-6b603d135298.json
+
+ingress:
+  - hostname: fjapool.com
+    service: http://webapp:5000
+  - hostname: www.fjapool.com
+    service: http://webapp:5000
+  - service: http_status:404
